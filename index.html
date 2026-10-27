@@ -248,7 +248,7 @@
             </div>
         </div>
 
-        <!-- Linha de Gráficos (Pizza + Regional com remoção da coluna zerada) -->
+        <!-- Linha de Gráficos (Pizza + Regional sem barra vermelha caso zerada) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-1">
@@ -509,8 +509,14 @@
 
     <!-- Lógica de Dados e Gráficos -->
     <script>
-        const CSV_OS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=1666421233&single=true&output=csv";
-        const CSV_EVOLUCAO_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=115322743&single=true&output=csv";
+        // URLs base com parâmetro de data para evitar que o navegador armazene cache desatualizado
+        function getOSUrl() {
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=1666421233&single=true&output=csv&_t=" + Date.now();
+        }
+
+        function getEvolucaoUrl() {
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=115322743&single=true&output=csv&_t=" + Date.now();
+        }
 
         let rawDataset = [];
         let filteredDataset = [];
@@ -528,7 +534,7 @@
         let currentPage = 1;
         const pageSize = 15;
 
-        // Inicia carregamento automático ao carregar a página
+        // Início automático
         window.addEventListener('DOMContentLoaded', () => {
             loadAllData();
         });
@@ -554,9 +560,10 @@
             }
         }
 
-        // Carregamento automático da base de OS com suporte a download direto e proxy
+        // Leitura automática da base principal com PapaParse download
         function loadFromOnlineSpreadsheet() {
-            Papa.parse(CSV_OS_URL, {
+            const targetUrl = getOSUrl();
+            Papa.parse(targetUrl, {
                 download: true,
                 header: true,
                 skipEmptyLines: true,
@@ -575,7 +582,8 @@
         }
 
         function fallbackProxyOS() {
-            fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_OS_URL))
+            const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(getOSUrl());
+            fetch(proxyUrl)
                 .then(r => r.text())
                 .then(csv => {
                     Papa.parse(csv, {
@@ -594,9 +602,10 @@
                 });
         }
 
-        // Carregamento automático da evolução geral
+        // Leitura automática da aba de evolução geral
         function loadEvolucaoGeralData() {
-            Papa.parse(CSV_EVOLUCAO_URL, {
+            const targetUrl = getEvolucaoUrl();
+            Papa.parse(targetUrl, {
                 download: true,
                 header: true,
                 skipEmptyLines: true,
@@ -614,7 +623,8 @@
         }
 
         function fallbackProxyEvolucao() {
-            fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_EVOLUCAO_URL))
+            const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(getEvolucaoUrl());
+            fetch(proxyUrl)
                 .then(r => r.text())
                 .then(csv => {
                     Papa.parse(csv, {
@@ -627,7 +637,7 @@
                         }
                     });
                 })
-                .catch(err => console.warn("Erro ao buscar evolução via proxy:", err));
+                .catch(err => console.warn("Erro ao descarregar evolução geral:", err));
         }
 
         function processEvolucaoRows(rows) {
@@ -991,7 +1001,7 @@
             });
         }
 
-        // Gráfico de Barras Regional com ocultação estrita de colunas vermelhas sem vencidas
+        // Gráfico Regional: omite a coluna se o valor for zero
         function renderRegionalChart() {
             const canvas = document.getElementById('chartRegional');
             if (!canvas) return;
@@ -1010,7 +1020,7 @@
             const labels = Object.keys(mapRegional).sort((a,b) => mapRegional[b].total - mapRegional[a].total);
             const totalData = labels.map(r => mapRegional[r].total);
             
-            // Se vencidas for 0, passa null para a coluna NÃO ser desenhada
+            // Retorna null caso não haja vencidas para aquela regional, impedindo o desenho da barra
             const vencidasData = labels.map(r => mapRegional[r].vencidas > 0 ? mapRegional[r].vencidas : null);
             const totalVencidasGeral = labels.reduce((acc, r) => acc + mapRegional[r].vencidas, 0);
 
@@ -1023,7 +1033,7 @@
                 }
             ];
 
-            // Apenas adiciona a série vermelha se existir pelo menos 1 OS vencida em alguma regional
+            // Apenas adiciona o conjunto de dados de Vencidas se existir pelo menos uma OS vencida
             if (totalVencidasGeral > 0) {
                 datasets.push({
                     label: 'Vencidas',
@@ -1032,7 +1042,7 @@
                     borderColor: '#fda4af',
                     borderWidth: 1,
                     borderRadius: 4,
-                    minBarLength: 7 // Apenas aplica tamanho mínimo se o valor for numérico (> 0)
+                    minBarLength: 7
                 });
             }
 
