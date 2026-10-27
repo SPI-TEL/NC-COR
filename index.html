@@ -309,7 +309,7 @@
             <div class="glass-card rounded-2xl p-5 flex flex-col">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
                     <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
-                        <i class="fa-solid fa-fire text-amber-500"></i> Área Ofensora de Volume[cite: 2]
+                        <i class="fa-solid fa-fire text-amber-500"></i> Área Ofensora de Volume
                     </h3>
                     <span class="text-[10px] uppercase font-bold text-slate-500">Top Unidades[cite: 2]</span>
                 </div>
@@ -372,30 +372,6 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>
-
-        <!-- NOVO: Gráfico Evolutivo de Quantidades de Entrantes (Acima do Detalhamento) -->
-        <div class="glass-card rounded-2xl p-5 flex flex-col">
-            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
-                <div>
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-chart-area text-cyan-400"></i> Evolutivo Temporal de Entrantes (Criação de OS)
-                    </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Acompanhamento da curva de abertura e entrada de Ordens de Serviço</p>
-                </div>
-                <!-- Agrupador Temporal: Mensal ou Diário -->
-                <div class="flex items-center gap-1.5 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60 text-xs">
-                    <button id="btnEvolutivoMensal" onclick="setEvolutivoGranularidade('mensal')" class="px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm">
-                        Mensal
-                    </button>
-                    <button id="btnEvolutivoDiario" onclick="setEvolutivoGranularidade('diario')" class="px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">
-                        Diário
-                    </button>
-                </div>
-            </div>
-            <div class="relative w-full h-[260px]">
-                <canvas id="chartEvolutivoEntrantes"></canvas>
             </div>
         </div>
 
@@ -467,8 +443,6 @@
         let filteredDataset = [];
         let chartSlaInstance = null;
         let chartRegionalInstance = null;
-        let chartEvolutivoInstance = null;
-        let granularidadeEvolutivo = 'mensal'; // 'mensal' ou 'diario'
 
         let currentPage = 1;
         const pageSize = 15;
@@ -583,6 +557,8 @@
                 const descricaoAcao = (row['Descrição Ação'] || row['Descricao Acao'] || '').trim();
                 const etapaEsteira = (row['Etapa Esteira'] || '').trim();
 
+                // Lógica de "Executada sem Aprovação":
+                // Identifica se foi marcada como Serviço executado sem a aprovação final ou nas tratativas/etapas equivalentes
                 const isExecSemAprov = necessidade.includes('EXEC') && (necessidade.includes('SEM') || prioridadeVivo.includes('NÃO EXEC') || prioridadeVivo.includes('SEM APR') || etapaEsteira.toUpperCase().includes('APROV'));
 
                 return {
@@ -650,30 +626,38 @@
             const fSearch = document.getElementById('filterSearch').value.toLowerCase().trim();
 
             filteredDataset = rawDataset.filter(item => {
+                // Filtro Gestor (TEL como padrão)
                 if (fGestor === 'TEL' && !item.gestor.includes('TEL')) return false;
                 if (fGestor === 'VIVO' && !item.gestor.includes('VIVO')) return false;
 
+                // Filtro Executadas sem Aprovação
                 if (fExecSemAprov === 'SIM' && !item.isExecSemAprov) return false;
                 if (fExecSemAprov === 'NAO' && item.isExecSemAprov) return false;
 
+                // FAT-B
                 if (fFatB === 'FAT_B' && !item.isFatB) return false;
                 if (fFatB === 'NAO_FAT_B' && item.isFatB) return false;
 
+                // SLA Faixas
                 if (fSLA === 'VENCIDAS' && !item.isVencida) return false;
                 if (fSLA === 'ACIMA_90' && (item.isVencida || item.slaPctNum < 90)) return false;
                 if (fSLA === 'ACIMA_80' && (item.isVencida || item.slaPctNum < 80)) return false;
                 if (fSLA === '70_80' && (item.isVencida || item.slaPctNum < 70 || item.slaPctNum >= 80)) return false;
                 if (fSLA === 'ABAIXO_70' && (item.isVencida || item.slaPctNum >= 70)) return false;
 
+                // Urgente
                 if (fUrgente === 'SIM' && !item.urgente.toLowerCase().includes('urgente')) return false;
                 if (fUrgente === 'NAO' && item.urgente.toLowerCase().includes('não urgente') === false && item.urgente.toLowerCase().includes('nao urgente') === false && item.urgente.toLowerCase().includes('urgente')) return false;
 
+                // SC
                 if (fSC === 'COM_SC' && (!item.numSC || item.numSC === '#REF!')) return false;
                 if (fSC === 'SEM_SC' && (item.numSC && item.numSC !== '#REF!')) return false;
 
+                // Regional & Tipo
                 if (fRegional !== 'TODOS' && item.regional !== fRegional) return false;
                 if (fTipo !== 'TODOS' && item.tipoServico !== fTipo) return false;
 
+                // Busca Livre
                 if (fSearch) {
                     const match = (item.os && item.os.toLowerCase().includes(fSearch)) ||
                                   (item.site && item.site.toLowerCase().includes(fSearch)) ||
@@ -691,7 +675,7 @@
         }
 
         function resetFilters() {
-            document.getElementById('filterGestor').value = 'TEL';
+            document.getElementById('filterGestor').value = 'TEL'; // Retorna para TEL por padrão
             document.getElementById('filterExecSemAprov').value = 'TODOS';
             document.getElementById('filterFatB').value = 'TODOS';
             document.getElementById('filterSLA').value = 'TODOS';
@@ -701,21 +685,6 @@
             document.getElementById('filterTipo').value = 'TODOS';
             document.getElementById('filterSearch').value = '';
             applyFilters();
-        }
-
-        function setEvolutivoGranularidade(gran) {
-            granularidadeEvolutivo = gran;
-            const btnM = document.getElementById('btnEvolutivoMensal');
-            const btnD = document.getElementById('btnEvolutivoDiario');
-
-            if (gran === 'mensal') {
-                btnM.className = "px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm";
-                btnD.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
-            } else {
-                btnD.className = "px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm";
-                btnM.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
-            }
-            renderEvolutivoChart();
         }
 
         function updateDashboard() {
@@ -771,7 +740,7 @@
             document.getElementById('kpiMediaReaisOS').innerText = mediaReaisPorOS.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             document.getElementById('kpiRiscoTotal').innerText = (vencidas + acima80).toLocaleString('pt-BR');
-            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`[cite: 1];
+            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`;[cite: 1]
 
             document.getElementById('lblFaixa1').innerText = abaixo70;
             document.getElementById('lblFaixa2').innerText = entre70e80;
@@ -781,7 +750,6 @@
             renderSlaDonut(abaixo70, entre70e80, acima80, vencidas);
             renderRegionalChart();
             renderRankings();
-            renderEvolutivoChart();
             renderTable();
         }
 
@@ -886,112 +854,13 @@
             });
         }
 
-        // Gráfico Evolutivo de Entrantes
-        function renderEvolutivoChart() {
-            const canvas = document.getElementById('chartEvolutivoEntrantes');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
-            if (chartEvolutivoInstance) chartEvolutivoInstance.destroy();
-
-            const timelineMap = {};
-
-            filteredDataset.forEach(d => {
-                if (!d.dataCriacao) return;
-
-                let key = '';
-                let label = '';
-                const ano = d.dataCriacao.getFullYear();
-                const mes = String(d.dataCriacao.getMonth() + 1).padStart(2, '0');
-                const dia = String(d.dataCriacao.getDate()).padStart(2, '0');
-
-                if (granularidadeEvolutivo === 'mensal') {
-                    key = `${ano}-${mes}`;
-                    label = `${mes}/${ano}`;
-                } else {
-                    key = `${ano}-${mes}-${dia}`;
-                    label = `${dia}/${mes}/${ano}`;
-                }
-
-                if (!timelineMap[key]) {
-                    timelineMap[key] = { label: label, count: 0, sortKey: key };
-                }
-                timelineMap[key].count++;
-            });
-
-            const sortedKeys = Object.keys(timelineMap).sort();
-            const labels = sortedKeys.map(k => timelineMap[k].label);
-            const dataCounts = sortedKeys.map(k => timelineMap[k].count);
-
-            const gradient = ctx.createLinearGradient(0, 0, 0, 240);
-            gradient.addColorStop(0, 'rgba(6, 182, 212, 0.45)');
-            gradient.addColorStop(1, 'rgba(6, 182, 212, 0.0)');
-
-            chartEvolutivoInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'OS Entrantes',
-                        data: dataCounts,
-                        borderColor: '#06b6d4',
-                        backgroundColor: gradient,
-                        borderWidth: 2.5,
-                        fill: true,
-                        tension: 0.35,
-                        pointBackgroundColor: '#0891b2',
-                        pointBorderColor: '#ffffff',
-                        pointBorderWidth: 1.5,
-                        pointRadius: labels.length > 35 ? 1.5 : 4,
-                        pointHoverRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
-                    },
-                    scales: {
-                        x: {
-                            grid: { color: 'rgba(51, 65, 85, 0.2)' },
-                            ticks: { 
-                                color: '#94a3b8', 
-                                font: { size: 10 },
-                                maxRotation: 45,
-                                maxTicksLimit: 14
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                            ticks: { 
-                                color: '#94a3b8', 
-                                font: { size: 10 },
-                                precision: 0
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return ` Entrantes: ${context.raw} ordens`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
         function renderRankings() {
             const areaStats = {};
             const regionalStats = {};
             const totalOS = filteredDataset.length;
 
             filteredDataset.forEach(d => {
+                // Estatísticas por Área / Unidade
                 const area = d.unidadeNegocio || 'NÃO DEFINIDA';
                 if (!areaStats[area]) {
                     areaStats[area] = { volume: 0, vencidas: 0 };
@@ -999,6 +868,7 @@
                 areaStats[area].volume++;
                 if (d.isVencida) areaStats[area].vencidas++;
 
+                // Estatísticas por Regional para o Card Central (>80%)
                 const reg = d.regional || 'NÃO DEFINIDA';
                 if (!regionalStats[reg]) {
                     regionalStats[reg] = { volume: 0, acima80: 0 };
@@ -1123,6 +993,7 @@
                     ? `<span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-500/20 text-purple-300 font-medium">VIVO</span>`
                     : `<span class="px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 text-blue-300 font-medium">TEL</span>`;
 
+                // Badge de Dias Restantes
                 let tempoRestanteBadge = '<span class="text-slate-500 text-[11px]">-</span>';
                 if (row.tempoRestante !== null) {
                     if (row.tempoRestante < 0) {
