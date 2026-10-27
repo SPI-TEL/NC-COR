@@ -155,12 +155,23 @@
                     </select>
                 </div>
 
-                <!-- Filtro Tipo de Serviço -->
-                <div>
+                <!-- NOVO: Filtro Tipo de Serviço com MÚLTIPLA SELEÇÃO -->
+                <div class="relative">
                     <label class="block text-[10px] text-slate-400 font-medium mb-1">TIPO SERVIÇO</label>
-                    <select id="filterTipo" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
-                        <option value="TODOS">Todos</option>
-                    </select>
+                    <button type="button" id="btnDropdownTipo" onclick="toggleTipoDropdown(event)" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 flex items-center justify-between focus:border-cyan-500 focus:outline-none">
+                        <span id="labelDropdownTipo" class="truncate text-left pr-1">Todos</span>
+                        <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                    </button>
+                    <!-- Menu dropdown flutuante -->
+                    <div id="menuDropdownTipo" class="absolute left-0 mt-1 w-52 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 z-50 hidden max-h-56 overflow-y-auto custom-scroll">
+                        <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-800 text-[11px]">
+                            <button type="button" onclick="selectAllTipos(true)" class="text-cyan-400 hover:underline">Marcar Todos</button>
+                            <button type="button" onclick="selectAllTipos(false)" class="text-slate-400 hover:underline">Limpar</button>
+                        </div>
+                        <div id="listaOpcoesTipo" class="space-y-1 text-xs">
+                            <!-- Injetado dinamicamente com checkboxes -->
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Busca Livre -->
@@ -259,34 +270,52 @@
             </div>
         </div>
 
-        <!-- Linha de Gráficos (Dimensão compacta) -->
+        <!-- Linha de Gráficos Ajustados -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="glass-card rounded-2xl p-4 flex flex-col">
-                <div class="flex items-center justify-between mb-2">
+            
+            <!-- Gráfico 1: Distribuição de Faixas de SLA (Valores Próximos da Legenda) -->
+            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-1">
                     <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-pie text-cyan-400"></i> Distribuição por Faixa de SLA
                     </h3>
                     <span class="text-[10px] text-slate-400">Tempo de Atendimento</span>
                 </div>
-                <div class="relative w-full h-[130px] flex items-center justify-center">
+                
+                <div class="relative w-full h-[125px] flex items-center justify-center">
                     <canvas id="chartSlaPizza"></canvas>
                 </div>
-                <div class="grid grid-cols-2 gap-1.5 mt-2.5 pt-2 border-t border-slate-800 text-[10px]">
-                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> < 70%: <strong id="lblFaixa1" class="ml-auto text-slate-300">0</strong></div>
-                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-yellow-500"></span> 70% a 80%: <strong id="lblFaixa2" class="ml-auto text-slate-300">0</strong></div>
-                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-500"></span> > 80%: <strong id="lblFaixa3" class="ml-auto text-slate-300">0</strong></div>
-                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-600"></span> Vencidas: <strong id="lblFaixa4" class="ml-auto text-slate-300">0</strong></div>
+
+                <!-- Legenda com valores diretos e próximos -->
+                <div class="grid grid-cols-2 gap-x-2 gap-y-1 pt-2 border-t border-slate-800 text-[11px]">
+                    <div class="flex items-center justify-between bg-slate-800/40 px-2 py-0.5 rounded">
+                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>&lt; 70%:</span>
+                        <strong id="lblFaixa1" class="text-emerald-400 font-bold ml-1">0</strong>
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-800/40 px-2 py-0.5 rounded">
+                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2 h-2 rounded-full bg-yellow-500"></span>70% a 80%:</span>
+                        <strong id="lblFaixa2" class="text-yellow-400 font-bold ml-1">0</strong>
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-800/40 px-2 py-0.5 rounded">
+                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2 h-2 rounded-full bg-orange-500"></span>&gt; 80%:</span>
+                        <strong id="lblFaixa3" class="text-orange-400 font-bold ml-1">0</strong>
+                    </div>
+                    <div class="flex items-center justify-between bg-slate-800/40 px-2 py-0.5 rounded">
+                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2 h-2 rounded-full bg-rose-600"></span>Vencidas:</span>
+                        <strong id="lblFaixa4" class="text-rose-400 font-bold ml-1">0</strong>
+                    </div>
                 </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-4 lg:col-span-2 flex flex-col">
-                <div class="flex items-center justify-between mb-2">
+            <!-- Gráfico 2: Distribuição por Regional (Abaixado até ao fundo do card, sem espaço ocioso) -->
+            <div class="glass-card rounded-2xl p-4 pb-2 lg:col-span-2 flex flex-col">
+                <div class="flex items-center justify-between mb-1">
                     <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-bar text-blue-400"></i> Distribuição por Regional
                     </h3>
                     <span class="text-[10px] text-slate-400">Volume Total vs Vencidas</span>
                 </div>
-                <div class="relative w-full h-[140px]">
+                <div class="relative w-full h-[155px] flex-1">
                     <canvas id="chartRegional"></canvas>
                 </div>
             </div>
@@ -494,7 +523,7 @@
         Portal de Gestão Operacional NC/COR • Conectado à Base Oficial Vivo / TEL
     </footer>
 
-    <!-- Lógica com Fallback e Proxy Anti-CORS -->
+    <!-- Lógica JS -->
     <script>
         const CSV_ONLINE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=1666421233&single=true&output=csv";
 
@@ -505,10 +534,13 @@
         let chartEvolutivoInstance = null;
         let granularidadeEvolutivo = 'mensal';
 
+        // Controle da Seleção Múltipla de Tipos
+        let selectedTipos = new Set();
+        let availableTipos = [];
+
         let currentPage = 1;
         const pageSize = 15;
 
-        // Executa imediatamente ao carregar o DOM ou a janela
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', loadFromOnlineSpreadsheet);
         } else {
@@ -530,12 +562,10 @@
             }
         }
 
-        // Carregamento robusto com tentativa direta e fallback por proxy
         async function loadFromOnlineSpreadsheet() {
             setBadge('loading', 'A carregar planilha...');
 
             try {
-                // Tentativa 1: Fetch direto com controlo de cache
                 const response = await fetch(CSV_ONLINE_URL + '&_t=' + Date.now());
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const csvText = await response.text();
@@ -547,7 +577,6 @@
             }
 
             try {
-                // Tentativa 2: Proxy CORS público de contingência
                 const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_ONLINE_URL);
                 const proxyResponse = await fetch(proxyUrl);
                 if (!proxyResponse.ok) throw new Error(`Proxy HTTP ${proxyResponse.status}`);
@@ -559,7 +588,6 @@
                 console.error("Falha ao descarregar via proxy:", errProxy);
                 setBadge('error', 'Use o botão CSV Local');
                 
-                // Realça visualmente o botão CSV Local para o utilizador
                 const lbl = document.getElementById('lblLocalCsv');
                 if (lbl) {
                     lbl.classList.remove('bg-slate-800');
@@ -569,11 +597,6 @@
         }
 
         function parseAndProcessCSV(csvString) {
-            if (typeof Papa === 'undefined') {
-                alert('A biblioteca PapaParse não pôde ser carregada da CDN. Verifique a ligação à internet ou carregue o ficheiro localmente.');
-                return;
-            }
-
             Papa.parse(csvString, {
                 header: true,
                 skipEmptyLines: true,
@@ -708,7 +731,7 @@
 
         function populateDropdownFilters() {
             const regionais = [...new Set(rawDataset.map(d => d.regional))].filter(Boolean).sort();
-            const tipos = [...new Set(rawDataset.map(d => d.tipoServico))].filter(Boolean).sort();
+            availableTipos = [...new Set(rawDataset.map(d => d.tipoServico))].filter(Boolean).sort();
 
             const selRegional = document.getElementById('filterRegional');
             selRegional.innerHTML = '<option value="TODOS">Todas</option>';
@@ -716,12 +739,62 @@
                 selRegional.innerHTML += `<option value="${r}">${r}</option>`;
             });
 
-            const selTipo = document.getElementById('filterTipo');
-            selTipo.innerHTML = '<option value="TODOS">Todos</option>';
-            tipos.forEach(t => {
-                selTipo.innerHTML += `<option value="${t}">${t}</option>`;
+            // Popula opções de tipo de serviço para seleção múltipla
+            const containerTipos = document.getElementById('listaOpcoesTipo');
+            containerTipos.innerHTML = '';
+            selectedTipos.clear();
+
+            availableTipos.forEach(t => {
+                containerTipos.innerHTML += `
+                    <label class="flex items-center gap-2 p-1 rounded hover:bg-slate-800 cursor-pointer">
+                        <input type="checkbox" value="${t}" onchange="onTipoCheckboxChange()" class="chk-tipo rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0">
+                        <span class="text-slate-200 text-xs">${t}</span>
+                    </label>
+                `;
             });
+            updateTipoDropdownLabel();
         }
+
+        // Funções para controle do filtro multi-select de tipo
+        function toggleTipoDropdown(e) {
+            e.stopPropagation();
+            const menu = document.getElementById('menuDropdownTipo');
+            menu.classList.toggle('hidden');
+        }
+
+        function selectAllTipos(marcar) {
+            const chks = document.querySelectorAll('.chk-tipo');
+            chks.forEach(c => c.checked = marcar);
+            onTipoCheckboxChange();
+        }
+
+        function onTipoCheckboxChange() {
+            selectedTipos.clear();
+            const chks = document.querySelectorAll('.chk-tipo:checked');
+            chks.forEach(c => selectedTipos.add(c.value));
+            updateTipoDropdownLabel();
+            applyFilters();
+        }
+
+        function updateTipoDropdownLabel() {
+            const lbl = document.getElementById('labelDropdownTipo');
+            if (selectedTipos.size === 0) {
+                lbl.innerText = 'Todos';
+            } else if (selectedTipos.size === 1) {
+                lbl.innerText = Array.from(selectedTipos)[0];
+            } else {
+                lbl.innerText = `${selectedTipos.size} selecionados`;
+            }
+        }
+
+        // Fechar o menu de dropdown se clicar fora
+        window.addEventListener('click', (e) => {
+            const menu = document.getElementById('menuDropdownTipo');
+            const btn = document.getElementById('btnDropdownTipo');
+            if (menu && !menu.contains(e.target) && !btn.contains(e.target)) {
+                menu.classList.add('hidden');
+            }
+        });
 
         function applyFilters() {
             const fGestor = document.getElementById('filterGestor').value;
@@ -731,7 +804,6 @@
             const fUrgente = document.getElementById('filterUrgente').value;
             const fSC = document.getElementById('filterSC').value;
             const fRegional = document.getElementById('filterRegional').value;
-            const fTipo = document.getElementById('filterTipo').value;
             const fSearch = document.getElementById('filterSearch').value.toLowerCase().trim();
 
             filteredDataset = rawDataset.filter(item => {
@@ -757,7 +829,11 @@
                 if (fSC === 'SEM_SC' && (item.numSC && item.numSC !== '#REF!')) return false;
 
                 if (fRegional !== 'TODOS' && item.regional !== fRegional) return false;
-                if (fTipo !== 'TODOS' && item.tipoServico !== fTipo) return false;
+
+                // Validação de Múltipla Escolha para Tipo de Serviço
+                if (selectedTipos.size > 0 && !selectedTipos.has(item.tipoServico)) {
+                    return false;
+                }
 
                 if (fSearch) {
                     const match = (item.os && item.os.toLowerCase().includes(fSearch)) ||
@@ -783,8 +859,10 @@
             document.getElementById('filterUrgente').value = 'TODOS';
             document.getElementById('filterSC').value = 'TODOS';
             document.getElementById('filterRegional').value = 'TODOS';
-            document.getElementById('filterTipo').value = 'TODOS';
             document.getElementById('filterSearch').value = '';
+            
+            // Limpa múltiplos tipos
+            selectAllTipos(false);
             applyFilters();
         }
 
@@ -858,10 +936,11 @@
             document.getElementById('kpiRiscoTotal').innerText = (vencidas + acima80).toLocaleString('pt-BR');
             document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`;
 
-            document.getElementById('lblFaixa1').innerText = abaixo70;
-            document.getElementById('lblFaixa2').innerText = entre70e80;
-            document.getElementById('lblFaixa3').innerText = acima80;
-            document.getElementById('lblFaixa4').innerText = vencidas;
+            // Atualiza os valores exatos e diretos ao lado da legenda
+            document.getElementById('lblFaixa1').innerText = abaixo70.toLocaleString('pt-BR');
+            document.getElementById('lblFaixa2').innerText = entre70e80.toLocaleString('pt-BR');
+            document.getElementById('lblFaixa3').innerText = acima80.toLocaleString('pt-BR');
+            document.getElementById('lblFaixa4').innerText = vencidas.toLocaleString('pt-BR');
 
             renderSlaDonut(abaixo70, entre70e80, acima80, vencidas);
             renderRegionalChart();
@@ -903,11 +982,12 @@
                             }
                         }
                     },
-                    cutout: '70%'
+                    cutout: '68%'
                 }
             });
         }
 
+        // Gráfico de Barras com layout otimizado até o fundo do card
         function renderRegionalChart() {
             const canvas = document.getElementById('chartRegional');
             if (!canvas) return;
@@ -949,21 +1029,34 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: 0,
+                            bottom: 0, // Remove o vão extra na base do gráfico
+                            left: 0,
+                            right: 0
+                        }
+                    },
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#94a3b8', font: { size: 9 } }
+                            ticks: { 
+                                color: '#94a3b8', 
+                                font: { size: 9 },
+                                padding: 2 // Reduz o afastamento do texto
+                            }
                         },
                         y: {
                             beginAtZero: true,
                             grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                            ticks: { color: '#94a3b8', font: { size: 9 }, maxTicksLimit: 5 }
+                            ticks: { color: '#94a3b8', font: { size: 9 }, maxTicksLimit: 4 }
                         }
                     },
                     plugins: {
                         legend: {
                             position: 'top',
-                            labels: { color: '#cbd5e1', boxWidth: 10, font: { size: 10 } }
+                            align: 'center',
+                            labels: { color: '#cbd5e1', boxWidth: 10, font: { size: 10 }, padding: 6 }
                         }
                     }
                 }
