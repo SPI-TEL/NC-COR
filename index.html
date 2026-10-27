@@ -516,6 +516,21 @@
         const CSV_OS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=1666421233&single=true&output=csv";
         const CSV_EVOLUCAO_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=115322743&single=true&output=csv";
 
+        // Dados de contingência imediatos para OS (garante que o painel não fique em branco)
+        const FALLBACK_OS_DATA = [
+            {"Número OS":"433299157","SGM":"2022134200","Site":"F.SP.RPO.AN.SPDA","Prazo":"FORA DO PRAZO","Urgente":"Não Urgente","Descrição OS":"Repor sistema aterramento, parte elétrica e iluminação.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"NC-SE","Regional":"16-ARQ","Coordenador":"Silvio Kowaski","Data Criação":"10/5/22 9:27","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"FORA","Tempo Restante":"-8","Denominação Unidade Negócio":"Ribeirao Preto","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""},
+            {"Número OS":"433307792","SGM":"2022106669","Site":"M.SP.SDE.CSP","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Fornecer 01 sistema de ar condicionado tipo split.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"NC-SE","Regional":"16-ARQ","Coordenador":"Silvio Kowaski","Data Criação":"10/5/22 9:45","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"1%","Tempo Restante":"89","Denominação Unidade Negócio":"RIBEIRAO PRETO","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""},
+            {"Número OS":"434954882","SGM":"2022135879","Site":"F.SP.ARQ.VX.SPDA","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Readequação do SPDA após furto.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"COR-OEM","Regional":"16-ARQ","Coordenador":"Silvio Kowaski","Data Criação":"10/28/22 10:38","Valor Materiais Externos":"R$ 1.250,00","Tipo de Segmento":"FAT_B","Último gestor":"TEL","%":"88%","Tempo Restante":"11","Denominação Unidade Negócio":"Araraquara","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""},
+            {"Número OS":"438633408","SGM":"","Site":"M.SP.PMO.CSP.AR1.SELF1","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Maquina CA-01, inoperante.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"11/17/22 12:50","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"45","Denominação Unidade Negócio":"LINS","Etapa Esteira":"Serviço executado","Descrição Ação":""},
+            {"Número OS":"438633529","SGM":"","Site":"M.SP.PMO.CSP.AR1.SELF1","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Maquina CA-01, inoperante.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"11/17/22 12:50","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"45","Denominação Unidade Negócio":"LINS","Etapa Esteira":"Serviço executado","Descrição Ação":""},
+            {"Número OS":"441978972","SGM":"2023026456","Site":"F.SP.GAR.RB","Prazo":"FORA DO PRAZO","Urgente":"Não Urgente","Descrição OS":"Furtado cabo nu de 25mm da malha de aterramento.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"COR-FV","Regional":"14-BRU","Matheus Mello":"","Data Criação":"11/28/22 15:45","Valor Materiais Externos":"R$ 2.400,00","Tipo de Segmento":"FAT_B","Último gestor":"TEL","%":"FORA","Tempo Restante":"-36","Denominação Unidade Negócio":"Marilia","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""},
+            {"Número OS":"451416131","SGM":"","Site":"F.SP.TUP.RC.SAC2.ACJ1","Prazo":"NO PRAZO","Urgente":"Urgente","Descrição OS":"Ar Condicionado ACJ Elgim não entra em serviço.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"12/6/22 13:57","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"10","Denominação Unidade Negócio":"Tupa","Etapa Esteira":"Serviço executado","Descrição Ação":""},
+            {"Número OS":"451439247","SGM":"","Site":"F.SP.TUP.RC.SAC1.SELF05","Prazo":"NO PRAZO","Urgente":"Urgente","Descrição OS":"Maquina de Ar Condicionado desligada por problema na turbina.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"12/6/22 14:35","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"10","Denominação Unidade Negócio":"Tupa","Etapa Esteira":"Serviço executado","Descrição Ação":""},
+            {"Número OS":"451445215","SGM":"","Site":"F.SP.TUP.RC.SAC1.SELF07","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Substituição dos fios que foram queimados.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"12/6/22 14:47","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"45","Denominação Unidade Negócio":"Tupa","Etapa Esteira":"Serviço executado","Descrição Ação":""},
+            {"Número OS":"451459307","SGM":"","Site":"F.SP.TUP.RC.SAC1.SELF08","Prazo":"NO PRAZO","Urgente":"Urgente","Descrição OS":"Maquina de Ar Condicionado desligado no disjuntor.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"12/6/22 15:10","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"10","Denominação Unidade Negócio":"Tupa","Etapa Esteira":"Serviço executado","Descrição Ação":""},
+            {"Número OS":"457500005","SGM":"2023004694","Site":"M.SP.CRV.CSP.AR1","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Adquirir e instalar um split de 30.000 BTU's com proteção.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"NC-SE","Regional":"16-ARQ","Coordenador":"Silvio Kowaski","Data Criação":"12/12/22 14:32","Valor Materiais Externos":"R$ 4.800,00","Tipo de Segmento":"FAT_B","Último gestor":"TEL","%":"29%","Tempo Restante":"64","Denominação Unidade Negócio":"SAO SIMAO","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""}
+        ];
+
         const FALLBACK_EVOLUCAO_TEXT = `Dia\tFora\tPrazo\tVariação
 3/1\t190\t991\t
 4/1\t190\t980\t
@@ -797,13 +812,18 @@
         let currentPage = 1;
         const pageSize = 15;
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadAllData);
-        } else {
+        // Inicialização com garantia de execução
+        window.addEventListener('DOMContentLoaded', () => {
+            // Inicializa imediatamente com contingência para garantir renderização sem atraso
+            processCSVData(FALLBACK_OS_DATA);
+            parseEvolucaoGeral(FALLBACK_EVOLUCAO_TEXT);
+            
+            // Em paralelo tenta descarregar a versão mais recente da nuvem
             loadAllData();
-        }
+        });
 
         function loadAllData() {
+            setBadge('loading', 'A carregar planilha...');
             loadFromOnlineSpreadsheet();
             loadEvolucaoGeralData();
         }
@@ -823,61 +843,55 @@
             }
         }
 
-        async function loadFromOnlineSpreadsheet() {
-            setBadge('loading', 'A carregar planilha...');
-
-            try {
-                const response = await fetch(CSV_OS_URL + '&_t=' + Date.now());
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const csvText = await response.text();
-                parseAndProcessCSV(csvText);
-                setBadge('success', 'Online Atualizado');
-                return;
-            } catch (errDirect) {
-                console.warn("Tentativa direta bloqueada por CORS/rede. A tentar proxy...", errDirect);
-            }
-
-            try {
-                const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_OS_URL);
-                const proxyResponse = await fetch(proxyUrl);
-                if (!proxyResponse.ok) throw new Error(`Proxy HTTP ${proxyResponse.status}`);
-                const proxyText = await proxyResponse.text();
-                parseAndProcessCSV(proxyText);
-                setBadge('success', 'Online (via Proxy)');
-                return;
-            } catch (errProxy) {
-                console.error("Falha ao descarregar via proxy:", errProxy);
-                setBadge('error', 'Use o botão CSV Local');
-                const lbl = document.getElementById('lblLocalCsv');
-                if (lbl) {
-                    lbl.classList.remove('bg-slate-800');
-                    lbl.classList.add('bg-blue-600', 'text-white', 'animate-pulse');
+        // Carregamento usando o PapaParse download nativo para contornar restrições de fetch do browser
+        function loadFromOnlineSpreadsheet() {
+            Papa.parse(CSV_OS_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data && results.data.length > 0) {
+                        processCSVData(results.data);
+                        setBadge('success', 'Online Atualizado');
+                    }
+                },
+                error: function(err) {
+                    console.warn("Falha no download direto da folha de OS:", err);
+                    // Tenta o proxy AllOrigins como contingência
+                    fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_OS_URL))
+                        .then(r => r.text())
+                        .then(csv => {
+                            Papa.parse(csv, {
+                                header: true,
+                                skipEmptyLines: true,
+                                complete: (res) => {
+                                    processCSVData(res.data);
+                                    setBadge('success', 'Online (Proxy)');
+                                }
+                            });
+                        })
+                        .catch(() => {
+                            setBadge('error', 'Online Indisponível (Use CSV Local)');
+                        });
                 }
-            }
+            });
         }
 
-        async function loadEvolucaoGeralData() {
-            try {
-                const response = await fetch(CSV_EVOLUCAO_URL + '&_t=' + Date.now());
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                const csvText = await response.text();
-                parseEvolucaoGeral(csvText);
-                return;
-            } catch (errDirect) {
-                console.warn("Evolução Geral: Falha direta, a tentar proxy...");
-            }
-
-            try {
-                const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_EVOLUCAO_URL);
-                const proxyResponse = await fetch(proxyUrl);
-                if (!proxyResponse.ok) throw new Error(`Proxy HTTP ${proxyResponse.status}`);
-                const proxyText = await proxyResponse.text();
-                parseEvolucaoGeral(proxyText);
-                return;
-            } catch (errProxy) {
-                console.warn("Evolução Geral: Proxy indisponível. Carregando dados base embutidos...");
-                parseEvolucaoGeral(FALLBACK_EVOLUCAO_TEXT);
-            }
+        function loadEvolucaoGeralData() {
+            Papa.parse(CSV_EVOLUCAO_URL, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data && results.data.length > 0) {
+                        processEvolucaoRows(results.data);
+                    }
+                },
+                error: function() {
+                    // Mantém os dados da constante embutida caso haja restrição
+                    parseEvolucaoGeral(FALLBACK_EVOLUCAO_TEXT);
+                }
+            });
         }
 
         function parseEvolucaoGeral(rawText) {
@@ -886,49 +900,32 @@
                 skipEmptyLines: true,
                 delimiter: rawText.includes('\t') ? '\t' : ',',
                 complete: function(results) {
-                    evolucaoGeralDataset = results.data.map(r => {
-                        const dia = (r['Dia'] || r['dia'] || '').trim();
-                        const fora = parseInt((r['Fora'] || r['fora'] || '0').toString().replace(/\D/g, '')) || 0;
-                        const prazo = parseInt((r['Prazo'] || r['prazo'] || '0').toString().replace(/\D/g, '')) || 0;
-                        const rawVar = (r['Variação'] || r['Variacao'] || r['variacao'] || '').toString().trim();
-                        let variacao = null;
-                        if (rawVar !== '') {
-                            const parsedVar = parseInt(rawVar.replace(/[^\d-]/g, ''));
-                            if (!isNaN(parsedVar)) variacao = parsedVar;
-                        }
-
-                        return { dia, fora, prazo, variacao };
-                    }).filter(d => d.dia);
-
-                    renderEvolucaoGeralChart();
+                    processEvolucaoRows(results.data);
                 }
             });
         }
 
-        function parseAndProcessCSV(csvString) {
-            Papa.parse(csvString, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    processCSVData(results.data);
-                },
-                error: function(err) {
-                    console.error("Erro no processamento CSV:", err);
-                    setBadge('error', 'Erro no CSV');
+        function processEvolucaoRows(rows) {
+            evolucaoGeralDataset = rows.map(r => {
+                const dia = (r['Dia'] || r['dia'] || '').trim();
+                const fora = parseInt((r['Fora'] || r['fora'] || '0').toString().replace(/\D/g, '')) || 0;
+                const prazo = parseInt((r['Prazo'] || r['prazo'] || '0').toString().replace(/\D/g, '')) || 0;
+                const rawVar = (r['Variação'] || r['Variacao'] || r['variacao'] || '').toString().trim();
+                let variacao = null;
+                if (rawVar !== '') {
+                    const parsedVar = parseInt(rawVar.replace(/[^\d-]/g, ''));
+                    if (!isNaN(parsedVar)) variacao = parsedVar;
                 }
-            });
+                return { dia, fora, prazo, variacao };
+            }).filter(d => d.dia);
+
+            renderEvolucaoGeralChart();
         }
 
         function loadFromFile(event) {
             const file = event.target.files[0];
             if (!file) return;
             setBadge('loading', 'A processar ficheiro...');
-
-            const lbl = document.getElementById('lblLocalCsv');
-            if (lbl) {
-                lbl.classList.remove('animate-pulse', 'bg-blue-600', 'text-white');
-                lbl.classList.add('bg-slate-800', 'text-slate-300');
-            }
 
             Papa.parse(file, {
                 header: true,
@@ -971,10 +968,8 @@
                 const isVencida = isFora || prazo === 'FORA DO PRAZO' || prazo === 'FORA';
 
                 const gestor = (row['Último gestor'] || row['Ultimo gestor'] || '').trim().toUpperCase();
-
                 const segmento = (row['Tipo de Segmento'] || '').trim();
                 const isFatB = segmento.toUpperCase().includes('FAT_B') || segmento.toUpperCase().includes('FAT-B');
-
                 const urg = (row['Urgente'] || '').trim();
 
                 const dataCriacaoStr = (row['Data Criação'] || row['Data Criacao'] || '').trim();
@@ -1238,7 +1233,7 @@
             document.getElementById('kpiMediaReaisOS').innerText = mediaReaisPorOS.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             document.getElementById('kpiRiscoTotal').innerText = (vencidas + acima80).toLocaleString('pt-BR');
-            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`[cite: 8];
+            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`;
 
             document.getElementById('lblFaixa1').innerText = abaixo70.toLocaleString('pt-BR');
             document.getElementById('lblFaixa2').innerText = entre70e80.toLocaleString('pt-BR');
@@ -1290,7 +1285,6 @@
             });
         }
 
-        // Gráfico de Barras Regional com minBarLength garantindo visibilidade da coluna vencida
         function renderRegionalChart() {
             const canvas = document.getElementById('chartRegional');
             if (!canvas) return;
@@ -1328,7 +1322,7 @@
                             borderColor: '#fda4af',
                             borderWidth: 1,
                             borderRadius: 4,
-                            minBarLength: 7 // Garante que a barra apareça mesmo com 1 unidade!
+                            minBarLength: 7
                         }
                     ]
                 },
@@ -1604,9 +1598,9 @@
 
             const areasArray = Object.keys(areaStats).map(a => ({
                 area: a,
-                volume: areaStats[a].volume,
-                vencidas: areaStats[a].vencidas,
-                taxaFalha: areaStats[a].volume > 0 ? (areaStats[a].vencidas / areaStats[a].volume) * 100 : 0
+                volume: areaStats[area].volume,
+                vencidas: areaStats[area].vencidas,
+                taxaFalha: areaStats[area].volume > 0 ? (areaStats[area].vencidas / areaStats[area].volume) * 100 : 0
             }));
 
             const topVolume = [...areasArray].sort((a,b) => b.volume - a.volume).slice(0, 5);
