@@ -168,75 +168,89 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto w-full p-6 flex-1 flex flex-col gap-6">
 
-        <!-- Grid de KPIs Primários -->
+        <!-- Grid de KPIs Primários (Ícones alinhados no topo com o Título) -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
             
             <!-- Total OS -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-blue-500">
-                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Volume Total</span>
-                <div class="mt-2 flex items-baseline justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Volume Total</span>
+                    <i class="fa-solid fa-list-check text-blue-400/80 text-sm"></i>
+                </div>
+                <div class="mt-2">
                     <span id="kpiTotalOS" class="text-2xl font-bold text-white tracking-tight">0</span>
-                    <i class="fa-solid fa-list-check text-blue-400/40 text-lg"></i>
                 </div>
                 <span class="text-[10px] text-slate-500 mt-1">OS Válidas apuradas</span>
             </div>
 
             <!-- Média Diária -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-cyan-500">
-                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Média Diária</span>
-                <div class="mt-2 flex items-baseline justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Média Diária</span>
+                    <i class="fa-solid fa-calendar-day text-cyan-400/80 text-sm"></i>
+                </div>
+                <div class="mt-2">
                     <span id="kpiMediaDiaria" class="text-2xl font-bold text-cyan-400 tracking-tight">0.0</span>
-                    <i class="fa-solid fa-calendar-day text-cyan-400/40 text-lg"></i>
                 </div>
                 <span class="text-[10px] text-slate-500 mt-1">Entrantes / dias c/ reg.</span>
             </div>
 
             <!-- Volume Mensal -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-indigo-500">
-                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Vol. Mensal</span>
-                <div class="mt-2 flex items-baseline justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Vol. Mensal</span>
+                    <i class="fa-solid fa-calendar-week text-indigo-400/80 text-sm"></i>
+                </div>
+                <div class="mt-2">
                     <span id="kpiVolMensal" class="text-2xl font-bold text-indigo-300 tracking-tight">0</span>
-                    <i class="fa-solid fa-calendar-week text-indigo-400/40 text-lg"></i>
                 </div>
                 <span class="text-[10px] text-slate-500 mt-1">Média mensal de criação</span>
             </div>
 
             <!-- Volume FAT-B Qtde -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-purple-500">
-                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">FAT-B (Qtde)</span>
-                <div class="mt-2 flex items-baseline justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">FAT-B (Qtde)</span>
+                    <i class="fa-solid fa-receipt text-purple-400/80 text-sm"></i>
+                </div>
+                <div class="mt-2">
                     <span id="kpiFatBQtde" class="text-2xl font-bold text-purple-400 tracking-tight">0</span>
-                    <i class="fa-solid fa-receipt text-purple-400/40 text-lg"></i>
                 </div>
                 <span id="kpiFatBPct" class="text-[10px] text-purple-300/80 mt-1">0% da base</span>
             </div>
 
             <!-- Volume FAT-B R$ -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-emerald-500">
-                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">FAT-B (R$)</span>
-                <div class="mt-2 flex items-baseline justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">FAT-B (R$)</span>
+                    <i class="fa-solid fa-money-bill-wave text-emerald-400/80 text-sm"></i>
+                </div>
+                <div class="mt-2">
                     <span id="kpiFatBReais" class="text-xl font-bold text-emerald-400 tracking-tight">R$ 0</span>
-                    <i class="fa-solid fa-money-bill-wave text-emerald-400/40 text-lg"></i>
                 </div>
                 <span class="text-[10px] text-slate-500 mt-1">Soma de materiais</span>
             </div>
 
             <!-- R$ Médio por OS -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-teal-500">
-                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">R$ Médio / OS</span>
-                <div class="mt-2 flex items-baseline justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">R$ Médio / OS</span>
+                    <i class="fa-solid fa-calculator text-teal-400/80 text-sm"></i>
+                </div>
+                <div class="mt-2">
                     <span id="kpiMediaReaisOS" class="text-xl font-bold text-teal-400 tracking-tight">R$ 0</span>
-                    <i class="fa-solid fa-calculator text-teal-400/40 text-lg"></i>
                 </div>
                 <span class="text-[10px] text-slate-500 mt-1">Custo médio unitário</span>
             </div>
 
             <!-- Críticos / SLA Alto Risco -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-rose-500">
-                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Vencidas / >80%</span>
-                <div class="mt-2 flex items-baseline justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Vencidas / >80%</span>
+                    <i class="fa-solid fa-triangle-exclamation text-rose-400/80 text-sm"></i>
+                </div>
+                <div class="mt-2">
                     <span id="kpiRiscoTotal" class="text-2xl font-bold text-rose-400 tracking-tight">0</span>
-                    <i class="fa-solid fa-triangle-exclamation text-rose-400/40 text-lg"></i>
                 </div>
                 <span id="kpiRiscoDetail" class="text-[10px] text-rose-300/80 mt-1">0 Venc. | 0 >80%</span>
             </div>
@@ -264,7 +278,7 @@
                 </div>
             </div>
 
-            <!-- Gráfico 2: Volume por Regional (Bar Chart Horizontal/Vertical) -->
+            <!-- Gráfico 2: Volume por Regional (Bar Chart) -->
             <div class="glass-card rounded-2xl p-5 lg:col-span-2 flex flex-col">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-sm font-bold text-white flex items-center gap-2">
@@ -278,16 +292,16 @@
             </div>
         </div>
 
-        <!-- Seção de Rankings de Ofensores (Volume & Vencidas) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Seção de Rankings de Ofensores (3 Colunas: Volume, Regional >80% e Vencidas) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
             
-            <!-- Ranking Ofensores de Volume -->
+            <!-- Card 1: Ranking Ofensores de Volume -->
             <div class="glass-card rounded-2xl p-5 flex flex-col">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
                     <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
                         <i class="fa-solid fa-fire text-amber-500"></i> Área/Unidade Ofensora de Volume
                     </h3>
-                    <span class="text-[10px] uppercase font-bold text-slate-500">Top Unidades</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-500">TOP UNIDADES</span>
                 </div>
                 <div class="overflow-y-auto max-h-56 custom-scroll pr-1">
                     <table class="w-full text-left text-xs">
@@ -305,13 +319,37 @@
                 </div>
             </div>
 
-            <!-- Ranking Ofensores de Vencidas -->
+            <!-- Card 2: Ranking Regional Ofensoras > 80% SLA -->
+            <div class="glass-card rounded-2xl p-5 flex flex-col border-t-2 border-t-orange-500/60">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
+                    <h3 class="text-sm font-bold text-orange-400 flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-orange-500"></i> Regional Ofensora > 80% SLA
+                    </h3>
+                    <span class="text-[10px] uppercase font-bold text-slate-500">ALTO RISCO</span>
+                </div>
+                <div class="overflow-y-auto max-h-56 custom-scroll pr-1">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="text-slate-400 border-b border-slate-800">
+                                <th class="py-2">Regional</th>
+                                <th class="py-2 text-right">>80%</th>
+                                <th class="py-2 text-right">% Criticidade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rankingRegional80Body" class="divide-y divide-slate-800/60 text-slate-300">
+                            <!-- Injetado dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Card 3: Ranking Ofensores de Vencidas -->
             <div class="glass-card rounded-2xl p-5 flex flex-col">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
                     <h3 class="text-sm font-bold text-rose-400 flex items-center gap-2">
                         <i class="fa-solid fa-skull-crossbones text-rose-500"></i> Área Ofensora de Vencidas
                     </h3>
-                    <span class="text-[10px] uppercase font-bold text-slate-500">Maior Risco de SLA</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-500">MAIOR RISCO SLA</span>
                 </div>
                 <div class="overflow-y-auto max-h-56 custom-scroll pr-1">
                     <table class="w-full text-left text-xs">
@@ -328,6 +366,7 @@
                     </table>
                 </div>
             </div>
+
         </div>
 
         <!-- Tabela Detalhada com Paginação e Exportação -->
@@ -337,7 +376,7 @@
                     <h3 class="text-sm font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-table-list text-cyan-400"></i> Detalhamento Analítico de Ordens de Serviço
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Listagem com status, prazos, gestor e ações imediatas</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Listagem com status, prazos, dias restantes, gestor e esteira</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <span id="recordsCount" class="text-xs text-slate-400">Exibindo 0 registros</span>
@@ -358,10 +397,10 @@
                             <th class="py-3 px-3">Segmento</th>
                             <th class="py-3 px-3">Gestor</th>
                             <th class="py-3 px-3">Prazo</th>
+                            <th class="py-3 px-3">Dias Restantes</th>
                             <th class="py-3 px-3">% SLA</th>
                             <th class="py-3 px-3">Valor Materiais</th>
                             <th class="py-3 px-3">N° SC</th>
-                            <th class="py-3 px-3">Urgência</th>
                             <th class="py-3 px-3">Etapa Esteira</th>
                         </tr>
                     </thead>
@@ -371,7 +410,7 @@
                 </table>
             </div>
 
-            <!-- Paginação Simples -->
+            <!-- Paginação -->
             <div class="flex items-center justify-between pt-4 text-xs text-slate-400">
                 <div class="flex items-center gap-2">
                     <span>Página <strong id="currentPageNum" class="text-white">1</strong> de <strong id="totalPagesNum" class="text-white">1</strong></span>
@@ -390,7 +429,7 @@
         Portal de Gestão Operacional NC/COR • Conectado à Base Oficial Vivo / TEL
     </footer>
 
-    <!-- Scripts da Lógica e Dashboards -->
+    <!-- Scripts de Lógica e Dados -->
     <script>
         const CSV_ONLINE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=1666421233&single=true&output=csv";
 
@@ -403,12 +442,11 @@
         let currentPage = 1;
         const pageSize = 15;
 
-        // Ao carregar a página
+        // Inicialização
         window.addEventListener('DOMContentLoaded', () => {
             loadFromOnlineSpreadsheet();
         });
 
-        // Atualiza status do badge
         function setBadge(state, text) {
             const badge = document.getElementById('statusBadge');
             const statusText = document.getElementById('statusText');
@@ -423,7 +461,6 @@
             }
         }
 
-        // Carga online da planilha
         function loadFromOnlineSpreadsheet() {
             setBadge('loading', 'Baixando Planilha...');
             Papa.parse(CSV_ONLINE_URL, {
@@ -437,12 +474,10 @@
                 error: function(err) {
                     console.error("Erro na leitura online:", err);
                     setBadge('error', 'Falha ao buscar CSV');
-                    alert("Aviso: Houve um erro ao buscar o link público diretamente (pode ser bloqueio CORS da rede corporativa). Você pode clicar em 'CSV Local' para carregar a planilha salva no seu computador.");
                 }
             });
         }
 
-        // Carga via arquivo manual
         function loadFromFile(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -461,14 +496,12 @@
             });
         }
 
-        // Normalização e Limpeza dos Dados
         function processCSVData(data) {
-            // Filtra registros que contenham #REF! severo no número da OS ou vazios
             rawDataset = data.filter(row => {
                 const os = (row['Número OS'] || row['Numero OS'] || '').trim();
                 return os && os !== '#REF!' && !os.includes('#REF');
             }).map(row => {
-                // Limpeza e parse de campos numéricos e categóricos
+                // Parse de valores monetários
                 const valStr = (row['Valor Materiais Externos'] || '0')
                     .replace('R$', '')
                     .replace(/\./g, '')
@@ -492,7 +525,14 @@
                 const prazo = (row['Prazo'] || '').trim().toUpperCase();
                 const isVencida = isFora || prazo === 'FORA DO PRAZO' || prazo === 'FORA';
 
-                // Normalização Gestor
+                // Tempo Restante (Dias Restantes)
+                const rawTempoRestante = (row['Tempo Restante'] || '').toString().trim();
+                let tempoRestanteNum = null;
+                if (rawTempoRestante !== '' && rawTempoRestante !== '#REF!' && !isNaN(parseInt(rawTempoRestante, 10))) {
+                    tempoRestanteNum = parseInt(rawTempoRestante, 10);
+                }
+
+                // Gestor
                 const gestor = (row['Último gestor'] || row['Ultimo gestor'] || '').trim().toUpperCase();
 
                 // Segmento / FAT-B
@@ -502,7 +542,7 @@
                 // Urgência
                 const urg = (row['Urgente'] || '').trim();
 
-                // Data de Criação
+                // Data Criação
                 const dataCriacaoStr = (row['Data Criação'] || row['Data Criacao'] || '').trim();
                 let dtCriacao = null;
                 if (dataCriacaoStr) {
@@ -530,6 +570,7 @@
                     slaPctStr: rawPct,
                     slaPctNum: slaNumeric,
                     prazo: prazo,
+                    tempoRestante: tempoRestanteNum,
                     isVencida: isVencida,
                     urgente: urg,
                     etapaEsteira: row['Etapa Esteira'] || '',
@@ -543,7 +584,6 @@
             applyFilters();
         }
 
-        // Popula filtros dinâmicos (Regional, Tipo de Serviço)
         function populateDropdownFilters() {
             const regionais = [...new Set(rawDataset.map(d => d.regional))].filter(Boolean).sort();
             const tipos = [...new Set(rawDataset.map(d => d.tipoServico))].filter(Boolean).sort();
@@ -561,7 +601,6 @@
             });
         }
 
-        // Aplicação de Todos os Filtros
         function applyFilters() {
             const fGestor = document.getElementById('filterGestor').value;
             const fFatB = document.getElementById('filterFatB').value;
@@ -573,34 +612,27 @@
             const fSearch = document.getElementById('filterSearch').value.toLowerCase().trim();
 
             filteredDataset = rawDataset.filter(item => {
-                // Gestor (TEL/VIVO)
                 if (fGestor === 'TEL' && !item.gestor.includes('TEL')) return false;
                 if (fGestor === 'VIVO' && !item.gestor.includes('VIVO')) return false;
 
-                // FAT-B
                 if (fFatB === 'FAT_B' && !item.isFatB) return false;
                 if (fFatB === 'NAO_FAT_B' && item.isFatB) return false;
 
-                // SLA Faixas
                 if (fSLA === 'VENCIDAS' && !item.isVencida) return false;
                 if (fSLA === 'ACIMA_90' && (item.isVencida || item.slaPctNum < 90)) return false;
                 if (fSLA === 'ACIMA_80' && (item.isVencida || item.slaPctNum < 80)) return false;
                 if (fSLA === '70_80' && (item.isVencida || item.slaPctNum < 70 || item.slaPctNum >= 80)) return false;
                 if (fSLA === 'ABAIXO_70' && (item.isVencida || item.slaPctNum >= 70)) return false;
 
-                // Urgente
                 if (fUrgente === 'SIM' && !item.urgente.toLowerCase().includes('urgente')) return false;
                 if (fUrgente === 'NAO' && item.urgente.toLowerCase().includes('não urgente') === false && item.urgente.toLowerCase().includes('nao urgente') === false && item.urgente.toLowerCase().includes('urgente')) return false;
 
-                // SC
                 if (fSC === 'COM_SC' && (!item.numSC || item.numSC === '#REF!')) return false;
                 if (fSC === 'SEM_SC' && (item.numSC && item.numSC !== '#REF!')) return false;
 
-                // Regional & Tipo
                 if (fRegional !== 'TODOS' && item.regional !== fRegional) return false;
                 if (fTipo !== 'TODOS' && item.tipoServico !== fTipo) return false;
 
-                // Busca Livre
                 if (fSearch) {
                     const match = (item.os && item.os.toLowerCase().includes(fSearch)) ||
                                   (item.site && item.site.toLowerCase().includes(fSearch)) ||
@@ -628,25 +660,20 @@
             applyFilters();
         }
 
-        // Cálculo dos Indicadores e Gráficos
         function updateDashboard() {
             const total = filteredDataset.length;
 
-            // FAT-B
             const fatBList = filteredDataset.filter(d => d.isFatB);
             const fatBQtde = fatBList.length;
             const fatBReais = fatBList.reduce((acc, curr) => acc + curr.valorMateriais, 0);
 
-            // Valores Gerais R$
             const totalReais = filteredDataset.reduce((acc, curr) => acc + curr.valorMateriais, 0);
             const mediaReaisPorOS = total > 0 ? (totalReais / total) : 0;
 
-            // SLA Categories
             let abaixo70 = 0;
             let entre70e80 = 0;
             let acima80 = 0;
             let vencidas = 0;
-            let acima90 = 0;
 
             filteredDataset.forEach(d => {
                 if (d.isVencida) {
@@ -655,22 +682,17 @@
                     if (d.slaPctNum < 70) abaixo70++;
                     else if (d.slaPctNum >= 70 && d.slaPctNum < 80) entre70e80++;
                     else acima80++;
-
-                    if (d.slaPctNum >= 90) acima90++;
                 }
             });
 
-            // Média Diária & Volume Mensal
             const datasCriacao = filteredDataset.map(d => d.dataCriacao).filter(Boolean);
             let mediaDiaria = 0;
             let mediaMensal = 0;
 
             if (datasCriacao.length > 0) {
-                // Dias únicos com ordens abertas
                 const diasUnicos = new Set(datasCriacao.map(dt => dt.toISOString().split('T')[0])).size;
                 mediaDiaria = diasUnicos > 0 ? (total / diasUnicos) : total;
 
-                // Meses únicos
                 const mesesUnicos = new Set(datasCriacao.map(dt => `${dt.getFullYear()}-${dt.getMonth()}`)).size;
                 mediaMensal = mesesUnicos > 0 ? Math.round(total / mesesUnicos) : total;
             } else {
@@ -678,7 +700,6 @@
                 mediaMensal = total;
             }
 
-            // Atualiza KPIs no DOM
             document.getElementById('kpiTotalOS').innerText = total.toLocaleString('pt-BR');
             document.getElementById('kpiMediaDiaria').innerText = mediaDiaria.toFixed(1);
             document.getElementById('kpiVolMensal').innerText = mediaMensal.toLocaleString('pt-BR');
@@ -691,20 +712,17 @@
             document.getElementById('kpiRiscoTotal').innerText = (vencidas + acima80).toLocaleString('pt-BR');
             document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`;
 
-            // Labels Donut
             document.getElementById('lblFaixa1').innerText = abaixo70;
             document.getElementById('lblFaixa2').innerText = entre70e80;
             document.getElementById('lblFaixa3').innerText = acima80;
             document.getElementById('lblFaixa4').innerText = vencidas;
 
-            // Renderizar Gráficos e Rankings
             renderSlaDonut(abaixo70, entre70e80, acima80, vencidas);
             renderRegionalChart();
-            renderRankings(vencidas);
+            renderRankings();
             renderTable();
         }
 
-        // Gráfico Pizza / Donut de SLA
         function renderSlaDonut(f1, f2, f3, f4) {
             const ctx = document.getElementById('chartSlaPizza').getContext('2d');
             if (chartSlaInstance) chartSlaInstance.destroy();
@@ -716,10 +734,10 @@
                     datasets: [{
                         data: [f1, f2, f3, f4],
                         backgroundColor: [
-                            '#10b981', // Emerald 500
-                            '#eab308', // Yellow 500
-                            '#f97316', // Orange 500
-                            '#e11d48'  // Rose 600
+                            '#10b981',
+                            '#eab308',
+                            '#f97316',
+                            '#e11d48'
                         ],
                         borderWidth: 0,
                         hoverOffset: 4
@@ -746,12 +764,10 @@
             });
         }
 
-        // Gráfico de Barras por Regional
         function renderRegionalChart() {
             const ctx = document.getElementById('chartRegional').getContext('2d');
             if (chartRegionalInstance) chartRegionalInstance.destroy();
 
-            // Agrupa por Regional
             const mapRegional = {};
             filteredDataset.forEach(d => {
                 if (!mapRegional[d.regional]) {
@@ -808,12 +824,15 @@
             });
         }
 
-        // Rankings de Ofensores (Volume & Vencidas por Área / Unidade de Negócio)
+        // Rankings: 1. Área Volume | 2. Regional >80% | 3. Área Vencidas
         function renderRankings() {
-            const areaStats = {};
             const totalOS = filteredDataset.length;
 
+            const areaStats = {};
+            const regionalStats = {};
+
             filteredDataset.forEach(d => {
+                // Áreas
                 const area = d.unidadeNegocio || 'NÃO DEFINIDA';
                 if (!areaStats[area]) {
                     areaStats[area] = { volume: 0, vencidas: 0 };
@@ -822,8 +841,19 @@
                 if (d.isVencida) {
                     areaStats[area].vencidas++;
                 }
+
+                // Regionais
+                const reg = d.regional || 'SEM REGIONAL';
+                if (!regionalStats[reg]) {
+                    regionalStats[reg] = { total: 0, acima80: 0 };
+                }
+                regionalStats[reg].total++;
+                if (!d.isVencida && d.slaPctNum >= 80) {
+                    regionalStats[reg].acima80++;
+                }
             });
 
+            // 1. Ranking Volume por Área
             const areasArray = Object.keys(areaStats).map(a => ({
                 area: a,
                 volume: areaStats[a].volume,
@@ -831,7 +861,6 @@
                 taxaFalha: areaStats[a].volume > 0 ? (areaStats[a].vencidas / areaStats[a].volume) * 100 : 0
             }));
 
-            // 1. Ranking de Volume
             const topVolume = [...areasArray].sort((a,b) => b.volume - a.volume).slice(0, 5);
             const tbodyVol = document.getElementById('rankingVolumeBody');
             tbodyVol.innerHTML = '';
@@ -844,7 +873,7 @@
                         <tr class="hover:bg-slate-800/40">
                             <td class="py-2 flex items-center gap-2">
                                 <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-400'}">${index + 1}</span>
-                                <span class="font-medium text-slate-200 truncate max-w-[170px]" title="${item.area}">${item.area}</span>
+                                <span class="font-medium text-slate-200 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
                             </td>
                             <td class="py-2 text-right font-semibold text-white">${item.volume}</td>
                             <td class="py-2 text-right text-slate-400">${pct}%</td>
@@ -853,19 +882,47 @@
                 });
             }
 
-            // 2. Ranking de Vencidas
+            // 2. Ranking Regional Ofensora > 80% SLA
+            const regArray = Object.keys(regionalStats).map(r => ({
+                regional: r,
+                total: regionalStats[r].total,
+                acima80: regionalStats[r].acima80,
+                pctCriticidade: regionalStats[r].total > 0 ? (regionalStats[r].acima80 / regionalStats[r].total) * 100 : 0
+            }));
+
+            const topReg80 = regArray.filter(r => r.acima80 > 0).sort((a,b) => b.acima80 - a.acima80).slice(0, 5);
+            const tbodyReg80 = document.getElementById('rankingRegional80Body');
+            tbodyReg80.innerHTML = '';
+            if (topReg80.length === 0) {
+                tbodyReg80.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-500">Nenhuma Regional acima de 80%</td></tr>';
+            } else {
+                topReg80.forEach((item, index) => {
+                    tbodyReg80.innerHTML += `
+                        <tr class="hover:bg-slate-800/40">
+                            <td class="py-2 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-orange-500/20 text-orange-400' : 'bg-slate-800 text-slate-400'}">${index + 1}</span>
+                                <span class="font-medium text-slate-200 truncate max-w-[130px]" title="${item.regional}">${item.regional}</span>
+                            </td>
+                            <td class="py-2 text-right font-bold text-orange-400">${item.acima80}</td>
+                            <td class="py-2 text-right text-slate-400">${item.pctCriticidade.toFixed(1)}%</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // 3. Ranking Área Ofensora de Vencidas
             const topVencidas = [...areasArray].filter(a => a.vencidas > 0).sort((a,b) => b.vencidas - a.vencidas).slice(0, 5);
             const tbodyVenc = document.getElementById('rankingVencidasBody');
             tbodyVenc.innerHTML = '';
             if (topVencidas.length === 0) {
-                tbodyVenc.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-500">Nenhuma OS vencida! Parabéns!</td></tr>';
+                tbodyVenc.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-500">Nenhuma OS vencida!</td></tr>';
             } else {
                 topVencidas.forEach((item, index) => {
                     tbodyVenc.innerHTML += `
                         <tr class="hover:bg-slate-800/40">
                             <td class="py-2 flex items-center gap-2">
                                 <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-slate-400'}">${index + 1}</span>
-                                <span class="font-medium text-slate-200 truncate max-w-[170px]" title="${item.area}">${item.area}</span>
+                                <span class="font-medium text-slate-200 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
                             </td>
                             <td class="py-2 text-right font-bold text-rose-400">${item.vencidas}</td>
                             <td class="py-2 text-right text-slate-400">${item.taxaFalha.toFixed(1)}%</td>
@@ -908,16 +965,22 @@
                     slaBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">${row.slaPctNum}%</span>`;
                 }
 
+                // Dias Restantes Formatação
+                let diasRestantesBadge = `<span class="text-slate-500">-</span>`;
+                if (row.tempoRestante !== null) {
+                    if (row.tempoRestante < 0) {
+                        diasRestantesBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">${row.tempoRestante} dias</span>`;
+                    } else if (row.tempoRestante <= 5) {
+                        diasRestantesBadge = `<span class="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/20 text-amber-400 border border-amber-500/30">${row.tempoRestante} dias</span>`;
+                    } else {
+                        diasRestantesBadge = `<span class="text-slate-300 font-mono text-[11px]">${row.tempoRestante} dias</span>`;
+                    }
+                }
+
                 // Gestor Tag
                 const gestorTag = row.gestor.includes('VIVO')
                     ? `<span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-500/20 text-purple-300 font-medium">VIVO</span>`
                     : `<span class="px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 text-blue-300 font-medium">TEL</span>`;
-
-                // Urgência Tag
-                const isUrg = row.urgente.toLowerCase().includes('urgente') && !row.urgente.toLowerCase().includes('não urgente') && !row.urgente.toLowerCase().includes('nao urgente');
-                const urgTag = isUrg 
-                    ? `<span class="px-1.5 py-0.5 rounded text-[10px] bg-rose-600 text-white font-bold flex items-center gap-1 w-max"><i class="fa-solid fa-bolt text-[9px]"></i> Urgente</span>`
-                    : `<span class="text-slate-500 text-[11px]">Normal</span>`;
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-800/40 transition">
@@ -928,11 +991,11 @@
                         <td class="py-2.5 px-3 text-slate-300">${row.segmento || '-'}</td>
                         <td class="py-2.5 px-3">${gestorTag}</td>
                         <td class="py-2.5 px-3 ${row.isVencida ? 'text-rose-400 font-semibold' : 'text-slate-400'}">${row.prazo || 'N/A'}</td>
+                        <td class="py-2.5 px-3">${diasRestantesBadge}</td>
                         <td class="py-2.5 px-3">${slaBadge}</td>
                         <td class="py-2.5 px-3 font-medium text-emerald-400">${row.valorMateriais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
                         <td class="py-2.5 px-3 text-slate-300 font-mono">${row.numSC || '-'}</td>
-                        <td class="py-2.5 px-3">${urgTag}</td>
-                        <td class="py-2.5 px-3 text-slate-400 max-w-[150px] truncate" title="${row.etapaEsteira}">${row.etapaEsteira || '-'}</td>
+                        <td class="py-2.5 px-3 text-slate-400 max-w-[160px] truncate" title="${row.etapaEsteira}">${row.etapaEsteira || '-'}</td>
                     </tr>
                 `;
             });
@@ -943,7 +1006,6 @@
             renderTable();
         }
 
-        // Exportação do CSV Filtrado
         function exportCurrentFilteredCSV() {
             if (filteredDataset.length === 0) {
                 alert('Não há dados filtrados para exportar.');
