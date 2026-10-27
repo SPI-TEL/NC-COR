@@ -59,7 +59,7 @@
                 <button id="btnReload" onclick="loadFromOnlineSpreadsheet()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-medium text-white transition flex items-center gap-2 shadow-sm">
                     <i class="fa-solid fa-rotate"></i> Recarregar Planilha
                 </button>
-                <label class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 cursor-pointer transition flex items-center gap-2">
+                <label id="lblLocalCsv" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 cursor-pointer transition flex items-center gap-2">
                     <i class="fa-solid fa-file-csv"></i> CSV Local
                     <input type="file" id="fileInput" accept=".csv" class="hidden" onchange="loadFromFile(event)">
                 </label>
@@ -181,7 +181,6 @@
         <!-- Grid de KPIs Primários com Ícones Alinhados ao Título -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
             
-            <!-- Total OS -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-blue-500">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Volume Total</span>
@@ -193,7 +192,6 @@
                 <span class="text-[10px] text-slate-500 mt-1">OS Válidas apuradas</span>
             </div>
 
-            <!-- Média Diária -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-cyan-500">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Média Diária</span>
@@ -205,7 +203,6 @@
                 <span class="text-[10px] text-slate-500 mt-1">Entrantes / dias c/ reg.</span>
             </div>
 
-            <!-- Volume Mensal -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-indigo-500">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Vol. Mensal</span>
@@ -217,7 +214,6 @@
                 <span class="text-[10px] text-slate-500 mt-1">Média mensal de criação</span>
             </div>
 
-            <!-- Volume FAT-B Qtde -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-purple-500">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">FAT-B (Qtde)</span>
@@ -229,7 +225,6 @@
                 <span id="kpiFatBPct" class="text-[10px] text-purple-300/80 mt-1">0% da base</span>
             </div>
 
-            <!-- Volume FAT-B R$ -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-emerald-500">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">FAT-B (R$)</span>
@@ -241,7 +236,6 @@
                 <span class="text-[10px] text-slate-500 mt-1">Soma de materiais</span>
             </div>
 
-            <!-- R$ Médio por OS -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-teal-500">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">R$ Médio / OS</span>
@@ -253,7 +247,6 @@
                 <span class="text-[10px] text-slate-500 mt-1">Custo médio unitário</span>
             </div>
 
-            <!-- Críticos / SLA Alto Risco -->
             <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-rose-500">
                 <div class="flex items-center justify-between">
                     <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Vencidas / >80%</span>
@@ -266,59 +259,54 @@
             </div>
         </div>
 
-        <!-- Linha de Gráficos Principais -->
+        <!-- Linha de Gráficos (Dimensão compacta) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Gráfico 1: Distribuição de Faixas de SLA (Donut) -->
-            <div class="glass-card rounded-2xl p-5 flex flex-col">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <div class="glass-card rounded-2xl p-4 flex flex-col">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-pie text-cyan-400"></i> Distribuição por Faixa de SLA
                     </h3>
-                    <span class="text-[11px] text-slate-400">Tempo de Atendimento</span>
+                    <span class="text-[10px] text-slate-400">Tempo de Atendimento</span>
                 </div>
-                <div class="relative flex-1 min-h-[260px] flex items-center justify-center">
+                <div class="relative w-full h-[130px] flex items-center justify-center">
                     <canvas id="chartSlaPizza"></canvas>
                 </div>
-                <div class="grid grid-cols-2 gap-2 mt-4 pt-3 border-t border-slate-800 text-[11px]">
-                    <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> < 70%: <strong id="lblFaixa1" class="ml-auto text-slate-300">0</strong></div>
-                    <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-yellow-500"></span> 70% a 80%: <strong id="lblFaixa2" class="ml-auto text-slate-300">0</strong></div>
-                    <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span> > 80%: <strong id="lblFaixa3" class="ml-auto text-slate-300">0</strong></div>
-                    <div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span> Vencidas: <strong id="lblFaixa4" class="ml-auto text-slate-300">0</strong></div>
+                <div class="grid grid-cols-2 gap-1.5 mt-2.5 pt-2 border-t border-slate-800 text-[10px]">
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span> < 70%: <strong id="lblFaixa1" class="ml-auto text-slate-300">0</strong></div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-yellow-500"></span> 70% a 80%: <strong id="lblFaixa2" class="ml-auto text-slate-300">0</strong></div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-orange-500"></span> > 80%: <strong id="lblFaixa3" class="ml-auto text-slate-300">0</strong></div>
+                    <div class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-rose-600"></span> Vencidas: <strong id="lblFaixa4" class="ml-auto text-slate-300">0</strong></div>
                 </div>
             </div>
 
-            <!-- Gráfico 2: Volume por Regional (Bar Chart) -->
-            <div class="glass-card rounded-2xl p-5 lg:col-span-2 flex flex-col">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <div class="glass-card rounded-2xl p-4 lg:col-span-2 flex flex-col">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
                         <i class="fa-solid fa-chart-bar text-blue-400"></i> Distribuição por Regional
                     </h3>
-                    <span class="text-[11px] text-slate-400">Volume Total vs Vencidas</span>
+                    <span class="text-[10px] text-slate-400">Volume Total vs Vencidas</span>
                 </div>
-                <div class="relative flex-1 min-h-[280px]">
+                <div class="relative w-full h-[140px]">
                     <canvas id="chartRegional"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Seção de 3 Rankings: Volume, Regional Ofensora > 80% e Vencidas -->
+        <!-- Rankings: Volume, Regional > 80% e Vencidas -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            <!-- Ranking 1: Ofensores de Volume -->
             <div class="glass-card rounded-2xl p-5 flex flex-col">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
                     <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
                         <i class="fa-solid fa-fire text-amber-500"></i> Área Ofensora de Volume
                     </h3>
-                    <span class="text-[10px] uppercase font-bold text-slate-500">Top Unidades[cite: 2]</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-500">Top Unidades</span>
                 </div>
                 <div class="overflow-y-auto max-h-56 custom-scroll pr-1">
                     <table class="w-full text-left text-xs">
                         <thead>
                             <tr class="text-slate-400 border-b border-slate-800">
-                                <th class="py-2">Área / Unidade Negócio[cite: 2]</th>
-                                <th class="py-2 text-right">Volume[cite: 2]</th>
+                                <th class="py-2">Área / Unidade Negócio</th>
+                                <th class="py-2 text-right">Volume</th>
                                 <th class="py-2 text-right">% Total</th>
                             </tr>
                         </thead>
@@ -328,7 +316,6 @@
                 </div>
             </div>
 
-            <!-- Ranking 2 (Central): Regional Ofensora > 80% SLA -->
             <div class="glass-card rounded-2xl p-5 flex flex-col border border-orange-500/20">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
                     <h3 class="text-sm font-bold text-orange-400 flex items-center gap-2">
@@ -351,21 +338,20 @@
                 </div>
             </div>
 
-            <!-- Ranking 3: Ofensores de Vencidas -->
             <div class="glass-card rounded-2xl p-5 flex flex-col">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
                     <h3 class="text-sm font-bold text-rose-400 flex items-center gap-2">
-                        <i class="fa-solid fa-skull-crossbones text-rose-500"></i> Área Ofensora de Vencidas[cite: 2]
+                        <i class="fa-solid fa-skull-crossbones text-rose-500"></i> Área Ofensora de Vencidas
                     </h3>
-                    <span class="text-[10px] uppercase font-bold text-slate-500">Maior Risco SLA[cite: 2]</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-500">Maior Risco SLA</span>
                 </div>
                 <div class="overflow-y-auto max-h-56 custom-scroll pr-1">
                     <table class="w-full text-left text-xs">
                         <thead>
                             <tr class="text-slate-400 border-b border-slate-800">
-                                <th class="py-2">Área / Unidade Negócio[cite: 2]</th>
-                                <th class="py-2 text-right">Vencidas[cite: 2]</th>
-                                <th class="py-2 text-right">Taxa Falha[cite: 2]</th>
+                                <th class="py-2">Área / Unidade Negócio</th>
+                                <th class="py-2 text-right">Vencidas</th>
+                                <th class="py-2 text-right">Taxa Falha</th>
                             </tr>
                         </thead>
                         <tbody id="rankingVencidasBody" class="divide-y divide-slate-800/60 text-slate-300">
@@ -375,14 +361,37 @@
             </div>
         </div>
 
-        <!-- Tabela Detalhada com Dias Restantes entre Prazo e SLA -->
+        <!-- Gráfico Evolutivo de Entrantes -->
+        <div class="glass-card rounded-2xl p-5 flex flex-col">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <div>
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-area text-cyan-400"></i> Evolutivo Temporal de Entrantes (Criação de OS)
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-0.5">Acompanhamento da curva de abertura e entrada de Ordens de Serviço</p>
+                </div>
+                <div class="flex items-center gap-1.5 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60 text-xs">
+                    <button id="btnEvolutivoMensal" onclick="setEvolutivoGranularidade('mensal')" class="px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm">
+                        Mensal
+                    </button>
+                    <button id="btnEvolutivoDiario" onclick="setEvolutivoGranularidade('diario')" class="px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">
+                        Diário
+                    </button>
+                </div>
+            </div>
+            <div class="relative w-full h-[220px]">
+                <canvas id="chartEvolutivoEntrantes"></canvas>
+            </div>
+        </div>
+
+        <!-- Tabela Detalhada -->
         <div class="glass-card rounded-2xl p-5 flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
                     <h3 class="text-sm font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-table-list text-cyan-400"></i> Detalhamento Analítico de Ordens de Serviço
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Listagem com prazos, dias restantes, esteira e ações</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Listagem com prazos, dias restantes, esteira e ações detalhadas</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <span id="recordsCount" class="text-xs text-slate-400">Exibindo 0 registros</span>
@@ -400,7 +409,6 @@
                             <th class="py-3 px-3">Site / Local</th>
                             <th class="py-3 px-3">Regional</th>
                             <th class="py-3 px-3">Tipo Serviço</th>
-                            <th class="py-3 px-3">Segmento</th>
                             <th class="py-3 px-3">Gestor</th>
                             <th class="py-3 px-3">Prazo</th>
                             <th class="py-3 px-3 text-center">Dias Restantes</th>
@@ -408,7 +416,7 @@
                             <th class="py-3 px-3">Valor Materiais</th>
                             <th class="py-3 px-3">N° SC</th>
                             <th class="py-3 px-3">Etapa Esteira</th>
-                            <th class="py-3 px-3">Descrição Ação</th>
+                            <th class="py-3 px-3 text-center">Ação</th>
                         </tr>
                     </thead>
                     <tbody id="tableOSBody" class="divide-y divide-slate-800/80 text-slate-300">
@@ -430,12 +438,63 @@
 
     </main>
 
+    <!-- Modal Detalhe da Ação -->
+    <div id="modalAcao" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="glass-card bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+                        <i class="fa-solid fa-clipboard-list text-sm"></i>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-bold text-white">Detalhamento da Ação</h4>
+                        <p class="text-[11px] text-slate-400">OS: <span id="modalOSNum" class="text-cyan-400 font-mono font-semibold"></span></p>
+                    </div>
+                </div>
+                <button onclick="fecharModalAcao()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Descrição da Ação</label>
+                    <div id="modalDescricaoAcao" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-slate-200 leading-relaxed max-h-48 overflow-y-auto custom-scroll whitespace-pre-wrap">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Descrição Original da OS</label>
+                    <div id="modalDescricaoOS" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-slate-300 leading-relaxed max-h-36 overflow-y-auto custom-scroll whitespace-pre-wrap">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
+                    <div class="p-2 rounded-lg bg-slate-800/50 border border-slate-800">
+                        <span class="text-slate-400 block text-[10px]">Etapa Esteira</span>
+                        <span id="modalEtapaEsteira" class="font-medium text-slate-200 truncate block"></span>
+                    </div>
+                    <div class="p-2 rounded-lg bg-slate-800/50 border border-slate-800">
+                        <span class="text-slate-400 block text-[10px]">Responsável</span>
+                        <span id="modalResponsavel" class="font-medium text-slate-200 truncate block"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2 border-t border-slate-800">
+                <button onclick="fecharModalAcao()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition">
+                    Fechar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="border-t border-slate-900 bg-slate-950 py-4 text-center text-xs text-slate-500">
         Portal de Gestão Operacional NC/COR • Conectado à Base Oficial Vivo / TEL
     </footer>
 
-    <!-- Scripts -->
+    <!-- Lógica com Fallback e Proxy Anti-CORS -->
     <script>
         const CSV_ONLINE_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=1666421233&single=true&output=csv";
 
@@ -443,17 +502,23 @@
         let filteredDataset = [];
         let chartSlaInstance = null;
         let chartRegionalInstance = null;
+        let chartEvolutivoInstance = null;
+        let granularidadeEvolutivo = 'mensal';
 
         let currentPage = 1;
         const pageSize = 15;
 
-        window.addEventListener('DOMContentLoaded', () => {
+        // Executa imediatamente ao carregar o DOM ou a janela
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadFromOnlineSpreadsheet);
+        } else {
             loadFromOnlineSpreadsheet();
-        });
+        }
 
         function setBadge(state, text) {
             const badge = document.getElementById('statusBadge');
             const statusText = document.getElementById('statusText');
+            if (!badge || !statusText) return;
             statusText.innerText = text;
             
             if (state === 'loading') {
@@ -465,20 +530,59 @@
             }
         }
 
-        function loadFromOnlineSpreadsheet() {
-            setBadge('loading', 'Baixando Planilha...');
-            Papa.parse(CSV_ONLINE_URL, {
-                download: true,
+        // Carregamento robusto com tentativa direta e fallback por proxy
+        async function loadFromOnlineSpreadsheet() {
+            setBadge('loading', 'A carregar planilha...');
+
+            try {
+                // Tentativa 1: Fetch direto com controlo de cache
+                const response = await fetch(CSV_ONLINE_URL + '&_t=' + Date.now());
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const csvText = await response.text();
+                parseAndProcessCSV(csvText);
+                setBadge('success', 'Online Atualizado');
+                return;
+            } catch (errDirect) {
+                console.warn("Tentativa direta bloqueada por CORS/rede. A tentar proxy de contingência...", errDirect);
+            }
+
+            try {
+                // Tentativa 2: Proxy CORS público de contingência
+                const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_ONLINE_URL);
+                const proxyResponse = await fetch(proxyUrl);
+                if (!proxyResponse.ok) throw new Error(`Proxy HTTP ${proxyResponse.status}`);
+                const proxyText = await proxyResponse.text();
+                parseAndProcessCSV(proxyText);
+                setBadge('success', 'Online (via Proxy)');
+                return;
+            } catch (errProxy) {
+                console.error("Falha ao descarregar via proxy:", errProxy);
+                setBadge('error', 'Use o botão CSV Local');
+                
+                // Realça visualmente o botão CSV Local para o utilizador
+                const lbl = document.getElementById('lblLocalCsv');
+                if (lbl) {
+                    lbl.classList.remove('bg-slate-800');
+                    lbl.classList.add('bg-blue-600', 'text-white', 'animate-pulse');
+                }
+            }
+        }
+
+        function parseAndProcessCSV(csvString) {
+            if (typeof Papa === 'undefined') {
+                alert('A biblioteca PapaParse não pôde ser carregada da CDN. Verifique a ligação à internet ou carregue o ficheiro localmente.');
+                return;
+            }
+
+            Papa.parse(csvString, {
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
                     processCSVData(results.data);
-                    setBadge('success', 'Online Atualizado');
                 },
                 error: function(err) {
-                    console.error("Erro na leitura online:", err);
-                    setBadge('error', 'Falha ao buscar CSV');
-                    alert("Aviso: Houve um erro ao buscar o link público diretamente (pode ser bloqueio CORS da rede corporativa). Você pode clicar em 'CSV Local' para carregar a planilha salva no seu computador.");
+                    console.error("Erro no processamento CSV:", err);
+                    setBadge('error', 'Erro no CSV');
                 }
             });
         }
@@ -486,17 +590,24 @@
         function loadFromFile(event) {
             const file = event.target.files[0];
             if (!file) return;
-            setBadge('loading', 'Processando arquivo...');
+            setBadge('loading', 'A processar ficheiro...');
+
+            const lbl = document.getElementById('lblLocalCsv');
+            if (lbl) {
+                lbl.classList.remove('animate-pulse', 'bg-blue-600', 'text-white');
+                lbl.classList.add('bg-slate-800', 'text-slate-300');
+            }
+
             Papa.parse(file, {
                 header: true,
                 skipEmptyLines: true,
                 complete: function(results) {
                     processCSVData(results.data);
-                    setBadge('success', 'Arquivo Local');
+                    setBadge('success', 'Ficheiro Local');
                 },
                 error: function(err) {
-                    console.error("Erro ao ler arquivo:", err);
-                    setBadge('error', 'Erro no arquivo');
+                    console.error("Erro ao ler ficheiro:", err);
+                    setBadge('error', 'Erro no ficheiro');
                 }
             });
         }
@@ -557,8 +668,6 @@
                 const descricaoAcao = (row['Descrição Ação'] || row['Descricao Acao'] || '').trim();
                 const etapaEsteira = (row['Etapa Esteira'] || '').trim();
 
-                // Lógica de "Executada sem Aprovação":
-                // Identifica se foi marcada como Serviço executado sem a aprovação final ou nas tratativas/etapas equivalentes
                 const isExecSemAprov = necessidade.includes('EXEC') && (necessidade.includes('SEM') || prioridadeVivo.includes('NÃO EXEC') || prioridadeVivo.includes('SEM APR') || etapaEsteira.toUpperCase().includes('APROV'));
 
                 return {
@@ -626,38 +735,30 @@
             const fSearch = document.getElementById('filterSearch').value.toLowerCase().trim();
 
             filteredDataset = rawDataset.filter(item => {
-                // Filtro Gestor (TEL como padrão)
                 if (fGestor === 'TEL' && !item.gestor.includes('TEL')) return false;
                 if (fGestor === 'VIVO' && !item.gestor.includes('VIVO')) return false;
 
-                // Filtro Executadas sem Aprovação
                 if (fExecSemAprov === 'SIM' && !item.isExecSemAprov) return false;
                 if (fExecSemAprov === 'NAO' && item.isExecSemAprov) return false;
 
-                // FAT-B
                 if (fFatB === 'FAT_B' && !item.isFatB) return false;
                 if (fFatB === 'NAO_FAT_B' && item.isFatB) return false;
 
-                // SLA Faixas
                 if (fSLA === 'VENCIDAS' && !item.isVencida) return false;
                 if (fSLA === 'ACIMA_90' && (item.isVencida || item.slaPctNum < 90)) return false;
                 if (fSLA === 'ACIMA_80' && (item.isVencida || item.slaPctNum < 80)) return false;
                 if (fSLA === '70_80' && (item.isVencida || item.slaPctNum < 70 || item.slaPctNum >= 80)) return false;
                 if (fSLA === 'ABAIXO_70' && (item.isVencida || item.slaPctNum >= 70)) return false;
 
-                // Urgente
                 if (fUrgente === 'SIM' && !item.urgente.toLowerCase().includes('urgente')) return false;
                 if (fUrgente === 'NAO' && item.urgente.toLowerCase().includes('não urgente') === false && item.urgente.toLowerCase().includes('nao urgente') === false && item.urgente.toLowerCase().includes('urgente')) return false;
 
-                // SC
                 if (fSC === 'COM_SC' && (!item.numSC || item.numSC === '#REF!')) return false;
                 if (fSC === 'SEM_SC' && (item.numSC && item.numSC !== '#REF!')) return false;
 
-                // Regional & Tipo
                 if (fRegional !== 'TODOS' && item.regional !== fRegional) return false;
                 if (fTipo !== 'TODOS' && item.tipoServico !== fTipo) return false;
 
-                // Busca Livre
                 if (fSearch) {
                     const match = (item.os && item.os.toLowerCase().includes(fSearch)) ||
                                   (item.site && item.site.toLowerCase().includes(fSearch)) ||
@@ -675,7 +776,7 @@
         }
 
         function resetFilters() {
-            document.getElementById('filterGestor').value = 'TEL'; // Retorna para TEL por padrão
+            document.getElementById('filterGestor').value = 'TEL';
             document.getElementById('filterExecSemAprov').value = 'TODOS';
             document.getElementById('filterFatB').value = 'TODOS';
             document.getElementById('filterSLA').value = 'TODOS';
@@ -685,6 +786,21 @@
             document.getElementById('filterTipo').value = 'TODOS';
             document.getElementById('filterSearch').value = '';
             applyFilters();
+        }
+
+        function setEvolutivoGranularidade(gran) {
+            granularidadeEvolutivo = gran;
+            const btnM = document.getElementById('btnEvolutivoMensal');
+            const btnD = document.getElementById('btnEvolutivoDiario');
+
+            if (gran === 'mensal') {
+                btnM.className = "px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm";
+                btnD.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
+            } else {
+                btnD.className = "px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm";
+                btnM.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
+            }
+            renderEvolutivoChart();
         }
 
         function updateDashboard() {
@@ -740,7 +856,7 @@
             document.getElementById('kpiMediaReaisOS').innerText = mediaReaisPorOS.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             document.getElementById('kpiRiscoTotal').innerText = (vencidas + acima80).toLocaleString('pt-BR');
-            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`;[cite: 1]
+            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`;
 
             document.getElementById('lblFaixa1').innerText = abaixo70;
             document.getElementById('lblFaixa2').innerText = entre70e80;
@@ -750,11 +866,14 @@
             renderSlaDonut(abaixo70, entre70e80, acima80, vencidas);
             renderRegionalChart();
             renderRankings();
+            renderEvolutivoChart();
             renderTable();
         }
 
         function renderSlaDonut(f1, f2, f3, f4) {
-            const ctx = document.getElementById('chartSlaPizza').getContext('2d');
+            const canvas = document.getElementById('chartSlaPizza');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
             if (chartSlaInstance) chartSlaInstance.destroy();
 
             chartSlaInstance = new Chart(ctx, {
@@ -763,14 +882,9 @@
                     labels: ['Abaixo de 70%', 'Entre 70% e 80%', 'Acima de 80%', 'Vencidas'],
                     datasets: [{
                         data: [f1, f2, f3, f4],
-                        backgroundColor: [
-                            '#10b981',
-                            '#eab308',
-                            '#f97316',
-                            '#e11d48'
-                        ],
+                        backgroundColor: ['#10b981', '#eab308', '#f97316', '#e11d48'],
                         borderWidth: 0,
-                        hoverOffset: 4
+                        hoverOffset: 3
                     }]
                 },
                 options: {
@@ -789,13 +903,15 @@
                             }
                         }
                     },
-                    cutout: '72%'
+                    cutout: '70%'
                 }
             });
         }
 
         function renderRegionalChart() {
-            const ctx = document.getElementById('chartRegional').getContext('2d');
+            const canvas = document.getElementById('chartRegional');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
             if (chartRegionalInstance) chartRegionalInstance.destroy();
 
             const mapRegional = {};
@@ -820,13 +936,13 @@
                             label: 'Total de OS',
                             data: totalData,
                             backgroundColor: 'rgba(59, 130, 246, 0.75)',
-                            borderRadius: 6
+                            borderRadius: 4
                         },
                         {
-                            label: 'Vencidas (Fora Prazo)',
+                            label: 'Vencidas',
                             data: vencidasData,
                             backgroundColor: 'rgba(225, 29, 72, 0.85)',
-                            borderRadius: 6
+                            borderRadius: 4
                         }
                     ]
                 },
@@ -836,18 +952,117 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                            ticks: { color: '#94a3b8', font: { size: 9 } }
                         },
                         y: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(51, 65, 85, 0.4)' },
-                            ticks: { color: '#94a3b8', font: { size: 10 } }
+                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            ticks: { color: '#94a3b8', font: { size: 9 }, maxTicksLimit: 5 }
                         }
                     },
                     plugins: {
                         legend: {
                             position: 'top',
-                            labels: { color: '#cbd5e1', boxWidth: 12, font: { size: 11 } }
+                            labels: { color: '#cbd5e1', boxWidth: 10, font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderEvolutivoChart() {
+            const canvas = document.getElementById('chartEvolutivoEntrantes');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (chartEvolutivoInstance) chartEvolutivoInstance.destroy();
+
+            const timelineMap = {};
+
+            filteredDataset.forEach(d => {
+                if (!d.dataCriacao) return;
+
+                let key = '';
+                let label = '';
+                const ano = d.dataCriacao.getFullYear();
+                const mes = String(d.dataCriacao.getMonth() + 1).padStart(2, '0');
+                const dia = String(d.dataCriacao.getDate()).padStart(2, '0');
+
+                if (granularidadeEvolutivo === 'mensal') {
+                    key = `${ano}-${mes}`;
+                    label = `${mes}/${ano}`;
+                } else {
+                    key = `${ano}-${mes}-${dia}`;
+                    label = `${dia}/${mes}/${ano}`;
+                }
+
+                if (!timelineMap[key]) {
+                    timelineMap[key] = { label: label, count: 0 };
+                }
+                timelineMap[key].count++;
+            });
+
+            const sortedKeys = Object.keys(timelineMap).sort();
+            const labels = sortedKeys.map(k => timelineMap[k].label);
+            const dataCounts = sortedKeys.map(k => timelineMap[k].count);
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+            gradient.addColorStop(0, 'rgba(6, 182, 212, 0.45)');
+            gradient.addColorStop(1, 'rgba(6, 182, 212, 0.0)');
+
+            chartEvolutivoInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'OS Entrantes',
+                        data: dataCounts,
+                        borderColor: '#06b6d4',
+                        backgroundColor: gradient,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#0891b2',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 1.5,
+                        pointRadius: labels.length > 35 ? 1.5 : 3.5,
+                        pointHoverRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(51, 65, 85, 0.2)' },
+                            ticks: { 
+                                color: '#94a3b8', 
+                                font: { size: 10 },
+                                maxRotation: 45,
+                                maxTicksLimit: 14
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            ticks: { 
+                                color: '#94a3b8', 
+                                font: { size: 10 },
+                                precision: 0
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Entrantes: ${context.raw} ordens`;
+                                }
+                            }
                         }
                     }
                 }
@@ -860,7 +1075,6 @@
             const totalOS = filteredDataset.length;
 
             filteredDataset.forEach(d => {
-                // Estatísticas por Área / Unidade
                 const area = d.unidadeNegocio || 'NÃO DEFINIDA';
                 if (!areaStats[area]) {
                     areaStats[area] = { volume: 0, vencidas: 0 };
@@ -868,7 +1082,6 @@
                 areaStats[area].volume++;
                 if (d.isVencida) areaStats[area].vencidas++;
 
-                // Estatísticas por Regional para o Card Central (>80%)
                 const reg = d.regional || 'NÃO DEFINIDA';
                 if (!regionalStats[reg]) {
                     regionalStats[reg] = { volume: 0, acima80: 0 };
@@ -879,7 +1092,7 @@
                 }
             });
 
-            // 1. Ranking de Volume (Área)
+            // 1. Ranking de Volume
             const areasArray = Object.keys(areaStats).map(a => ({
                 area: a,
                 volume: areaStats[a].volume,
@@ -908,7 +1121,7 @@
                 });
             }
 
-            // 2. Ranking de Regional Ofensora > 80% (Central)
+            // 2. Ranking de Regional Ofensora > 80%
             const regionalArray = Object.keys(regionalStats).map(r => ({
                 regional: r,
                 acima80: regionalStats[r].acima80,
@@ -936,7 +1149,7 @@
                 });
             }
 
-            // 3. Ranking de Vencidas (Área)
+            // 3. Ranking de Vencidas
             const topVencidas = [...areasArray].filter(a => a.vencidas > 0).sort((a,b) => b.vencidas - a.vencidas).slice(0, 5);
             const tbodyVenc = document.getElementById('rankingVencidasBody');
             tbodyVenc.innerHTML = '';
@@ -977,7 +1190,7 @@
             const pageData = filteredDataset.slice(startIdx, startIdx + pageSize);
 
             if (pageData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="13" class="text-center py-6 text-slate-500">Nenhum registro encontrado para estes filtros.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" class="text-center py-6 text-slate-500">Nenhum registro encontrado para estes filtros.</td></tr>';
                 return;
             }
 
@@ -993,7 +1206,6 @@
                     ? `<span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-500/20 text-purple-300 font-medium">VIVO</span>`
                     : `<span class="px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 text-blue-300 font-medium">TEL</span>`;
 
-                // Badge de Dias Restantes
                 let tempoRestanteBadge = '<span class="text-slate-500 text-[11px]">-</span>';
                 if (row.tempoRestante !== null) {
                     if (row.tempoRestante < 0) {
@@ -1007,25 +1219,57 @@
                     tempoRestanteBadge = `<span class="text-slate-400 text-[10px]">${row.tempoRestanteRaw}</span>`;
                 }
 
+                const valorFormatado = row.valorMateriais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const valorClass = row.valorMateriais > 0 
+                    ? 'font-medium text-emerald-400' 
+                    : 'text-slate-500 font-normal';
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-800/40 transition">
                         <td class="py-2.5 px-3 font-semibold text-white">${row.os}</td>
                         <td class="py-2.5 px-3 text-slate-300 max-w-[160px] truncate" title="${row.site}">${row.site}</td>
                         <td class="py-2.5 px-3 text-slate-400">${row.regional}</td>
                         <td class="py-2.5 px-3 text-slate-300"><span class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 font-mono text-[10px]">${row.tipoServico}</span></td>
-                        <td class="py-2.5 px-3 text-slate-300">${row.segmento || '-'}</td>
                         <td class="py-2.5 px-3">${gestorTag}</td>
                         <td class="py-2.5 px-3 ${row.isVencida ? 'text-rose-400 font-semibold' : 'text-slate-400'}">${row.prazo || 'N/A'}</td>
                         <td class="py-2.5 px-3 text-center">${tempoRestanteBadge}</td>
                         <td class="py-2.5 px-3">${slaBadge}</td>
-                        <td class="py-2.5 px-3 font-medium text-emerald-400">${row.valorMateriais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                        <td class="py-2.5 px-3 ${valorClass}">${valorFormatado}</td>
                         <td class="py-2.5 px-3 text-slate-300 font-mono">${row.numSC || '-'}</td>
                         <td class="py-2.5 px-3 text-slate-400 max-w-[150px] truncate" title="${row.etapaEsteira}">${row.etapaEsteira || '-'}</td>
-                        <td class="py-2.5 px-3 text-slate-300 max-w-[150px] truncate" title="${row.descricaoAcao}">${row.descricaoAcao || '-'}</td>
+                        <td class="py-2.5 px-3 text-center">
+                            <button onclick="abrirModalAcao('${row.os}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-600 text-slate-300 hover:text-white border border-slate-700 hover:border-cyan-500 text-[11px] font-medium transition flex items-center gap-1.5 mx-auto">
+                                <i class="fa-solid fa-eye text-[10px]"></i> Ação
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
         }
+
+        function abrirModalAcao(numOS) {
+            const item = rawDataset.find(d => d.os === numOS);
+            if (!item) return;
+
+            document.getElementById('modalOSNum').innerText = item.os;
+            document.getElementById('modalDescricaoAcao').innerText = item.descricaoAcao || 'Nenhuma descrição de ação preenchida nesta OS.';
+            document.getElementById('modalDescricaoOS').innerText = item.descricao || 'Sem descrição cadastrada.';
+            document.getElementById('modalEtapaEsteira').innerText = item.etapaEsteira || 'Não informada';
+            document.getElementById('modalResponsavel').innerText = item.responsavel || 'Não informado';
+
+            document.getElementById('modalAcao').classList.remove('hidden');
+        }
+
+        function fecharModalAcao() {
+            document.getElementById('modalAcao').classList.add('hidden');
+        }
+
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('modalAcao');
+            if (e.target === modal) {
+                fecharModalAcao();
+            }
+        });
 
         function changePage(direction) {
             currentPage += direction;
