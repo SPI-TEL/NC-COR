@@ -363,7 +363,7 @@
             </div>
         </div>
 
-        <!-- NOVO: GRÁFICO EVOLUÇÃO GERAL (Acima do Evolutivo de Entrantes) -->
+        <!-- GRÁFICO EVOLUÇÃO GERAL -->
         <div class="glass-card rounded-2xl p-5 flex flex-col border border-blue-500/20">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
@@ -516,7 +516,6 @@
         const CSV_OS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=1666421233&single=true&output=csv";
         const CSV_EVOLUCAO_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=115322743&single=true&output=csv";
 
-        // Fallback embutido com os dados fornecidos da Evolução Geral
         const FALLBACK_EVOLUCAO_TEXT = `Dia\tFora\tPrazo\tVariação
 3/1\t190\t991\t
 4/1\t190\t980\t
@@ -824,7 +823,6 @@
             }
         }
 
-        // Carga da aba principal de OS
         async function loadFromOnlineSpreadsheet() {
             setBadge('loading', 'A carregar planilha...');
 
@@ -858,7 +856,6 @@
             }
         }
 
-        // Carga da aba de Evolução Geral (Fora vs Prazo vs Variação)
         async function loadEvolucaoGeralData() {
             try {
                 const response = await fetch(CSV_EVOLUCAO_URL + '&_t=' + Date.now());
@@ -1241,7 +1238,7 @@
             document.getElementById('kpiMediaReaisOS').innerText = mediaReaisPorOS.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             document.getElementById('kpiRiscoTotal').innerText = (vencidas + acima80).toLocaleString('pt-BR');
-            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`;
+            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`[cite: 8];
 
             document.getElementById('lblFaixa1').innerText = abaixo70.toLocaleString('pt-BR');
             document.getElementById('lblFaixa2').innerText = entre70e80.toLocaleString('pt-BR');
@@ -1293,6 +1290,7 @@
             });
         }
 
+        // Gráfico de Barras Regional com minBarLength garantindo visibilidade da coluna vencida
         function renderRegionalChart() {
             const canvas = document.getElementById('chartRegional');
             if (!canvas) return;
@@ -1326,8 +1324,11 @@
                         {
                             label: 'Vencidas',
                             data: vencidasData,
-                            backgroundColor: 'rgba(225, 29, 72, 0.85)',
-                            borderRadius: 4
+                            backgroundColor: 'rgba(225, 29, 72, 0.95)',
+                            borderColor: '#fda4af',
+                            borderWidth: 1,
+                            borderRadius: 4,
+                            minBarLength: 7 // Garante que a barra apareça mesmo com 1 unidade!
                         }
                     ]
                 },
@@ -1340,7 +1341,11 @@
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#94a3b8', font: { size: 9 }, padding: 2 }
+                            ticks: { 
+                                color: '#94a3b8', 
+                                font: { size: 9 },
+                                padding: 2 
+                            }
                         },
                         y: {
                             beginAtZero: true,
@@ -1353,13 +1358,19 @@
                             position: 'top',
                             align: 'center',
                             labels: { color: '#cbd5e1', boxWidth: 10, font: { size: 10 }, padding: 6 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` ${context.dataset.label}: ${context.raw}`;
+                                }
+                            }
                         }
                     }
                 }
             });
         }
 
-        // Renderização do Novo Gráfico: Evolução Geral
         function renderEvolucaoGeralChart() {
             const canvas = document.getElementById('chartEvolucaoGeral');
             if (!canvas || evolucaoGeralDataset.length === 0) return;
@@ -1591,7 +1602,6 @@
                 }
             });
 
-            // 1. Ranking de Volume
             const areasArray = Object.keys(areaStats).map(a => ({
                 area: a,
                 volume: areaStats[a].volume,
@@ -1620,7 +1630,6 @@
                 });
             }
 
-            // 2. Ranking de Regional Ofensora > 80%
             const regionalArray = Object.keys(regionalStats).map(r => ({
                 regional: r,
                 acima80: regionalStats[r].acima80,
@@ -1648,7 +1657,6 @@
                 });
             }
 
-            // 3. Ranking de Vencidas
             const topVencidas = [...areasArray].filter(a => a.vencidas > 0).sort((a,b) => b.vencidas - a.vencidas).slice(0, 5);
             const tbodyVenc = document.getElementById('rankingVencidasBody');
             tbodyVenc.innerHTML = '';
