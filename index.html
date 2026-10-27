@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal de Gestão & SLA de Ordens de Serviço | NC/COR</title>
+    <title>Torre de Controle OS | NC / COR</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
@@ -54,18 +54,14 @@
                 </div>
             </div>
 
-            <!-- Ações rápidas & Fonte de dados -->
+            <!-- Ações rápidas & Status Online -->
             <div class="flex items-center gap-3">
                 <button id="btnReload" onclick="loadAllData()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-medium text-white transition flex items-center gap-2 shadow-sm">
                     <i class="fa-solid fa-rotate"></i> Recarregar Planilha
                 </button>
-                <label id="lblLocalCsv" class="px-3.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 cursor-pointer transition flex items-center gap-2">
-                    <i class="fa-solid fa-file-csv"></i> CSV Local OS
-                    <input type="file" id="fileInput" accept=".csv" class="hidden" onchange="loadFromFile(event)">
-                </label>
                 <div id="statusBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
                     <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                    <span id="statusText">Aguardando Carga</span>
+                    <span id="statusText">A carregar planilha...</span>
                 </div>
             </div>
         </div>
@@ -84,7 +80,7 @@
             </div>
 
             <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-9 gap-2.5">
-                <!-- Filtro Gestor (PADRÃO TEL) -->
+                <!-- Filtro Gestor -->
                 <div>
                     <label class="block text-[10px] text-slate-400 font-medium mb-1">GESTOR</label>
                     <select id="filterGestor" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
@@ -114,7 +110,7 @@
                     </select>
                 </div>
 
-                <!-- Filtro Faixa SLA / Vencimento -->
+                <!-- Filtro Faixa SLA -->
                 <div>
                     <label class="block text-[10px] text-slate-400 font-medium mb-1">STATUS DO SLA</label>
                     <select id="filterSLA" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
@@ -155,7 +151,7 @@
                     </select>
                 </div>
 
-                <!-- Filtro Tipo de Serviço Múltiplo -->
+                <!-- Filtro Tipo de Serviço com Múltipla Escolha -->
                 <div class="relative">
                     <label class="block text-[10px] text-slate-400 font-medium mb-1">TIPO SERVIÇO</label>
                     <button type="button" id="btnDropdownTipo" onclick="toggleTipoDropdown(event)" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 flex items-center justify-between focus:border-cyan-500 focus:outline-none">
@@ -252,7 +248,7 @@
             </div>
         </div>
 
-        <!-- Linha de Gráficos Ajustados (Pizza + Regional) -->
+        <!-- Linha de Gráficos (Pizza + Regional com remoção da coluna zerada) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-1">
@@ -516,286 +512,6 @@
         const CSV_OS_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=1666421233&single=true&output=csv";
         const CSV_EVOLUCAO_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=115322743&single=true&output=csv";
 
-        // Dados de contingência imediatos para OS (garante que o painel não fique em branco)
-        const FALLBACK_OS_DATA = [
-            {"Número OS":"433299157","SGM":"2022134200","Site":"F.SP.RPO.AN.SPDA","Prazo":"FORA DO PRAZO","Urgente":"Não Urgente","Descrição OS":"Repor sistema aterramento, parte elétrica e iluminação.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"NC-SE","Regional":"16-ARQ","Coordenador":"Silvio Kowaski","Data Criação":"10/5/22 9:27","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"FORA","Tempo Restante":"-8","Denominação Unidade Negócio":"Ribeirao Preto","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""},
-            {"Número OS":"433307792","SGM":"2022106669","Site":"M.SP.SDE.CSP","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Fornecer 01 sistema de ar condicionado tipo split.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"NC-SE","Regional":"16-ARQ","Coordenador":"Silvio Kowaski","Data Criação":"10/5/22 9:45","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"1%","Tempo Restante":"89","Denominação Unidade Negócio":"RIBEIRAO PRETO","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""},
-            {"Número OS":"434954882","SGM":"2022135879","Site":"F.SP.ARQ.VX.SPDA","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Readequação do SPDA após furto.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"COR-OEM","Regional":"16-ARQ","Coordenador":"Silvio Kowaski","Data Criação":"10/28/22 10:38","Valor Materiais Externos":"R$ 1.250,00","Tipo de Segmento":"FAT_B","Último gestor":"TEL","%":"88%","Tempo Restante":"11","Denominação Unidade Negócio":"Araraquara","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""},
-            {"Número OS":"438633408","SGM":"","Site":"M.SP.PMO.CSP.AR1.SELF1","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Maquina CA-01, inoperante.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"11/17/22 12:50","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"45","Denominação Unidade Negócio":"LINS","Etapa Esteira":"Serviço executado","Descrição Ação":""},
-            {"Número OS":"438633529","SGM":"","Site":"M.SP.PMO.CSP.AR1.SELF1","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Maquina CA-01, inoperante.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"11/17/22 12:50","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"45","Denominação Unidade Negócio":"LINS","Etapa Esteira":"Serviço executado","Descrição Ação":""},
-            {"Número OS":"441978972","SGM":"2023026456","Site":"F.SP.GAR.RB","Prazo":"FORA DO PRAZO","Urgente":"Não Urgente","Descrição OS":"Furtado cabo nu de 25mm da malha de aterramento.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"COR-FV","Regional":"14-BRU","Matheus Mello":"","Data Criação":"11/28/22 15:45","Valor Materiais Externos":"R$ 2.400,00","Tipo de Segmento":"FAT_B","Último gestor":"TEL","%":"FORA","Tempo Restante":"-36","Denominação Unidade Negócio":"Marilia","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""},
-            {"Número OS":"451416131","SGM":"","Site":"F.SP.TUP.RC.SAC2.ACJ1","Prazo":"NO PRAZO","Urgente":"Urgente","Descrição OS":"Ar Condicionado ACJ Elgim não entra em serviço.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"12/6/22 13:57","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"10","Denominação Unidade Negócio":"Tupa","Etapa Esteira":"Serviço executado","Descrição Ação":""},
-            {"Número OS":"451439247","SGM":"","Site":"F.SP.TUP.RC.SAC1.SELF05","Prazo":"NO PRAZO","Urgente":"Urgente","Descrição OS":"Maquina de Ar Condicionado desligada por problema na turbina.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"12/6/22 14:35","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"10","Denominação Unidade Negócio":"Tupa","Etapa Esteira":"Serviço executado","Descrição Ação":""},
-            {"Número OS":"451445215","SGM":"","Site":"F.SP.TUP.RC.SAC1.SELF07","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Substituição dos fios que foram queimados.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"12/6/22 14:47","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"45","Denominação Unidade Negócio":"Tupa","Etapa Esteira":"Serviço executado","Descrição Ação":""},
-            {"Número OS":"451459307","SGM":"","Site":"F.SP.TUP.RC.SAC1.SELF08","Prazo":"NO PRAZO","Urgente":"Urgente","Descrição OS":"Maquina de Ar Condicionado desligado no disjuntor.","Denominação Estado OS":"Pendente Conclusão Vistoria","Tipo de Serviço":"NC-OEM","Regional":"14-BRU","Matheus Mello":"","Data Criação":"12/6/22 15:10","Valor Materiais Externos":"R$ 0,00","Tipo de Segmento":"Fat_A","Último gestor":"TEL","%":"0%","Tempo Restante":"10","Denominação Unidade Negócio":"Tupa","Etapa Esteira":"Serviço executado","Descrição Ação":""},
-            {"Número OS":"457500005","SGM":"2023004694","Site":"M.SP.CRV.CSP.AR1","Prazo":"NO PRAZO","Urgente":"Não Urgente","Descrição OS":"Adquirir e instalar um split de 30.000 BTU's com proteção.","Denominação Estado OS":"Pendente Gerente Aprov. Orçamento","Tipo de Serviço":"NC-SE","Regional":"16-ARQ","Coordenador":"Silvio Kowaski","Data Criação":"12/12/22 14:32","Valor Materiais Externos":"R$ 4.800,00","Tipo de Segmento":"FAT_B","Último gestor":"TEL","%":"29%","Tempo Restante":"64","Denominação Unidade Negócio":"SAO SIMAO","Etapa Esteira":"Aprovação Vivo","Descrição Ação":""}
-        ];
-
-        const FALLBACK_EVOLUCAO_TEXT = `Dia\tFora\tPrazo\tVariação
-3/1\t190\t991\t
-4/1\t190\t980\t
-5/1\t179\t971\t
-6/1\t176\t921\t
-12/1\t175\t775\t
-13/1\t166\t798\t
-14/1\t161\t754\t
-15/1\t153\t727\t
-16/1\t139\t759\t
-17/1\t129\t732\t
-18/1\t127\t736\t
-19/1\t127\t744\t
-20/1\t126\t711\t
-21/1\t124\t720\t
-22/1\t125\t722\t
-23/1\t125\t722\t
-24/1\t120\t736\t
-25/1\t124\t702\t
-26/1\t121\t704\t
-27/1\t115\t678\t
-28/1\t110\t691\t
-29/1\t107\t696\t
-30/1\t100\t662\t
-31/1\t98\t678\t
-3/2\t96\t650\t
-4/2\t96\t671\t
-5/2\t96\t655\t
-6/2\t96\t647\t
-7/2\t96\t635\t
-10/2\t99\t639\t
-11/2\t96\t630\t
-12/2\t94\t613\t
-13/2\t94\t627\t
-14/2\t94\t616\t
-15/2\t92\t604\t
-16/2\t94\t653\t
-17/2\t94\t655\t
-18/2\t94\t666\t
-19/2\t93\t627\t
-24/2\t96\t632\t
-25/2\t94\t629\t
-26/2\t92\t591\t
-27/2\t92\t580\t
-28/2\t90\t616\t
-3/3\t68\t442\t
-4/3\t89\t559\t
-5/3\t89\t534\t
-6/3\t91\t552\t
-7/3\t89\t531\t
-11/3\t76\t524\t
-12/3\t76\t505\t
-13/3\t74\t482\t
-14/3\t73\t501\t
-17/3\t71\t494\t
-18/3\t66\t557\t
-19/3\t66\t533\t
-20/3\t58\t535\t
-21/3\t59\t534\t
-22/3\t58\t535\t
-23/3\t59\t534\t
-24/3\t54\t516\t
-25/3\t50\t519\t
-26/3\t48\t496\t
-27/3\t45\t540\t
-28/3\t42\t538\t
-31/3\t40\t518\t
-1/4\t40\t525\t
-2/4\t38\t506\t
-3/4\t34\t494\t
-4/4\t34\t486\t
-7/4\t34\t465\t
-8/4\t34\t457\t
-9/4\t31\t454\t
-10/4\t29\t540\t
-11/4\t28\t512\t
-14/4\t27\t519\t
-15/4\t28\t519\t
-16/4\t26\t513\t
-17/4\t25\t513\t
-18/4\t23\t501\t
-22/4\t23\t501\t
-23/4\t22\t477\t
-24/4\t21\t474\t
-25/4\t21\t462\t
-28/4\t20\t424\t
-29/4\t20\t421\t
-30/4\t20\t428\t
-2/5\t1\t403\t
-5/5\t1\t377\t
-6/5\t1\t380\t3
-7/5\t1\t400\t20
-8/5\t2\t415\t15
-9/5\t2\t430\t15
-12/5\t2\t429\t-1
-13/5\t2\t422\t-7
-14/5\t2\t403\t-19
-15/5\t2\t407\t4
-16/5\t9\t426\t19
-19/5\t9\t410\t-16
-20/5\t9\t403\t-7
-21/5\t9\t427\t24
-22/5\t8\t411\t-16
-23/5\t8\t397\t-14
-26/5\t7\t403\t6
-27/5\t7\t403\t0
-28/5\t6\t371\t-32
-30/5\t1\t369\t-2
-2/6\t0\t359\t-10
-3/6\t0\t379\t20
-4/6\t0\t445\t66
-5/6\t0\t450\t5
-6/6\t0\t451\t1
-9/6\t0\t436\t-15
-10/6\t0\t479\t43
-11/6\t0\t486\t7
-12/6\t0\t475\t-11
-13/6\t0\t464\t-11
-16/6\t0\t466\t2
-17/6\t0\t459\t-7
-18/6\t0\t461\t2
-20/6\t0\t498\t37
-23/6\t0\t505\t7
-24/6\t0\t493\t-12
-25/6\t0\t501\t8
-26/6\t0\t538\t37
-27/6\t0\t506\t-32
-30/6\t0\t496\t-10
-1/7\t0\t492\t-4
-2/7\t0\t491\t-1
-3/7\t0\t485\t-6
-4/7\t0\t493\t8
-5/7\t0\t478\t-15
-6/7\t0\t459\t-19
-10/7\t0\t440\t-19
-11/7\t0\t417\t-23
-12/7\t0\t424\t7
-15/7\t0\t416\t-8
-16/7\t0\t436\t20
-17/7\t0\t503\t67
-18/7\t0\t517\t14
-21/7\t0\t504\t-13
-22/7\t0\t577\t73
-23/7\t0\t596\t19
-24/7\t0\t608\t12
-25/7\t0\t589\t-19
-28/7\t2\t649\t60
-29/7\t8\t624\t-25
-30/7\t0\t543\t-81
-31/7\t0\t522\t-21
-1/9\t0\t517\t
-2/9\t0\t508\t-9
-3/9\t0\t548\t40
-4/9\t0\t529\t-19
-5/9\t0\t527\t-2
-8/9\t0\t536\t9
-9/9\t0\t536\t0
-10/9\t0\t536\t0
-11/9\t0\t536\t0
-12/9\t0\t526\t-10
-15/9\t3\t604\t78
-16/9\t3\t610\t6
-17/9\t3\t564\t-46
-18/9\t3\t570\t6
-23/9\t9\t616\t46
-24/9\t9\t609\t-7
-25/9\t6\t606\t-3
-29/9\t5\t613\t7
-30/9\t4\t658\t45
-1/10\t0\t673\t15
-2/10\t0\t658\t-15
-3/10\t0\t668\t10
-7/10\t0\t672\t4
-8/10\t0\t616\t-56
-9/10\t0\t583\t-33
-10/10\t0\t574\t-9
-13/10\t0\t561\t-13
-14/10\t0\t519\t-42
-15/10\t1\t501\t-18
-16/10\t2\t539\t38
-20/10\t0\t613\t74
-21/10\t0\t608\t-5
-22/10\t0\t596\t-12
-23/10\t0\t578\t-18
-24/10\t0\t552\t-26
-27/10\t0\t513\t-39
-28/10\t0\t504\t-9
-29/10\t0\t508\t4
-31/10\t0\t477\t-31
-4/11\t0\t495\t18
-5/11\t0\t489\t-6
-6/11\t0\t475\t-14
-7/11\t0\t489\t14
-10/11\t2\t488\t-1
-11/11\t1\t489\t1
-12/11\t2\t510\t21
-13/11\t2\t507\t-3
-14/11\t2\t512\t5
-17/11\t1\t505\t-7
-18/11\t1\t476\t-29
-19/11\t1\t470\t-6
-21/11\t1\t513\t43
-24/11\t0\t469\t-44
-25/11\t0\t466\t-3
-26/11\t1\t534\t68
-27/11\t0\t480\t-54
-28/11\t0\t462\t-18
-1/12\t0\t462\t0
-2/12\t0\t451\t-11
-3/12\t0\t452\t1
-4/12\t0\t470\t18
-5/12\t0\t468\t-2
-8/12\t0\t482\t14
-9/12\t0\t488\t6
-10/12\t0\t496\t8
-11/12\t0\t495\t-1
-12/12\t0\t521\t26
-15/12\t0\t503\t-18
-16/12\t0\t560\t57
-17/12\t0\t537\t-23
-18/12\t0\t522\t-15
-19/12\t0\t521\t-1
-20/12\t0\t492\t-29
-21/12\t0\t489\t-3
-22/12\t0\t491\t2
-26/12\t0\t492\t1
-29/12\t1\t496\t4
-30/12\t1\t477\t-19
-31/12\t3\t473\t-4
-2/1\t3\t462\t-11
-5/1\t10\t475\t13
-6/1\t11\t483\t8
-7/1\t10\t489\t6
-8/1\t10\t482\t-7
-9/1\t10\t508\t26
-12/1\t17\t490\t-18
-13/1\t17\t512\t22
-14/1\t17\t526\t14
-15/1\t15\t531\t5
-16/1\t15\t537\t6
-19/1\t15\t533\t-4
-20/1\t15\t533\t0
-21/1\t16\t535\t2
-23/1\t16\t607\t72
-26/1\t17\t604\t-3
-27/1\t16\t582\t-22
-28/1\t16\t587\t5
-29/1\t14\t632\t45
-30/1\t27\t637\t5
-2/2\t26\t576\t-61
-3/2\t26\t584\t8
-4/2\t25\t605\t21
-5/2\t21\t588\t-17
-9/2\t22\t603\t15
-10/2\t21\t614\t11
-11/2\t20\t613\t-1
-12/2\t21\t622\t9
-13/2\t21\t664\t42
-16/2\t22\t658\t-6
-17/2\t20\t609\t-49
-18/2\t20\t611\t2
-20/2\t18\t619\t8
-25/2\t14\t601\t-18
-26/2\t14\t570\t-31`;
-
         let rawDataset = [];
         let filteredDataset = [];
         let evolucaoGeralDataset = [];
@@ -812,13 +528,8 @@
         let currentPage = 1;
         const pageSize = 15;
 
-        // Inicialização com garantia de execução
+        // Inicia carregamento automático ao carregar a página
         window.addEventListener('DOMContentLoaded', () => {
-            // Inicializa imediatamente com contingência para garantir renderização sem atraso
-            processCSVData(FALLBACK_OS_DATA);
-            parseEvolucaoGeral(FALLBACK_EVOLUCAO_TEXT);
-            
-            // Em paralelo tenta descarregar a versão mais recente da nuvem
             loadAllData();
         });
 
@@ -843,7 +554,7 @@
             }
         }
 
-        // Carregamento usando o PapaParse download nativo para contornar restrições de fetch do browser
+        // Carregamento automático da base de OS com suporte a download direto e proxy
         function loadFromOnlineSpreadsheet() {
             Papa.parse(CSV_OS_URL, {
                 download: true,
@@ -853,30 +564,37 @@
                     if (results.data && results.data.length > 0) {
                         processCSVData(results.data);
                         setBadge('success', 'Online Atualizado');
+                    } else {
+                        fallbackProxyOS();
                     }
                 },
-                error: function(err) {
-                    console.warn("Falha no download direto da folha de OS:", err);
-                    // Tenta o proxy AllOrigins como contingência
-                    fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_OS_URL))
-                        .then(r => r.text())
-                        .then(csv => {
-                            Papa.parse(csv, {
-                                header: true,
-                                skipEmptyLines: true,
-                                complete: (res) => {
-                                    processCSVData(res.data);
-                                    setBadge('success', 'Online (Proxy)');
-                                }
-                            });
-                        })
-                        .catch(() => {
-                            setBadge('error', 'Online Indisponível (Use CSV Local)');
-                        });
+                error: function() {
+                    fallbackProxyOS();
                 }
             });
         }
 
+        function fallbackProxyOS() {
+            fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_OS_URL))
+                .then(r => r.text())
+                .then(csv => {
+                    Papa.parse(csv, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: (res) => {
+                            if (res.data && res.data.length > 0) {
+                                processCSVData(res.data);
+                                setBadge('success', 'Online (Proxy)');
+                            }
+                        }
+                    });
+                })
+                .catch(() => {
+                    setBadge('error', 'Falha ao carregar');
+                });
+        }
+
+        // Carregamento automático da evolução geral
         function loadEvolucaoGeralData() {
             Papa.parse(CSV_EVOLUCAO_URL, {
                 download: true,
@@ -885,24 +603,31 @@
                 complete: function(results) {
                     if (results.data && results.data.length > 0) {
                         processEvolucaoRows(results.data);
+                    } else {
+                        fallbackProxyEvolucao();
                     }
                 },
                 error: function() {
-                    // Mantém os dados da constante embutida caso haja restrição
-                    parseEvolucaoGeral(FALLBACK_EVOLUCAO_TEXT);
+                    fallbackProxyEvolucao();
                 }
             });
         }
 
-        function parseEvolucaoGeral(rawText) {
-            Papa.parse(rawText, {
-                header: true,
-                skipEmptyLines: true,
-                delimiter: rawText.includes('\t') ? '\t' : ',',
-                complete: function(results) {
-                    processEvolucaoRows(results.data);
-                }
-            });
+        function fallbackProxyEvolucao() {
+            fetch("https://api.allorigins.win/raw?url=" + encodeURIComponent(CSV_EVOLUCAO_URL))
+                .then(r => r.text())
+                .then(csv => {
+                    Papa.parse(csv, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: (res) => {
+                            if (res.data && res.data.length > 0) {
+                                processEvolucaoRows(res.data);
+                            }
+                        }
+                    });
+                })
+                .catch(err => console.warn("Erro ao buscar evolução via proxy:", err));
         }
 
         function processEvolucaoRows(rows) {
@@ -920,25 +645,6 @@
             }).filter(d => d.dia);
 
             renderEvolucaoGeralChart();
-        }
-
-        function loadFromFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            setBadge('loading', 'A processar ficheiro...');
-
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    processCSVData(results.data);
-                    setBadge('success', 'Ficheiro Local');
-                },
-                error: function(err) {
-                    console.error("Erro ao ler ficheiro:", err);
-                    setBadge('error', 'Erro no ficheiro');
-                }
-            });
         }
 
         function processCSVData(data) {
@@ -1285,6 +991,7 @@
             });
         }
 
+        // Gráfico de Barras Regional com ocultação estrita de colunas vermelhas sem vencidas
         function renderRegionalChart() {
             const canvas = document.getElementById('chartRegional');
             if (!canvas) return;
@@ -1302,29 +1009,38 @@
 
             const labels = Object.keys(mapRegional).sort((a,b) => mapRegional[b].total - mapRegional[a].total);
             const totalData = labels.map(r => mapRegional[r].total);
-            const vencidasData = labels.map(r => mapRegional[r].vencidas);
+            
+            // Se vencidas for 0, passa null para a coluna NÃO ser desenhada
+            const vencidasData = labels.map(r => mapRegional[r].vencidas > 0 ? mapRegional[r].vencidas : null);
+            const totalVencidasGeral = labels.reduce((acc, r) => acc + mapRegional[r].vencidas, 0);
+
+            const datasets = [
+                {
+                    label: 'Total de OS',
+                    data: totalData,
+                    backgroundColor: 'rgba(59, 130, 246, 0.75)',
+                    borderRadius: 4
+                }
+            ];
+
+            // Apenas adiciona a série vermelha se existir pelo menos 1 OS vencida em alguma regional
+            if (totalVencidasGeral > 0) {
+                datasets.push({
+                    label: 'Vencidas',
+                    data: vencidasData,
+                    backgroundColor: 'rgba(225, 29, 72, 0.95)',
+                    borderColor: '#fda4af',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                    minBarLength: 7 // Apenas aplica tamanho mínimo se o valor for numérico (> 0)
+                });
+            }
 
             chartRegionalInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
-                    datasets: [
-                        {
-                            label: 'Total de OS',
-                            data: totalData,
-                            backgroundColor: 'rgba(59, 130, 246, 0.75)',
-                            borderRadius: 4
-                        },
-                        {
-                            label: 'Vencidas',
-                            data: vencidasData,
-                            backgroundColor: 'rgba(225, 29, 72, 0.95)',
-                            borderColor: '#fda4af',
-                            borderWidth: 1,
-                            borderRadius: 4,
-                            minBarLength: 7
-                        }
-                    ]
+                    datasets: datasets
                 },
                 options: {
                     responsive: true,
@@ -1356,7 +1072,8 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ` ${context.dataset.label}: ${context.raw}`;
+                                    const val = context.raw !== null ? context.raw : 0;
+                                    return ` ${context.dataset.label}: ${val}`;
                                 }
                             }
                         }
@@ -1598,9 +1315,9 @@
 
             const areasArray = Object.keys(areaStats).map(a => ({
                 area: a,
-                volume: areaStats[area].volume,
-                vencidas: areaStats[area].vencidas,
-                taxaFalha: areaStats[area].volume > 0 ? (areaStats[area].vencidas / areaStats[area].volume) * 100 : 0
+                volume: areaStats[a].volume,
+                vencidas: areaStats[a].vencidas,
+                taxaFalha: areaStats[a].volume > 0 ? (areaStats[a].vencidas / areaStats[a].volume) * 100 : 0
             }));
 
             const topVolume = [...areasArray].sort((a,b) => b.volume - a.volume).slice(0, 5);
