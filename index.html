@@ -248,7 +248,7 @@
             </div>
         </div>
 
-        <!-- Linha de Gráficos (Pizza + Regional sem barra vermelha caso zerada) -->
+        <!-- Linha de Gráficos (Pizza + Regional) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-1">
@@ -509,13 +509,13 @@
 
     <!-- Lógica de Dados e Gráficos -->
     <script>
-        // URLs base com parâmetro de data para evitar que o navegador armazene cache desatualizado
+        // URLs atualizadas com os novos links de publicação e controle anti-cache via timestamp
         function getOSUrl() {
-            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=1666421233&single=true&output=csv&_t=" + Date.now();
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=1552048729&single=true&output=csv&_t=" + Date.now();
         }
 
         function getEvolucaoUrl() {
-            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhmjtTmiLipBWOYHPwgVDSfqWQxiuV9brjvjy41Q_BfGaaCE3xdFPLX6YsUsr5P9mewP3gqchBTDNz/pub?gid=115322743&single=true&output=csv&_t=" + Date.now();
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=510754929&single=true&output=csv&_t=" + Date.now();
         }
 
         let rawDataset = [];
@@ -1001,7 +1001,6 @@
             });
         }
 
-        // Gráfico Regional: omite a coluna se o valor for zero
         function renderRegionalChart() {
             const canvas = document.getElementById('chartRegional');
             if (!canvas) return;
@@ -1019,8 +1018,6 @@
 
             const labels = Object.keys(mapRegional).sort((a,b) => mapRegional[b].total - mapRegional[a].total);
             const totalData = labels.map(r => mapRegional[r].total);
-            
-            // Retorna null caso não haja vencidas para aquela regional, impedindo o desenho da barra
             const vencidasData = labels.map(r => mapRegional[r].vencidas > 0 ? mapRegional[r].vencidas : null);
             const totalVencidasGeral = labels.reduce((acc, r) => acc + mapRegional[r].vencidas, 0);
 
@@ -1033,7 +1030,6 @@
                 }
             ];
 
-            // Apenas adiciona o conjunto de dados de Vencidas se existir pelo menos uma OS vencida
             if (totalVencidasGeral > 0) {
                 datasets.push({
                     label: 'Vencidas',
