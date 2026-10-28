@@ -116,20 +116,18 @@
                     <select id="filterSLA" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
                         <option value="TODOS">Todos</option>
                         <option value="VENCIDAS">Vencidas (Fora)</option>
-                        <option value="ACIMA_90">> 90% SLA</option>
-                        <option value="ACIMA_80">> 80% SLA</option>
+                        <option value="ACIMA_90">&gt; 90% SLA</option>
+                        <option value="ACIMA_80">&gt; 80% SLA</option>
                         <option value="70_80">70% a 80% SLA</option>
-                        <option value="ABAIXO_70">< 70% SLA</option>
+                        <option value="ABAIXO_70">&lt; 70% SLA</option>
                     </select>
                 </div>
 
-                <!-- Filtro Urgente -->
+                <!-- Filtro Estado OS (Substituído Urgência) -->
                 <div>
-                    <label class="block text-[10px] text-slate-400 font-medium mb-1">URGÊNCIA</label>
-                    <select id="filterUrgente" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
+                    <label class="block text-[10px] text-slate-400 font-medium mb-1">ESTADO OS</label>
+                    <select id="filterEstadoOS" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
                         <option value="TODOS">Todos</option>
-                        <option value="SIM">Apenas Urgentes</option>
-                        <option value="NAO">Não Urgentes</option>
                     </select>
                 </div>
 
@@ -294,7 +292,7 @@
                 </div>
             </div>
 
-            <!-- Novo Gráfico: Valores por Regional -->
+            <!-- Gráfico: Valores por Regional -->
             <div class="glass-card rounded-2xl p-4 pb-2 flex flex-col border border-emerald-500/20">
                 <div class="flex items-center justify-between mb-1">
                     <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
@@ -379,7 +377,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
                     <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-arrow-trend-up text-blue-400"></i> Evolução Geral Histórica (Prazo, Fora do Prazo & Variação)[cite: 2]
+                        <i class="fa-solid fa-arrow-trend-up text-blue-400"></i> Evolução Geral Histórica (Prazo, Fora do Prazo & Variação)
                     </h3>
                     <p class="text-xs text-slate-400 mt-0.5">Série temporal consolidada do estoque de ordens de serviço por dia (Últimos 12 Meses)</p>
                 </div>
@@ -399,9 +397,9 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
                     <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-chart-area text-cyan-400"></i> Evolutivo Temporal de Entrantes (Criação de OS)[cite: 1]
+                        <i class="fa-solid fa-chart-area text-cyan-400"></i> Evolutivo Temporal de Entrantes (Data de Criação)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Acompanhamento da curva de abertura e entrada de Ordens de Serviço (Último Trimestre)</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Acompanhamento de OS criadas com base na Coluna N da planilha</p>
                 </div>
                 <div class="flex items-center gap-1.5 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60 text-xs">
                     <button id="btnEvolutivoMensal" onclick="setEvolutivoGranularidade('mensal')" class="px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm">
@@ -442,6 +440,7 @@
                             <th class="py-3 px-3">Site / Local</th>
                             <th class="py-3 px-3">Regional</th>
                             <th class="py-3 px-3">Tipo Serviço</th>
+                            <th class="py-3 px-3">Estado OS</th>
                             <th class="py-3 px-3">Gestor</th>
                             <th class="py-3 px-3">Prazo</th>
                             <th class="py-3 px-3 text-center">Dias Restantes</th>
@@ -545,6 +544,7 @@
         let granularidadeEvolutivo = 'mensal';
         let selectedTipos = new Set();
         let availableTipos = [];
+        let availableEstados = [];
 
         let currentPage = 1;
         const pageSize = 15;
@@ -670,6 +670,30 @@
             renderEvolucaoGeralChart();
         }
 
+        // Função para converter formatos de datas (DD/MM/YYYY, DD/MM/YY, YYYY-MM-DD etc.)
+        function parseDataCriacao(val) {
+            if (!val) return null;
+            const str = String(val).trim();
+            if (!str) return null;
+
+            // Formato DD/MM/YYYY ou DD/MM/YYYY HH:MM:SS
+            const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+            if (dmy) {
+                const dia = parseInt(dmy[1], 10);
+                const mes = parseInt(dmy[2], 10) - 1;
+                let ano = parseInt(dmy[3], 10);
+                if (ano < 100) ano += 2000;
+                const d = new Date(ano, mes, dia);
+                if (!isNaN(d.getTime())) return d;
+            }
+
+            // Tenta conversão nativa ISO (YYYY-MM-DD)
+            const isoDate = new Date(str);
+            if (!isNaN(isoDate.getTime())) return isoDate;
+
+            return null;
+        }
+
         function processCSVData(data) {
             rawDataset = data.filter(row => {
                 const os = (row['Número OS'] || row['Numero OS'] || '').trim();
@@ -699,16 +723,13 @@
                 const gestor = (row['Último gestor'] || row['Ultimo gestor'] || '').trim().toUpperCase();
                 const segmento = (row['Tipo de Segmento'] || '').trim();
                 const isFatB = segmento.toUpperCase().includes('FAT_B') || segmento.toUpperCase().includes('FAT-B');
-                const urg = (row['Urgente'] || '').trim();
 
-                const dataCriacaoStr = (row['Data Criação'] || row['Data Criacao'] || '').trim();
-                let dtCriacao = null;
-                if (dataCriacaoStr) {
-                    const parsedDt = new Date(dataCriacaoStr);
-                    if (!isNaN(parsedDt.getTime())) {
-                        dtCriacao = parsedDt;
-                    }
-                }
+                // Coluna J: Denominação Estado OS / Estado OS
+                const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || row['Estado'] || 'OUTROS').trim();
+
+                // Coluna N: Data de Criação
+                const dataCriacaoStr = (row['Data Criação'] || row['Data Criacao'] || row['Data de Criação'] || row['Data de Criacao'] || '').trim();
+                const dtCriacao = parseDataCriacao(dataCriacaoStr);
 
                 const tempoRestanteRaw = (row['Tempo Restante'] || '').trim();
                 let tempoRestanteNum = null;
@@ -731,7 +752,7 @@
                     sgm: row['SGM'] || '',
                     site: row['Site'] || 'N/A',
                     descricao: row['Descrição OS'] || row['Descricao OS'] || '',
-                    estadoOS: row['Denominação Estado OS'] || '',
+                    estadoOS: estadoOS,
                     tipoServico: (row['Tipo de Serviço'] || row['Tipo de Servico'] || 'OUTROS').trim(),
                     regional: (row['Regional'] || 'SEM REGIONAL').trim(),
                     coordenador: row['Coordenador'] || '',
@@ -745,7 +766,6 @@
                     slaPctNum: slaNumeric,
                     prazo: prazo,
                     isVencida: isVencida,
-                    urgente: urg,
                     etapaEsteira: etapaEsteira,
                     numSC: (row['N° SC'] || row['No SC'] || row['SC'] || '').trim(),
                     responsavel: row['Responsável'] || row['Responsavel'] || '',
@@ -765,13 +785,23 @@
         function populateDropdownFilters() {
             const regionais = [...new Set(rawDataset.map(d => d.regional))].filter(Boolean).sort();
             availableTipos = [...new Set(rawDataset.map(d => d.tipoServico))].filter(Boolean).sort();
+            availableEstados = [...new Set(rawDataset.map(d => d.estadoOS))].filter(Boolean).sort();
 
+            // Regional
             const selRegional = document.getElementById('filterRegional');
             selRegional.innerHTML = '<option value="TODOS">Todas</option>';
             regionais.forEach(r => {
                 selRegional.innerHTML += `<option value="${r}">${r}</option>`;
             });
 
+            // Estado OS
+            const selEstadoOS = document.getElementById('filterEstadoOS');
+            selEstadoOS.innerHTML = '<option value="TODOS">Todos</option>';
+            availableEstados.forEach(e => {
+                selEstadoOS.innerHTML += `<option value="${e}">${e}</option>`;
+            });
+
+            // Tipo de Serviço
             const containerTipos = document.getElementById('listaOpcoesTipo');
             containerTipos.innerHTML = '';
             selectedTipos.clear();
@@ -831,7 +861,7 @@
             const fExecSemAprov = document.getElementById('filterExecSemAprov').value;
             const fFatB = document.getElementById('filterFatB').value;
             const fSLA = document.getElementById('filterSLA').value;
-            const fUrgente = document.getElementById('filterUrgente').value;
+            const fEstadoOS = document.getElementById('filterEstadoOS').value;
             const fSC = document.getElementById('filterSC').value;
             const fRegional = document.getElementById('filterRegional').value;
             const fSearch = document.getElementById('filterSearch').value.toLowerCase().trim();
@@ -852,8 +882,7 @@
                 if (fSLA === '70_80' && (item.isVencida || item.slaPctNum < 70 || item.slaPctNum >= 80)) return false;
                 if (fSLA === 'ABAIXO_70' && (item.isVencida || item.slaPctNum >= 70)) return false;
 
-                if (fUrgente === 'SIM' && !item.urgente.toLowerCase().includes('urgente')) return false;
-                if (fUrgente === 'NAO' && item.urgente.toLowerCase().includes('não urgente') === false && item.urgente.toLowerCase().includes('nao urgente') === false && item.urgente.toLowerCase().includes('urgente')) return false;
+                if (fEstadoOS !== 'TODOS' && item.estadoOS !== fEstadoOS) return false;
 
                 if (fSC === 'COM_SC' && (!item.numSC || item.numSC === '#REF!')) return false;
                 if (fSC === 'SEM_SC' && (item.numSC && item.numSC !== '#REF!')) return false;
@@ -869,6 +898,7 @@
                                   (item.site && item.site.toLowerCase().includes(fSearch)) ||
                                   (item.descricao && item.descricao.toLowerCase().includes(fSearch)) ||
                                   (item.descricaoAcao && item.descricaoAcao.toLowerCase().includes(fSearch)) ||
+                                  (item.estadoOS && item.estadoOS.toLowerCase().includes(fSearch)) ||
                                   (item.unidadeNegocio && item.unidadeNegocio.toLowerCase().includes(fSearch));
                     if (!match) return false;
                 }
@@ -885,7 +915,7 @@
             document.getElementById('filterExecSemAprov').value = 'TODOS';
             document.getElementById('filterFatB').value = 'TODOS';
             document.getElementById('filterSLA').value = 'TODOS';
-            document.getElementById('filterUrgente').value = 'TODOS';
+            document.getElementById('filterEstadoOS').value = 'TODOS';
             document.getElementById('filterSC').value = 'TODOS';
             document.getElementById('filterRegional').value = 'TODOS';
             document.getElementById('filterSearch').value = '';
@@ -937,6 +967,7 @@
                 }
             });
 
+            // Cálculo dos indicadores a partir de dataCriacao (Coluna N)
             const datasCriacao = filteredDataset.map(d => d.dataCriacao).filter(Boolean);
             let mediaDiaria = 0;
             let mediaMensal = 0;
@@ -1102,7 +1133,6 @@
             });
         }
 
-        // Gráfico de Valores por Regional
         function renderValoresRegionalChart() {
             const canvas = document.getElementById('chartValoresRegional');
             if (!canvas) return;
@@ -1118,7 +1148,6 @@
                 mapValores[reg] += d.valorMateriais || 0;
             });
 
-            // Ordena as regionais pelo maior valor financeiro
             const labels = Object.keys(mapValores).sort((a,b) => mapValores[b] - mapValores[a]);
             const valoresData = labels.map(r => mapValores[r]);
 
@@ -1290,6 +1319,7 @@
             });
         }
 
+        // Gráfico de Evolução com base na Data de Criação (Coluna N)
         function renderEvolutivoChart() {
             const canvas = document.getElementById('chartEvolutivoEntrantes');
             if (!canvas) return;
@@ -1324,9 +1354,9 @@
             let sortedKeys = Object.keys(timelineMap).sort();
 
             if (granularidadeEvolutivo === 'mensal') {
-                sortedKeys = sortedKeys.slice(-3);
+                sortedKeys = sortedKeys.slice(-12); // Exibe histórico de até 12 meses
             } else {
-                sortedKeys = sortedKeys.slice(-90);
+                sortedKeys = sortedKeys.slice(-90); // Últimos 90 dias com registro
             }
 
             const labels = sortedKeys.map(k => timelineMap[k].label);
@@ -1341,7 +1371,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'OS Entrantes',
+                        label: 'OS Criadas',
                         data: dataCounts,
                         borderColor: '#06b6d4',
                         backgroundColor: gradient,
@@ -1387,7 +1417,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ` Entrantes: ${context.raw} ordens`;
+                                    return ` Criadas: ${context.raw} ordens`;
                                 }
                             }
                         }
@@ -1514,7 +1544,7 @@
             const pageData = filteredDataset.slice(startIdx, startIdx + pageSize);
 
             if (pageData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" class="text-center py-6 text-slate-500">Nenhum registro encontrado para estes filtros.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="13" class="text-center py-6 text-slate-500">Nenhum registro encontrado para estes filtros.</td></tr>';
                 return;
             }
 
@@ -1554,6 +1584,7 @@
                         <td class="py-2.5 px-3 text-slate-300 max-w-[160px] truncate" title="${row.site}">${row.site}</td>
                         <td class="py-2.5 px-3 text-slate-400">${row.regional}</td>
                         <td class="py-2.5 px-3 text-slate-300"><span class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 font-mono text-[10px]">${row.tipoServico}</span></td>
+                        <td class="py-2.5 px-3 text-slate-300"><span class="px-1.5 py-0.5 bg-slate-800/70 border border-slate-700 rounded text-slate-300 text-[10px]">${row.estadoOS}</span></td>
                         <td class="py-2.5 px-3">${gestorTag}</td>
                         <td class="py-2.5 px-3 ${row.isVencida ? 'text-rose-400 font-semibold' : 'text-slate-400'}">${row.prazo || 'N/A'}</td>
                         <td class="py-2.5 px-3 text-center">${tempoRestanteBadge}</td>
