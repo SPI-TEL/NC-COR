@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Torre de Controle OS | NC / COR</title>
+    <title>Controle de Ordens de Serviço | NC / COR</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
@@ -48,9 +48,9 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        Controle de Ordens de Serviços <span class="text-xs font-semibold px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">NC / COR</span>
+                        Controle de Ordens de Serviço <span class="text-xs font-semibold px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">NC / COR</span>
                     </h1>
-                    <p class="text-xs text-slate-400">Monitoramento Operacional, SLA & Eficiência</p>
+                    <p class="text-xs text-slate-400">Monitoramento Operacional, SLA & Eficiência em Tempo Real</p>
                 </div>
             </div>
 
@@ -294,7 +294,7 @@
                 </div>
             </div>
 
-            <!-- Novo Gráfico: Valores por Regional -->
+            <!-- Gráfico: Valores por Regional -->
             <div class="glass-card rounded-2xl p-4 pb-2 flex flex-col border border-emerald-500/20">
                 <div class="flex items-center justify-between mb-1">
                     <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
@@ -422,14 +422,14 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
                     <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-table-list text-cyan-400"></i> Detalhamento Analítico de Ordens de Serviço
+                        <i class="fa-solid fa-table-list text-cyan-400"></i> Detalhamento Analítico de Ordens de Serviço[cite: 4]
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Listagem com prazos, dias restantes, esteira e ações detalhadas</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Listagem com prazos, dias restantes, estado da OS e ações detalhadas</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span id="recordsCount" class="text-xs text-slate-400">Exibindo 0 registros</span>
+                    <span id="recordsCount" class="text-xs text-slate-400">Exibindo 0 registros</span>[cite: 4]
                     <button onclick="exportCurrentFilteredCSV()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-download"></i> Exportar Visão
+                        <i class="fa-solid fa-download"></i> Exportar Visão[cite: 4]
                     </button>
                 </div>
             </div>
@@ -438,18 +438,18 @@
                 <table class="w-full text-left text-xs whitespace-nowrap">
                     <thead class="bg-slate-900/90 text-slate-400 font-medium border-b border-slate-800">
                         <tr>
-                            <th class="py-3 px-3">Número OS</th>
-                            <th class="py-3 px-3">Site / Local</th>
-                            <th class="py-3 px-3">Regional</th>
-                            <th class="py-3 px-3">Tipo Serviço</th>
-                            <th class="py-3 px-3">Gestor</th>
-                            <th class="py-3 px-3">Prazo</th>
-                            <th class="py-3 px-3 text-center">Dias Restantes</th>
-                            <th class="py-3 px-3">% SLA</th>
-                            <th class="py-3 px-3">Valor Materiais</th>
-                            <th class="py-3 px-3">N° SC</th>
-                            <th class="py-3 px-3">Etapa Esteira</th>
-                            <th class="py-3 px-3 text-center">Ação</th>
+                            <th class="py-3 px-3">Número OS</th>[cite: 4]
+                            <th class="py-3 px-3">Site / Local</th>[cite: 4]
+                            <th class="py-3 px-3">Regional</th>[cite: 4]
+                            <th class="py-3 px-3">Tipo Serviço</th>[cite: 4]
+                            <th class="py-3 px-3">Gestor</th>[cite: 4]
+                            <th class="py-3 px-3">Prazo</th>[cite: 4]
+                            <th class="py-3 px-3 text-center">Dias Restantes</th>[cite: 4]
+                            <th class="py-3 px-3">% SLA</th>[cite: 4]
+                            <th class="py-3 px-3">Valor Materiais</th>[cite: 4]
+                            <th class="py-3 px-3">N° SC</th>[cite: 4]
+                            <th class="py-3 px-3">Estado OS</th>
+                            <th class="py-3 px-3 text-center">Ação</th>[cite: 4]
                         </tr>
                     </thead>
                     <tbody id="tableOSBody" class="divide-y divide-slate-800/80 text-slate-300"></tbody>
@@ -723,6 +723,7 @@
                 const prioridadeVivo = (row['Prioridade VIVO'] || '').trim().toUpperCase();
                 const descricaoAcao = (row['Descrição Ação'] || row['Descricao Acao'] || '').trim();
                 const etapaEsteira = (row['Etapa Esteira'] || '').trim();
+                const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || '').trim();
 
                 const isExecSemAprov = necessidade.includes('EXEC') && (necessidade.includes('SEM') || prioridadeVivo.includes('NÃO EXEC') || prioridadeVivo.includes('SEM APR') || etapaEsteira.toUpperCase().includes('APROV'));
 
@@ -731,7 +732,7 @@
                     sgm: row['SGM'] || '',
                     site: row['Site'] || 'N/A',
                     descricao: row['Descrição OS'] || row['Descricao OS'] || '',
-                    estadoOS: row['Denominação Estado OS'] || '',
+                    estadoOS: estadoOS,
                     tipoServico: (row['Tipo de Serviço'] || row['Tipo de Servico'] || 'OUTROS').trim(),
                     regional: (row['Regional'] || 'SEM REGIONAL').trim(),
                     coordenador: row['Coordenador'] || '',
@@ -1118,7 +1119,6 @@
                 mapValores[reg] += d.valorMateriais || 0;
             });
 
-            // Ordena as regionais pelo maior valor financeiro
             const labels = Object.keys(mapValores).sort((a,b) => mapValores[b] - mapValores[a]);
             const valoresData = labels.map(r => mapValores[r]);
 
@@ -1179,6 +1179,7 @@
             });
         }
 
+        // Gráfico de Evolução Geral limitado aos últimos 12 meses
         function renderEvolucaoGeralChart() {
             const canvas = document.getElementById('chartEvolucaoGeral');
             if (!canvas || evolucaoGeralDataset.length === 0) return;
@@ -1290,6 +1291,7 @@
             });
         }
 
+        // Gráfico Evolutivo de Entrantes limitado ao último trimestre
         function renderEvolutivoChart() {
             const canvas = document.getElementById('chartEvolutivoEntrantes');
             if (!canvas) return;
@@ -1500,7 +1502,7 @@
             tbody.innerHTML = '';
 
             const total = filteredDataset.length;
-            document.getElementById('recordsCount').innerText = `Exibindo ${total.toLocaleString('pt-BR')} registros`;
+            document.getElementById('recordsCount').innerText = `Exibindo ${total.toLocaleString('pt-BR')} registros`;[cite: 4]
 
             const totalPages = Math.ceil(total / pageSize) || 1;
             if (currentPage > totalPages) currentPage = totalPages;
@@ -1560,7 +1562,7 @@
                         <td class="py-2.5 px-3">${slaBadge}</td>
                         <td class="py-2.5 px-3 ${valorClass}">${valorFormatado}</td>
                         <td class="py-2.5 px-3 text-slate-300 font-mono">${row.numSC || '-'}</td>
-                        <td class="py-2.5 px-3 text-slate-400 max-w-[150px] truncate" title="${row.etapaEsteira}">${row.etapaEsteira || '-'}</td>
+                        <td class="py-2.5 px-3 text-slate-300 max-w-[160px] truncate" title="${row.estadoOS}">${row.estadoOS || '-'}</td>
                         <td class="py-2.5 px-3 text-center">
                             <button onclick="abrirModalAcao('${row.os}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-600 text-slate-300 hover:text-white border border-slate-700 hover:border-cyan-500 text-[11px] font-medium transition flex items-center gap-1.5 mx-auto">
                                 <i class="fa-solid fa-eye text-[10px]"></i> Ação
