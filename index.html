@@ -248,8 +248,9 @@
             </div>
         </div>
 
-        <!-- Linha de Gráficos (Pizza + Regional) -->
+        <!-- Linha de Gráficos (SLA, Volume por Regional e Valores por Regional) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Gráfico SLA Donut -->
             <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-1">
                     <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
@@ -280,15 +281,29 @@
                 </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-4 pb-2 lg:col-span-2 flex flex-col">
+            <!-- Gráfico Volume Regional -->
+            <div class="glass-card rounded-2xl p-4 pb-2 flex flex-col">
                 <div class="flex items-center justify-between mb-1">
                     <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
-                        <i class="fa-solid fa-chart-bar text-blue-400"></i> Distribuição por Regional
+                        <i class="fa-solid fa-chart-bar text-blue-400"></i> Volume por Regional
                     </h3>
-                    <span class="text-[10px] text-slate-400">Volume Total vs Vencidas</span>
+                    <span class="text-[10px] text-slate-400">Total vs Vencidas</span>
                 </div>
                 <div class="relative w-full h-[155px] flex-1">
                     <canvas id="chartRegional"></canvas>
+                </div>
+            </div>
+
+            <!-- Novo Gráfico: Valores por Regional -->
+            <div class="glass-card rounded-2xl p-4 pb-2 flex flex-col border border-emerald-500/20">
+                <div class="flex items-center justify-between mb-1">
+                    <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
+                        <i class="fa-solid fa-sack-dollar text-emerald-400"></i> Valores por Regional (R$)
+                    </h3>
+                    <span class="text-[10px] text-slate-400">Materiais Externos</span>
+                </div>
+                <div class="relative w-full h-[155px] flex-1">
+                    <canvas id="chartValoresRegional"></canvas>
                 </div>
             </div>
         </div>
@@ -509,7 +524,6 @@
 
     <!-- Lógica de Dados e Gráficos -->
     <script>
-        // URLs base com parâmetro de data para evitar que o navegador armazene cache desatualizado
         function getOSUrl() {
             return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=1552048729&single=true&output=csv&_t=" + Date.now();
         }
@@ -524,6 +538,7 @@
 
         let chartSlaInstance = null;
         let chartRegionalInstance = null;
+        let chartValoresRegionalInstance = null;
         let chartEvolutivoInstance = null;
         let chartEvolucaoGeralInstance = null;
 
@@ -560,7 +575,6 @@
             }
         }
 
-        // Leitura automática da base principal com PapaParse download
         function loadFromOnlineSpreadsheet() {
             const targetUrl = getOSUrl();
             Papa.parse(targetUrl, {
@@ -602,7 +616,6 @@
                 });
         }
 
-        // Leitura automática da aba de evolução geral
         function loadEvolucaoGeralData() {
             const targetUrl = getEvolucaoUrl();
             Papa.parse(targetUrl, {
@@ -958,6 +971,7 @@
 
             renderSlaDonut(abaixo70, entre70e80, acima80, vencidas);
             renderRegionalChart();
+            renderValoresRegionalChart();
             renderRankings();
             renderEvolutivoChart();
             renderTable();
@@ -1088,14 +1102,89 @@
             });
         }
 
-        // Gráfico de Evolução Geral limitado aos últimos 12 meses
+        // Gráfico de Valores por Regional
+        function renderValoresRegionalChart() {
+            const canvas = document.getElementById('chartValoresRegional');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (chartValoresRegionalInstance) chartValoresRegionalInstance.destroy();
+
+            const mapValores = {};
+            filteredDataset.forEach(d => {
+                const reg = d.regional || 'SEM REGIONAL';
+                if (!mapValores[reg]) {
+                    mapValores[reg] = 0;
+                }
+                mapValores[reg] += d.valorMateriais || 0;
+            });
+
+            // Ordena as regionais pelo maior valor financeiro
+            const labels = Object.keys(mapValores).sort((a,b) => mapValores[b] - mapValores[a]);
+            const valoresData = labels.map(r => mapValores[r]);
+
+            chartValoresRegionalInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total em R$',
+                        data: valoresData,
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        hoverBackgroundColor: 'rgba(52, 211, 153, 0.95)',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                        padding: { top: 0, bottom: 0, left: 0, right: 0 }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { 
+                                color: '#94a3b8', 
+                                font: { size: 9 },
+                                padding: 2 
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            ticks: { 
+                                color: '#94a3b8', 
+                                font: { size: 9 }, 
+                                maxTicksLimit: 4,
+                                callback: function(value) {
+                                    if (value >= 1000000) return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
+                                    if (value >= 1000) return 'R$ ' + (value / 1000).toFixed(0) + 'k';
+                                    return 'R$ ' + value;
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.raw || 0;
+                                    return ` Montante: ${val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         function renderEvolucaoGeralChart() {
             const canvas = document.getElementById('chartEvolucaoGeral');
             if (!canvas || evolucaoGeralDataset.length === 0) return;
             const ctx = canvas.getContext('2d');
             if (chartEvolucaoGeralInstance) chartEvolucaoGeralInstance.destroy();
 
-            // Retém apenas os registos correspondentes aos últimos 12 meses (~365 dias)
             const dadosUltimos12Meses = evolucaoGeralDataset.slice(-365);
 
             const labels = dadosUltimos12Meses.map(d => d.dia);
@@ -1201,7 +1290,6 @@
             });
         }
 
-        // Gráfico Evolutivo de Entrantes limitado ao último trimestre
         function renderEvolutivoChart() {
             const canvas = document.getElementById('chartEvolutivoEntrantes');
             if (!canvas) return;
@@ -1235,9 +1323,6 @@
 
             let sortedKeys = Object.keys(timelineMap).sort();
 
-            // Filtro para manter estritamente o último trimestre:
-            // - Visão mensal: últimos 3 meses
-            // - Visão diária: últimos 90 dias
             if (granularidadeEvolutivo === 'mensal') {
                 sortedKeys = sortedKeys.slice(-3);
             } else {
