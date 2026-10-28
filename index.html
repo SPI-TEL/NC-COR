@@ -83,7 +83,7 @@
                 <!-- Filtro Gestor -->
                 <div>
                     <label class="block text-[10px] text-slate-400 font-medium mb-1">GESTOR</label>
-                    <select id="filterGestor" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
+                    <select id="filterGestor" onchange="onGestorChange()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
                         <option value="TEL" selected>TEL</option>
                         <option value="VIVO">VIVO</option>
                         <option value="TODOS">Todos</option>
@@ -123,7 +123,7 @@
                     </select>
                 </div>
 
-                <!-- Filtro Estado OS (Substituído Urgência) -->
+                <!-- Filtro Estado OS -->
                 <div>
                     <label class="block text-[10px] text-slate-400 font-medium mb-1">ESTADO OS</label>
                     <select id="filterEstadoOS" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
@@ -399,7 +399,7 @@
                     <h3 class="text-sm font-bold text-white flex items-center gap-2">
                         <i class="fa-solid fa-chart-area text-cyan-400"></i> Evolutivo Temporal de Entrantes (Data de Criação)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Acompanhamento de OS criadas com base na Coluna N da planilha</p>
+                    <p class="text-xs text-slate-400 mt-0.5">Acompanhamento da curva de abertura e entrada de Ordens de Serviço</p>
                 </div>
                 <div class="flex items-center gap-1.5 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60 text-xs">
                     <button id="btnEvolutivoMensal" onclick="setEvolutivoGranularidade('mensal')" class="px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm">
@@ -544,7 +544,6 @@
         let granularidadeEvolutivo = 'mensal';
         let selectedTipos = new Set();
         let availableTipos = [];
-        let availableEstados = [];
 
         let currentPage = 1;
         const pageSize = 15;
@@ -670,7 +669,7 @@
             renderEvolucaoGeralChart();
         }
 
-        // Função para converter formatos de datas (DD/MM/YYYY, DD/MM/YY, YYYY-MM-DD etc.)
+        // Função para conversão robusta de datas
         function parseDataCriacao(val) {
             if (!val) return null;
             const str = String(val).trim();
@@ -687,9 +686,9 @@
                 if (!isNaN(d.getTime())) return d;
             }
 
-            // Tenta conversão nativa ISO (YYYY-MM-DD)
-            const isoDate = new Date(str);
-            if (!isNaN(isoDate.getTime())) return isoDate;
+            // ISO YYYY-MM-DD
+            const iso = new Date(str);
+            if (!isNaN(iso.getTime())) return iso;
 
             return null;
         }
@@ -724,10 +723,10 @@
                 const segmento = (row['Tipo de Segmento'] || '').trim();
                 const isFatB = segmento.toUpperCase().includes('FAT_B') || segmento.toUpperCase().includes('FAT-B');
 
-                // Coluna J: Denominação Estado OS / Estado OS
-                const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || row['Estado'] || 'OUTROS').trim();
+                // Coluna J: Denominação Estado OS
+                const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || row['Estado'] || 'N/A').trim();
 
-                // Coluna N: Data de Criação
+                // Coluna N: Data de Criação / Abertura
                 const dataCriacaoStr = (row['Data Criação'] || row['Data Criacao'] || row['Data de Criação'] || row['Data de Criacao'] || '').trim();
                 const dtCriacao = parseDataCriacao(dataCriacaoStr);
 
@@ -782,26 +781,49 @@
             applyFilters();
         }
 
+        // Atualiza a lista de opções de Estado OS conforme o Gestor ativo
+        function updateEstadoOSOptions() {
+            const fGestor = document.getElementById('filterGestor').value;
+            const selEstadoOS = document.getElementById('filterEstadoOS');
+            const valorAtual = selEstadoOS.value;
+
+            const baseFiltradaPorGestor = rawDataset.filter(d => {
+                if (fGestor === 'TEL') return d.gestor.includes('TEL');
+                if (fGestor === 'VIVO') return d.gestor.includes('VIVO');
+                return true;
+            });
+
+            const estados = [...new Set(baseFiltradaPorGestor.map(d => d.estadoOS))].filter(Boolean).sort();
+
+            selEstadoOS.innerHTML = '<option value="TODOS">Todos</option>';
+            estados.forEach(e => {
+                selEstadoOS.innerHTML += `<option value="${e}">${e}</option>`;
+            });
+
+            if (estados.includes(valorAtual)) {
+                selEstadoOS.value = valorAtual;
+            } else {
+                selEstadoOS.value = 'TODOS';
+            }
+        }
+
+        function onGestorChange() {
+            updateEstadoOSOptions();
+            applyFilters();
+        }
+
         function populateDropdownFilters() {
             const regionais = [...new Set(rawDataset.map(d => d.regional))].filter(Boolean).sort();
             availableTipos = [...new Set(rawDataset.map(d => d.tipoServico))].filter(Boolean).sort();
-            availableEstados = [...new Set(rawDataset.map(d => d.estadoOS))].filter(Boolean).sort();
 
-            // Regional
             const selRegional = document.getElementById('filterRegional');
             selRegional.innerHTML = '<option value="TODOS">Todas</option>';
             regionais.forEach(r => {
                 selRegional.innerHTML += `<option value="${r}">${r}</option>`;
             });
 
-            // Estado OS
-            const selEstadoOS = document.getElementById('filterEstadoOS');
-            selEstadoOS.innerHTML = '<option value="TODOS">Todos</option>';
-            availableEstados.forEach(e => {
-                selEstadoOS.innerHTML += `<option value="${e}">${e}</option>`;
-            });
+            updateEstadoOSOptions();
 
-            // Tipo de Serviço
             const containerTipos = document.getElementById('listaOpcoesTipo');
             containerTipos.innerHTML = '';
             selectedTipos.clear();
@@ -915,11 +937,11 @@
             document.getElementById('filterExecSemAprov').value = 'TODOS';
             document.getElementById('filterFatB').value = 'TODOS';
             document.getElementById('filterSLA').value = 'TODOS';
-            document.getElementById('filterEstadoOS').value = 'TODOS';
             document.getElementById('filterSC').value = 'TODOS';
             document.getElementById('filterRegional').value = 'TODOS';
             document.getElementById('filterSearch').value = '';
             
+            updateEstadoOSOptions();
             selectAllTipos(false);
             applyFilters();
         }
@@ -967,7 +989,7 @@
                 }
             });
 
-            // Cálculo dos indicadores a partir de dataCriacao (Coluna N)
+            // Cálculo dos indicadores a partir de dataCriacao
             const datasCriacao = filteredDataset.map(d => d.dataCriacao).filter(Boolean);
             let mediaDiaria = 0;
             let mediaMensal = 0;
@@ -1319,7 +1341,7 @@
             });
         }
 
-        // Gráfico de Evolução com base na Data de Criação (Coluna N)
+        // Gráfico de Evolução de Entrantes totalizando conforme o mês de abertura
         function renderEvolutivoChart() {
             const canvas = document.getElementById('chartEvolutivoEntrantes');
             if (!canvas) return;
@@ -1338,6 +1360,7 @@
                 const dia = String(d.dataCriacao.getDate()).padStart(2, '0');
 
                 if (granularidadeEvolutivo === 'mensal') {
+                    // Totalizador mensal: ano-mês
                     key = `${ano}-${mes}`;
                     label = `${mes}/${ano}`;
                 } else {
@@ -1353,10 +1376,33 @@
 
             let sortedKeys = Object.keys(timelineMap).sort();
 
-            if (granularidadeEvolutivo === 'mensal') {
-                sortedKeys = sortedKeys.slice(-12); // Exibe histórico de até 12 meses
-            } else {
-                sortedKeys = sortedKeys.slice(-90); // Últimos 90 dias com registro
+            // Sequência contínua de meses para evitar lacunas
+            if (granularidadeEvolutivo === 'mensal' && sortedKeys.length > 0) {
+                const minKey = sortedKeys[0];
+                const maxKey = sortedKeys[sortedKeys.length - 1];
+                const [startAno, startMes] = minKey.split('-').map(Number);
+                const [endAno, endMes] = maxKey.split('-').map(Number);
+
+                const fullKeys = [];
+                let curAno = startAno;
+                let curMes = startMes;
+
+                while (curAno < endAno || (curAno === endAno && curMes <= endMes)) {
+                    const k = `${curAno}-${String(curMes).padStart(2, '0')}`;
+                    const lbl = `${String(curMes).padStart(2, '0')}/${curAno}`;
+                    if (!timelineMap[k]) {
+                        timelineMap[k] = { label: lbl, count: 0 };
+                    }
+                    fullKeys.push(k);
+                    curMes++;
+                    if (curMes > 12) {
+                        curMes = 1;
+                        curAno++;
+                    }
+                }
+                sortedKeys = fullKeys.slice(-14);
+            } else if (granularidadeEvolutivo === 'diario') {
+                sortedKeys = sortedKeys.slice(-90);
             }
 
             const labels = sortedKeys.map(k => timelineMap[k].label);
@@ -1371,7 +1417,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'OS Criadas',
+                        label: 'OS Abertas',
                         data: dataCounts,
                         borderColor: '#06b6d4',
                         backgroundColor: gradient,
@@ -1417,7 +1463,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ` Criadas: ${context.raw} ordens`;
+                                    return ` Entrantes: ${context.raw} ordens`;
                                 }
                             }
                         }
