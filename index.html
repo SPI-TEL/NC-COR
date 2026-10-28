@@ -669,7 +669,6 @@
             renderEvolucaoGeralChart();
         }
 
-        // Função para conversão robusta de datas
         function parseDataCriacao(val) {
             if (!val) return null;
             const str = String(val).trim();
@@ -989,7 +988,7 @@
                 }
             });
 
-            // Cálculo dos indicadores a partir de dataCriacao
+            // Indicadores de médias
             const datasCriacao = filteredDataset.map(d => d.dataCriacao).filter(Boolean);
             let mediaDiaria = 0;
             let mediaMensal = 0;
@@ -1341,16 +1340,63 @@
             });
         }
 
-        // Gráfico de Evolução de Entrantes totalizando conforme o mês de abertura
+        // Gráfico Evolutivo de Entrantes (SEM FILTRO TEL/VIVO - TOTALIZA TODAS AS ENTRADAS)
         function renderEvolutivoChart() {
             const canvas = document.getElementById('chartEvolutivoEntrantes');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             if (chartEvolutivoInstance) chartEvolutivoInstance.destroy();
 
+            // Captura os demais filtros da tela (exceto gestor)
+            const fExecSemAprov = document.getElementById('filterExecSemAprov').value;
+            const fFatB = document.getElementById('filterFatB').value;
+            const fSLA = document.getElementById('filterSLA').value;
+            const fEstadoOS = document.getElementById('filterEstadoOS').value;
+            const fSC = document.getElementById('filterSC').value;
+            const fRegional = document.getElementById('filterRegional').value;
+            const fSearch = document.getElementById('filterSearch').value.toLowerCase().trim();
+
+            // Dataset independente de TEL/VIVO para o gráfico
+            const datasetSemGestor = rawDataset.filter(item => {
+                if (fExecSemAprov === 'SIM' && !item.isExecSemAprov) return false;
+                if (fExecSemAprov === 'NAO' && item.isExecSemAprov) return false;
+
+                if (fFatB === 'FAT_B' && !item.isFatB) return false;
+                if (fFatB === 'NAO_FAT_B' && item.isFatB) return false;
+
+                if (fSLA === 'VENCIDAS' && !item.isVencida) return false;
+                if (fSLA === 'ACIMA_90' && (item.isVencida || item.slaPctNum < 90)) return false;
+                if (fSLA === 'ACIMA_80' && (item.isVencida || item.slaPctNum < 80)) return false;
+                if (fSLA === '70_80' && (item.isVencida || item.slaPctNum < 70 || item.slaPctNum >= 80)) return false;
+                if (fSLA === 'ABAIXO_70' && (item.isVencida || item.slaPctNum >= 70)) return false;
+
+                if (fEstadoOS !== 'TODOS' && item.estadoOS !== fEstadoOS) return false;
+
+                if (fSC === 'COM_SC' && (!item.numSC || item.numSC === '#REF!')) return false;
+                if (fSC === 'SEM_SC' && (item.numSC && item.numSC !== '#REF!')) return false;
+
+                if (fRegional !== 'TODOS' && item.regional !== fRegional) return false;
+
+                if (selectedTipos.size > 0 && !selectedTipos.has(item.tipoServico)) {
+                    return false;
+                }
+
+                if (fSearch) {
+                    const match = (item.os && item.os.toLowerCase().includes(fSearch)) ||
+                                  (item.site && item.site.toLowerCase().includes(fSearch)) ||
+                                  (item.descricao && item.descricao.toLowerCase().includes(fSearch)) ||
+                                  (item.descricaoAcao && item.descricaoAcao.toLowerCase().includes(fSearch)) ||
+                                  (item.estadoOS && item.estadoOS.toLowerCase().includes(fSearch)) ||
+                                  (item.unidadeNegocio && item.unidadeNegocio.toLowerCase().includes(fSearch));
+                    if (!match) return false;
+                }
+
+                return true;
+            });
+
             const timelineMap = {};
 
-            filteredDataset.forEach(d => {
+            datasetSemGestor.forEach(d => {
                 if (!d.dataCriacao) return;
 
                 let key = '';
@@ -1360,7 +1406,6 @@
                 const dia = String(d.dataCriacao.getDate()).padStart(2, '0');
 
                 if (granularidadeEvolutivo === 'mensal') {
-                    // Totalizador mensal: ano-mês
                     key = `${ano}-${mes}`;
                     label = `${mes}/${ano}`;
                 } else {
@@ -1376,7 +1421,7 @@
 
             let sortedKeys = Object.keys(timelineMap).sort();
 
-            // Sequência contínua de meses para evitar lacunas
+            // Preenchimento contínuo de meses para consistência da linha temporal
             if (granularidadeEvolutivo === 'mensal' && sortedKeys.length > 0) {
                 const minKey = sortedKeys[0];
                 const maxKey = sortedKeys[sortedKeys.length - 1];
@@ -1417,7 +1462,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'OS Abertas',
+                        label: 'OS Abertas (Geral)',
                         data: dataCounts,
                         borderColor: '#06b6d4',
                         backgroundColor: gradient,
@@ -1463,7 +1508,7 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    return ` Entrantes: ${context.raw} ordens`;
+                                    return ` Entrantes (Total): ${context.raw} ordens`;
                                 }
                             }
                         }
