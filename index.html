@@ -93,7 +93,7 @@
                 <!-- Filtro Status / Ativa (Coluna AV) -->
                 <div>
                     <label class="block text-[10px] text-emerald-400 font-medium mb-1">STATUS (ATIVA)</label>
-                    <select id="filterAtiva" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-emerald-200 border border-emerald-800 rounded-lg px-2.5 py-1.5 focus:border-emerald-500 focus:outline-none">
+                    <select id="filterAtiva" onchange="onAtivaChange()" class="w-full bg-slate-800 text-xs text-emerald-200 border border-emerald-800 rounded-lg px-2.5 py-1.5 focus:border-emerald-500 focus:outline-none">
                         <option value="TODOS">Todos</option>
                     </select>
                 </div>
@@ -694,26 +694,59 @@
             renderEvolucaoGeralChart();
         }
 
-        // Lê a coluna N (Data de Criação) com tratamento flexível
+        // Leitura precisa de datas: evita distorções de ano futuro (ex: 2027/2028 por troca de dia por ano)
         function parseDataCriacao(val) {
             if (!val) return null;
             const str = String(val).trim();
-            if (!str) return null;
+            if (!str || str.includes('#')) return null;
 
-            // Formato DD/MM/YYYY ou DD/MM/YYYY HH:MM:SS
-            const dmy = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
-            if (dmy) {
-                const dia = parseInt(dmy[1], 10);
-                const mes = parseInt(dmy[2], 10) - 1;
-                let ano = parseInt(dmy[3], 10);
-                if (ano < 100) ano += 2000;
+            // Formato ISO: YYYY-MM-DD
+            const isoMatch = str.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
+            if (isoMatch) {
+                const ano = parseInt(isoMatch[1], 10);
+                const mes = parseInt(isoMatch[2], 10) - 1;
+                const dia = parseInt(isoMatch[3], 10);
                 const d = new Date(ano, mes, dia);
                 if (!isNaN(d.getTime())) return d;
             }
 
-            // ISO YYYY-MM-DD
+            // Formato com separador: DD/MM/YYYY ou DD-MM-YYYY
+            const partsMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+            if (partsMatch) {
+                let p1 = parseInt(partsMatch[1], 10);
+                let p2 = parseInt(partsMatch[2], 10);
+                let ano = parseInt(partsMatch[3], 10);
+
+                if (ano < 100) {
+                    ano += (ano < 50 ? 2000 : 1900);
+                }
+
+                let dia = p1;
+                let mes = p2 - 1;
+
+                // Se o segundo termo for maior que 12, é certamente MM/DD/YYYY
+                if (p2 > 12) {
+                    dia = p2;
+                    mes = p1 - 1;
+                }
+
+                // Proteção contra leitura invertida (se o ano resultante for anómalo no futuro)
+                const anoAtualLimite = new Date().getFullYear() + 1;
+                if (ano > anoAtualLimite) {
+                    if (p1 + 2000 <= anoAtualLimite) {
+                        dia = ano % 100;
+                        ano = 2000 + p1;
+                    }
+                }
+
+                const d = new Date(ano, mes, dia);
+                if (!isNaN(d.getTime())) return d;
+            }
+
             const iso = new Date(str);
-            if (!isNaN(iso.getTime())) return iso;
+            if (!isNaN(iso.getTime()) && iso.getFullYear() <= new Date().getFullYear() + 1) {
+                return iso;
+            }
 
             return null;
         }
@@ -723,6 +756,40 @@
                 const os = (row['Número OS'] || row['Numero OS'] || '').trim();
                 return os && os !== '#REF!' && !os.includes('#REF');
             }).map(row => {
+                const rowKeys = Object.keys(row);
+
+                // Mapeamento Coluna AV (Status / Ativa) por cabeçalho ou por índice da coluna (47/48)
+                let statusAtiva = (
+                    row['Ativa'] || 
+                    row['ATIVA'] || 
+                    row['Status Ativa'] || 
+                    row['Status'] || 
+                    row['Situação'] || 
+                    row['SITUACAO'] || 
+                    ''
+                ).trim();
+
+                if (!statusAtiva && rowKeys.length >= 48) {
+                    statusAtiva = String(row[rowKeys[47]] || row[rowKeys[48]] || '').trim();
+                }
+                if (!statusAtiva) statusAtiva = 'NÃO INFORMADO';
+
+                // Mapeamento Coluna N (Data Criação) por cabeçalho ou índice 13
+                let dataCriacaoStr = (
+                    row['Data Criação'] || 
+                    row['Data Criacao'] || 
+                    row['DATA CRIAÇÃO'] || 
+                    row['Data de Criação'] || 
+                    row['Criação'] || 
+                    ''
+                ).trim();
+
+                if (!dataCriacaoStr && rowKeys.length >= 14) {
+                    dataCriacaoStr = String(row[rowKeys[13]] || '').trim();
+                }
+
+                const dtCriacao = parseDataCriacao(dataCriacaoStr);
+
                 const valStr = (row['Valor Materiais Externos'] || '0')
                     .replace('R$', '')
                     .replace(/\./g, '')
@@ -750,13 +817,6 @@
 
                 // Coluna J: Denominação Estado OS
                 const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || row['Estado'] || 'N/A').trim();
-
-                // Coluna N: Data Criação
-                const dataCriacaoStr = (row['Data Criação'] || row['Data Criacao'] || row['Data de Criação'] || row['Data de Criacao'] || row['Criação'] || '').trim();
-                const dtCriacao = parseDataCriacao(dataCriacaoStr);
-
-                // Coluna AV: Ativa / Status
-                const statusAtiva = (row['Ativa'] || row['Status Ativa'] || row['Status'] || row['Situação'] || 'N/A').trim();
 
                 const tempoRestanteRaw = (row['Tempo Restante'] || '').trim();
                 let tempoRestanteNum = null;
@@ -810,18 +870,21 @@
             applyFilters();
         }
 
+        // Vinculação Dinâmica: Atualiza as opções de Estado OS cruzando com Gestor E Status da Coluna AV
         function updateEstadoOSOptions() {
             const fGestor = document.getElementById('filterGestor').value;
+            const fAtiva = document.getElementById('filterAtiva') ? document.getElementById('filterAtiva').value : 'TODOS';
             const selEstadoOS = document.getElementById('filterEstadoOS');
             const valorAtual = selEstadoOS.value;
 
-            const baseFiltradaPorGestor = rawDataset.filter(d => {
-                if (fGestor === 'TEL') return d.gestor.includes('TEL');
-                if (fGestor === 'VIVO') return d.gestor.includes('VIVO');
+            const baseFiltrada = rawDataset.filter(d => {
+                if (fGestor === 'TEL' && !d.gestor.includes('TEL')) return false;
+                if (fGestor === 'VIVO' && !d.gestor.includes('VIVO')) return false;
+                if (fAtiva !== 'TODOS' && d.statusAtiva.toUpperCase() !== fAtiva.toUpperCase()) return false;
                 return true;
             });
 
-            const estados = [...new Set(baseFiltradaPorGestor.map(d => d.estadoOS))].filter(Boolean).sort();
+            const estados = [...new Set(baseFiltrada.map(d => d.estadoOS))].filter(Boolean).sort();
 
             selEstadoOS.innerHTML = '<option value="TODOS">Todos</option>';
             estados.forEach(e => {
@@ -840,11 +903,16 @@
             applyFilters();
         }
 
+        function onAtivaChange() {
+            updateEstadoOSOptions();
+            applyFilters();
+        }
+
         function populateDropdownFilters() {
             const regionais = [...new Set(rawDataset.map(d => d.regional))].filter(Boolean).sort();
             availableTipos = [...new Set(rawDataset.map(d => d.tipoServico))].filter(Boolean).sort();
 
-            // Popula Status da Coluna AV (Ativa / Encerrada / Cancelada...)
+            // Opções da coluna AV (Ativa / Encerrada / Cancelada...)
             const statusAtivas = [...new Set(rawDataset.map(d => d.statusAtiva))].filter(Boolean).sort();
             const selAtiva = document.getElementById('filterAtiva');
             selAtiva.innerHTML = '<option value="TODOS">Todos</option>';
@@ -929,8 +997,7 @@
                 if (fGestor === 'TEL' && !item.gestor.includes('TEL')) return false;
                 if (fGestor === 'VIVO' && !item.gestor.includes('VIVO')) return false;
 
-                // Filtro da coluna Ativa (AV)
-                if (fAtiva !== 'TODOS' && item.statusAtiva !== fAtiva) return false;
+                if (fAtiva !== 'TODOS' && item.statusAtiva.toUpperCase() !== fAtiva.toUpperCase()) return false;
 
                 if (fExecSemAprov === 'SIM' && !item.isExecSemAprov) return false;
                 if (fExecSemAprov === 'NAO' && item.isExecSemAprov) return false;
@@ -1384,7 +1451,7 @@
             });
         }
 
-        // Gráfico Evolutivo de Entrantes (Coluna N + Linha de Média + Filtro de Período)
+        // Gráfico Evolutivo de Entrantes (Coluna N + Média + Filtro de Período)
         function renderEvolutivoChart() {
             const canvas = document.getElementById('chartEvolutivoEntrantes');
             if (!canvas) return;
@@ -1400,9 +1467,8 @@
             const fRegional = document.getElementById('filterRegional').value;
             const fSearch = document.getElementById('filterSearch').value.toLowerCase().trim();
 
-            // Dataset sem filtro de Gestor, mas respeitando demais seleções
             const datasetSemGestor = rawDataset.filter(item => {
-                if (fAtiva !== 'TODOS' && item.statusAtiva !== fAtiva) return false;
+                if (fAtiva !== 'TODOS' && item.statusAtiva.toUpperCase() !== fAtiva.toUpperCase()) return false;
                 if (fExecSemAprov === 'SIM' && !item.isExecSemAprov) return false;
                 if (fExecSemAprov === 'NAO' && item.isExecSemAprov) return false;
 
@@ -1440,7 +1506,7 @@
                 return true;
             });
 
-            // Encontra a data máxima da base para calcular a janela de período
+            // Encontrar data de referência real da base
             const datasValidas = datasetSemGestor.map(d => d.dataCriacao).filter(Boolean);
             let maxDate = new Date();
             if (datasValidas.length > 0) {
@@ -1493,7 +1559,6 @@
 
             let sortedKeys = Object.keys(timelineMap).sort();
 
-            // Preenchimento contínuo mensal
             if (granularidadeEvolutivo === 'mensal' && sortedKeys.length > 0) {
                 const minKey = sortedKeys[0];
                 const maxKey = sortedKeys[sortedKeys.length - 1];
@@ -1519,7 +1584,7 @@
                 }
                 sortedKeys = fullKeys;
                 if (periodoEvolutivo === 'todos') {
-                    sortedKeys = sortedKeys.slice(-24); // Exibe até 24 meses se for 'todos'
+                    sortedKeys = sortedKeys.slice(-24);
                 }
             } else if (granularidadeEvolutivo === 'diario') {
                 if (periodoEvolutivo === 'todos') {
@@ -1530,7 +1595,6 @@
             const labels = sortedKeys.map(k => timelineMap[k].label);
             const dataCounts = sortedKeys.map(k => timelineMap[k].count);
 
-            // Cálculo da Média de Entrantes
             const totalSoma = dataCounts.reduce((acc, c) => acc + c, 0);
             const mediaEntrantes = dataCounts.length > 0 ? (totalSoma / dataCounts.length) : 0;
             const dataMedia = dataCounts.map(() => Number(mediaEntrantes.toFixed(1)));
@@ -1758,7 +1822,6 @@
                     slaBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">${row.slaPctNum}%</span>`;
                 }
 
-                // Badge de Status (Coluna AV)
                 let statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700">${row.statusAtiva}</span>`;
                 const sUpper = row.statusAtiva.toUpperCase();
                 if (sUpper.includes('ATIVA') || sUpper.includes('SIM') || sUpper.includes('ABERTA')) {
