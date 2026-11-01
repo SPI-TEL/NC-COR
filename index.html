@@ -91,20 +91,19 @@
 
         <!-- KPIs Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
-            <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-blue-500">
+            <!-- 1. Total OS (Sem rodapé de total apurado) -->
+            <div class="card-clean p-3.5 flex flex-col justify-center border-t-4 border-t-blue-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span>Total OS</span>
                     <i class="fa-solid fa-list-check text-blue-500"></i>
                 </div>
-                <div class="my-1.5">
-                    <span id="kpiTotalOS" class="text-2xl font-black text-slate-800">0</span>
+                <div class="my-2">
+                    <span id="kpiTotalOS" class="text-3xl font-black text-slate-800">0</span>
                 </div>
-                <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span class="text-slate-400">Total apurado</span>
-                    <strong id="kpiMediaReaisOS" class="text-slate-700 font-semibold">R$ 0</strong>
-                </div>
+                <span class="text-[10px] text-slate-400 font-medium">Ordens apuradas</span>
             </div>
 
+            <!-- 2. Média Diária -->
             <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-cyan-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span>Média Diária</span>
@@ -119,6 +118,7 @@
                 </div>
             </div>
 
+            <!-- 3. Vol. Mensal -->
             <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-indigo-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span>Vol. Mensal</span>
@@ -133,36 +133,35 @@
                 </div>
             </div>
 
-            <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-purple-500">
+            <!-- 4. FAT-B (Qtde) (Sem rodapé de segmento) -->
+            <div class="card-clean p-3.5 flex flex-col justify-center border-t-4 border-t-purple-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span>FAT-B (Qtde)</span>
                     <i class="fa-solid fa-receipt text-purple-500"></i>
                 </div>
-                <div class="my-1.5 flex items-baseline justify-between">
-                    <span id="kpiFatBQtde" class="text-2xl font-black text-purple-600">0</span>
+                <div class="my-2 flex items-baseline justify-between">
+                    <span id="kpiFatBQtde" class="text-3xl font-black text-purple-600">0</span>
                     <span id="kpiFatBPct" class="text-[10px] font-bold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded">0%</span>
                 </div>
-                <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span class="text-slate-400">Segmento</span>
-                    <strong id="kpiFatBReais" class="text-purple-700 font-semibold">R$ 0</strong>
-                </div>
+                <span class="text-[10px] text-slate-400 font-medium">Volume FAT-B</span>
             </div>
 
+            <!-- 5. FAT-B (R$) -->
             <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-emerald-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
-                    <span>Exec. s/ Aprov.</span>
-                    <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                    <span>FAT-B (R$)</span>
+                    <i class="fa-solid fa-money-bill-wave text-emerald-500"></i>
                 </div>
-                <div class="my-1.5 flex items-baseline justify-between">
-                    <span id="kpiExecSemAprov" class="text-2xl font-black text-emerald-600">0</span>
-                    <span id="kpiExecSemAprovPct" class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">0%</span>
+                <div class="my-1.5">
+                    <span id="kpiFatBReais" class="text-xl font-black text-emerald-600 truncate block">R$ 0</span>
                 </div>
                 <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span class="text-slate-400">Necessidade</span>
-                    <strong class="text-emerald-700 font-semibold">Pend. Validação</strong>
+                    <span class="text-slate-400">Total Faturamento</span>
+                    <span id="kpiFatBReaisPct" class="text-emerald-700 font-bold text-[10px]">0% do total</span>
                 </div>
             </div>
 
+            <!-- 6. Alerta SLA >80% -->
             <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-amber-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span>Alerta SLA >80%</span>
@@ -177,6 +176,7 @@
                 </div>
             </div>
 
+            <!-- 7. Vencidas / Risco (Vencidas + Acima de 90%) -->
             <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-rose-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span>Vencidas / Risco</span>
@@ -186,7 +186,7 @@
                     <span id="kpiRiscoTotal" class="text-2xl font-black text-rose-600">0</span>
                 </div>
                 <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span id="kpiRiscoDetail" class="text-rose-600 font-semibold text-[10px]">0 Venc. | 0 >80%</span>
+                    <span id="kpiRiscoDetail" class="text-rose-600 font-semibold text-[10px]">0 Venc. | 0 >90%</span>
                 </div>
             </div>
         </div>
@@ -292,9 +292,9 @@
             </div>
         </section>
 
-        <!-- Gráficos Operacionais (SLA, Volume por Regional e Valores por Regional) -->
+        <!-- Gráficos Operacionais (SLA Donut mais grosso, Volume por Regional e Valores por Regional) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <!-- Gráfico SLA Donut -->
+            <!-- Gráfico SLA Donut (espessura aumentada com cutout: 50%) -->
             <div class="card-clean p-4 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase">
@@ -302,7 +302,7 @@
                     </h3>
                     <span class="text-[10px] text-slate-400 font-semibold">Atendimento</span>
                 </div>
-                <div class="relative w-full h-[140px] flex items-center justify-center my-auto">
+                <div class="relative w-full h-[150px] flex items-center justify-center my-auto">
                     <canvas id="chartSlaPizza"></canvas>
                 </div>
                 <div class="grid grid-cols-2 gap-x-2 gap-y-1 pt-3 border-t border-slate-100 text-[11px] mt-2">
@@ -352,7 +352,7 @@
             </div>
         </div>
 
-        <!-- Rankings Operacionais -->
+        <!-- Rankings Operacionais (com Bauru/BAURU unificados) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div class="card-clean p-4 flex flex-col">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
@@ -567,13 +567,18 @@
 
     <!-- Script de Lógica e Renderização -->
     <script>
-        // URLs corrigidas para formato CSV (resolvendo o problema de pubhtml que quebrava o carregamento)
         function getOSUrl() {
             return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=517461846&single=true&output=csv&_t=" + Date.now();
         }
 
         function getEvolucaoUrl() {
             return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=748000966&single=true&output=csv&_t=" + Date.now();
+        }
+
+        // Função para padronizar e unificar nomes (ex: Bauru e BAURU viram BAURU)
+        function normalizarNome(texto) {
+            if (!texto) return 'NÃO DEFINIDA';
+            return texto.toString().trim().toUpperCase().replace(/\s+/g, ' ');
         }
 
         let rawDataset = [];
@@ -730,7 +735,6 @@
         function parseBrazilianDate(str) {
             if (!str) return null;
             str = str.trim();
-            // DD/MM/YYYY
             const parts = str.split(/[\/\-]/);
             if (parts.length === 3) {
                 if (parts[2].length === 4) {
@@ -798,6 +802,10 @@
 
                 const isExecSemAprov = necessidade.includes('EXEC') && (necessidade.includes('SEM') || prioridadeVivo.includes('NÃO EXEC') || prioridadeVivo.includes('SEM APR') || etapaEsteira.toUpperCase().includes('APROV'));
 
+                // Normalização para evitar duplicidade de Bauru / BAURU
+                const regionalNorm = normalizarNome(row['Regional'] || row['REGIONAL'] || 'SEM REGIONAL');
+                const unidadeNegocioNorm = normalizarNome(row['Denominação Unidade Negócio'] || row['Unidade Negocio'] || row['Área'] || 'NÃO DEFINIDA');
+
                 return {
                     os: row['Número OS'] || row['Numero OS'] || row['OS'] || row['N° OS'],
                     sgm: row['SGM'] || '',
@@ -805,7 +813,7 @@
                     descricao: row['Descrição OS'] || row['Descricao OS'] || '',
                     estadoOS: estadoOS,
                     tipoServico: (row['Tipo de Serviço'] || row['Tipo de Servico'] || row['TIPO'] || 'OUTROS').toString().trim(),
-                    regional: (row['Regional'] || row['REGIONAL'] || 'SEM REGIONAL').toString().trim(),
+                    regional: regionalNorm,
                     coordenador: row['Coordenador'] || '',
                     dataCriacao: dtCriacao,
                     dataCriacaoStr: dataCriacaoStr,
@@ -821,7 +829,7 @@
                     etapaEsteira: etapaEsteira,
                     numSC: (row['N° SC'] || row['No SC'] || row['SC'] || '').toString().trim(),
                     responsavel: row['Responsável'] || row['Responsavel'] || '',
-                    unidadeNegocio: (row['Denominação Unidade Negócio'] || row['Unidade Negocio'] || row['Área'] || 'NÃO DEFINIDA').toString().trim(),
+                    unidadeNegocio: unidadeNegocioNorm,
                     tempoRestante: tempoRestanteNum,
                     tempoRestanteRaw: tempoRestanteRaw,
                     descricaoAcao: descricaoAcao,
@@ -988,17 +996,13 @@
             const fatBQtde = fatBList.length;
             const fatBReais = fatBList.reduce((acc, curr) => acc + curr.valorMateriais, 0);
 
-            const execSemAprovList = filteredDataset.filter(d => d.isExecSemAprov);
-            const execSemAprovQtde = execSemAprovList.length;
-
             const totalReais = filteredDataset.reduce((acc, curr) => acc + curr.valorMateriais, 0);
-            const mediaReaisPorOS = total > 0 ? (totalReais / total) : 0;
 
             let abaixo70 = 0;
             let entre70e80 = 0;
             let acima80 = 0;
-            let vencidas = 0;
             let acima90 = 0;
+            let vencidas = 0;
 
             filteredDataset.forEach(d => {
                 if (d.isVencida) {
@@ -1027,22 +1031,30 @@
                 mediaMensal = total;
             }
 
+            // 1. Total OS
             document.getElementById('kpiTotalOS').innerText = total.toLocaleString('pt-BR');
+            
+            // 2. Média Diária & Mensal
             document.getElementById('kpiMediaDiaria').innerText = mediaDiaria.toFixed(1);
             document.getElementById('kpiVolMensal').innerText = mediaMensal.toLocaleString('pt-BR');
+            
+            // 3. FAT-B Qtde
             document.getElementById('kpiFatBQtde').innerText = fatBQtde.toLocaleString('pt-BR');
             document.getElementById('kpiFatBPct').innerText = total > 0 ? `${((fatBQtde / total) * 100).toFixed(1)}%` : '0%';
+
+            // 4. FAT-B (R$)
             document.getElementById('kpiFatBReais').innerText = fatBReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            document.getElementById('kpiFatBReaisPct').innerText = totalReais > 0 ? `${((fatBReais / totalReais) * 100).toFixed(1)}% do total R$` : '0% do total R$';
 
-            document.getElementById('kpiExecSemAprov').innerText = execSemAprovQtde.toLocaleString('pt-BR');
-            document.getElementById('kpiExecSemAprovPct').innerText = total > 0 ? `${((execSemAprovQtde / total) * 100).toFixed(1)}%` : '0%';
-
+            // 5. Alerta SLA >80%
             document.getElementById('kpiAcima80').innerText = acima80.toLocaleString('pt-BR');
-            document.getElementById('kpiMediaReaisOS').innerText = mediaReaisPorOS.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
-            document.getElementById('kpiRiscoTotal').innerText = (vencidas + acima80).toLocaleString('pt-BR');
-            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Venc. | ${acima80} >80%`;
+            // 6. Vencidas / Risco (Vencidas + Acima de 90%)
+            const riscoContabilizado = vencidas + acima90;
+            document.getElementById('kpiRiscoTotal').innerText = riscoContabilizado.toLocaleString('pt-BR');
+            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Venc. | ${acima90} >90%`;
 
+            // Faixas Donut Labels
             document.getElementById('lblFaixa1').innerText = abaixo70.toLocaleString('pt-BR');
             document.getElementById('lblFaixa2').innerText = entre70e80.toLocaleString('pt-BR');
             document.getElementById('lblFaixa3').innerText = acima80.toLocaleString('pt-BR');
@@ -1056,6 +1068,7 @@
             renderTable();
         }
 
+        // Gráfico Donut de SLA com espessura mais grossa (cutout: 50%)
         function renderSlaDonut(f1, f2, f3, f4) {
             const canvas = document.getElementById('chartSlaPizza');
             if (!canvas) return;
@@ -1090,7 +1103,7 @@
                             }
                         }
                     },
-                    cutout: '70%'
+                    cutout: '50%' // Anel mais grosso
                 }
             });
         }
@@ -1420,6 +1433,7 @@
             });
         }
 
+        // Rankings com as áreas e regionais já unificadas sem distinção de case
         function renderRankings() {
             const areaStats = {};
             const regionalStats = {};
