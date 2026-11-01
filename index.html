@@ -96,7 +96,7 @@
             </div>
         </div>
 
-        <!-- KPIs Cards (8 Colunas: FAT-B ocupa 2 e os demais ocupam 1) -->
+        <!-- KPIs Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-2.5">
             <!-- 1. Total OS -->
             <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-blue-500">
@@ -301,7 +301,7 @@
 
         <!-- Gráficos Operacionais -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <!-- Gráfico SLA Donut (espesso / cutout: 50%) -->
+            <!-- Gráfico SLA Donut -->
             <div class="card-clean p-4 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-2">
                     <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase">
@@ -359,7 +359,7 @@
             </div>
         </div>
 
-        <!-- Rankings Operacionais (Sem barra de rolagem vertical) -->
+        <!-- Rankings Operacionais -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div class="card-clean p-4 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
@@ -468,14 +468,14 @@
             </div>
         </div>
 
-        <!-- Tabela Detalhada -->
+        <!-- Tabela Detalhada com Previsão Revisada -->
         <div class="card-clean p-4 flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-3 pb-2 border-b border-slate-100">
                 <div>
                     <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase">
                         <i class="fa-solid fa-table-list text-cyan-600"></i> Detalhamento Analítico de Ordens de Serviço
                     </h3>
-                    <p class="text-[11px] text-slate-400">Listagem analítica com prazos, dias restantes, estado da OS e ações detalhadas</p>
+                    <p class="text-[11px] text-slate-400">Listagem analítica com previsão revisada, dias restantes, estado da OS e ações detalhadas</p>
                 </div>
                 <div class="flex items-center gap-2 no-print">
                     <span id="recordsCount" class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">Exibindo 0 registros</span>
@@ -494,7 +494,7 @@
                             <th class="py-2.5 px-3">Regional</th>
                             <th class="py-2.5 px-3">Tipo Serviço</th>
                             <th class="py-2.5 px-3">Gestor</th>
-                            <th class="py-2.5 px-3">Prazo</th>
+                            <th class="py-2.5 px-3">Previsão Revisada</th>
                             <th class="py-2.5 px-3 text-center">Dias Restantes</th>
                             <th class="py-2.5 px-3">% SLA</th>
                             <th class="py-2.5 px-3">Valor Materiais</th>
@@ -806,6 +806,9 @@
                 const etapaEsteira = (row['Etapa Esteira'] || '').toString().trim();
                 const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || row['Estado'] || '').toString().trim();
 
+                // Leitura da Previsão Revisada
+                const previsaoRevisada = (row['Previsão Revisada'] || row['Previsao Revisada'] || row['Previsão revisada'] || row['Previsao revisada'] || '-').toString().trim();
+
                 const isExecSemAprov = necessidade.includes('EXEC') && (necessidade.includes('SEM') || prioridadeVivo.includes('NÃO EXEC') || prioridadeVivo.includes('SEM APR') || etapaEsteira.toUpperCase().includes('APROV'));
 
                 const regionalNorm = normalizarNome(row['Regional'] || row['REGIONAL'] || 'SEM REGIONAL');
@@ -817,6 +820,7 @@
                     site: row['Site'] || row['SITE'] || 'N/A',
                     descricao: row['Descrição OS'] || row['Descricao OS'] || '',
                     estadoOS: estadoOS,
+                    previsaoRevisada: previsaoRevisada,
                     tipoServico: (row['Tipo de Serviço'] || row['Tipo de Servico'] || row['TIPO'] || 'OUTROS').toString().trim(),
                     regional: regionalNorm,
                     coordenador: row['Coordenador'] || '',
@@ -1039,7 +1043,7 @@
             // 1. Total OS
             document.getElementById('kpiTotalOS').innerText = total.toLocaleString('pt-BR');
             
-            // 2. Média Diária & Mensal (com o mesmo tamanho visual)
+            // 2. Média Diária & Mensal
             document.getElementById('kpiMediaDiaria').innerText = mediaDiaria.toFixed(1);
             document.getElementById('kpiVolMensal').innerText = mediaMensal.toLocaleString('pt-BR');
             
@@ -1052,7 +1056,7 @@
             const fatBPctFinanceiro = totalReais > 0 ? ((fatBReais / totalReais) * 100).toFixed(1) : '0.0';
             document.getElementById('kpiFatBReaisPct').innerText = `${fatBPctFinanceiro}%`;
 
-            // 5. Alerta SLA >80% (mesmo tamanho que o Total OS)
+            // 5. Alerta SLA >80%
             document.getElementById('kpiAcima80').innerText = acima80.toLocaleString('pt-BR');
 
             // 6. Vencidas / Risco (Vencidas + Acima de 90%)
@@ -1074,7 +1078,6 @@
             renderTable();
         }
 
-        // Gráfico Donut de SLA com espessura mais grossa (cutout: 50%)
         function renderSlaDonut(f1, f2, f3, f4) {
             const canvas = document.getElementById('chartSlaPizza');
             if (!canvas) return;
@@ -1598,7 +1601,7 @@
                         <td class="py-2.5 px-3 text-slate-600 font-medium">${row.regional}</td>
                         <td class="py-2.5 px-3"><span class="px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded font-mono text-[10px] font-semibold border border-slate-200">${row.tipoServico}</span></td>
                         <td class="py-2.5 px-3">${gestorTag}</td>
-                        <td class="py-2.5 px-3 font-semibold ${row.isVencida ? 'text-rose-600' : 'text-slate-600'}">${row.prazo || 'N/A'}</td>
+                        <td class="py-2.5 px-3 font-medium text-slate-700">${row.previsaoRevisada || '-'}</td>
                         <td class="py-2.5 px-3 text-center">${tempoRestanteBadge}</td>
                         <td class="py-2.5 px-3">${slaBadge}</td>
                         <td class="py-2.5 px-3 ${valorClass}">${valorFormatado}</td>
@@ -1665,7 +1668,7 @@
                 "Área / Unidade Negócio": d.unidadeNegocio,
                 "Tipo de Serviço": d.tipoServico,
                 "Gestor": d.gestor,
-                "Status Prazo": d.prazo,
+                "Previsão Revisada": d.previsaoRevisada,
                 "Dias Restantes": d.tempoRestante !== null ? d.tempoRestante : d.tempoRestanteRaw,
                 "% SLA": d.slaPctStr,
                 "Valor Materiais (R$)": d.valorMateriais,
@@ -1686,7 +1689,7 @@
 
             wsAnalitico['!cols'] = [
                 { wch: 14 }, { wch: 20 }, { wch: 12 }, { wch: 22 },
-                { wch: 14 }, { wch: 10 }, { wch: 14 }, { wch: 14 },
+                { wch: 14 }, { wch: 10 }, { wch: 16 }, { wch: 14 },
                 { wch: 10 }, { wch: 16 }, { wch: 12 }, { wch: 25 },
                 { wch: 25 }, { wch: 18 }, { wch: 16 }, { wch: 12 },
                 { wch: 35 }, { wch: 35 }
