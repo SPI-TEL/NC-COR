@@ -96,104 +96,104 @@
             </div>
         </div>
 
-        <!-- KPIs Cards -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
-            <!-- 1. Total OS (Sem rodapé de total apurado) -->
-            <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-blue-500">
+        <!-- KPIs Cards (8 Colunas: FAT-B ocupa 2 e os demais ocupam 1, todos estilizados e harmonizados) -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-2.5">
+            <!-- 1. Total OS -->
+            <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-blue-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
-                    <span>Total OS</span>
+                    <span class="truncate">Total OS</span>
                     <i class="fa-solid fa-list-check text-blue-500"></i>
                 </div>
-                <div class="my-2">
+                <div class="my-1.5">
                     <span id="kpiTotalOS" class="text-3xl font-black text-slate-800">0</span>
                 </div>
                 <span class="text-[10px] text-slate-400 font-medium">Ordens apuradas</span>
             </div>
 
-            <!-- 2. Média Diária -->
-            <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-cyan-500">
+            <!-- 2. Média Diária (Tamanho text-3xl font-black) -->
+            <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-cyan-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
-                    <span>Média Diária</span>
+                    <span class="truncate">Média Diária</span>
                     <i class="fa-solid fa-calendar-day text-cyan-500"></i>
                 </div>
                 <div class="my-1.5">
-                    <span id="kpiMediaDiaria" class="text-2xl font-black text-cyan-600">0.0</span>
+                    <span id="kpiMediaDiaria" class="text-3xl font-black text-cyan-600">0.0</span>
                 </div>
-                <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span class="text-slate-400">Por dia c/ reg.</span>
+                <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[10px]">
+                    <span class="text-slate-400">Por dia</span>
                     <strong class="text-cyan-700 font-semibold">Entrantes</strong>
                 </div>
             </div>
 
-            <!-- 3. Vol. Mensal -->
-            <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-indigo-500">
+            <!-- 3. Vol. Mensal (Tamanho text-3xl font-black) -->
+            <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-indigo-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
-                    <span>Vol. Mensal</span>
+                    <span class="truncate">Vol. Mensal</span>
                     <i class="fa-solid fa-calendar-week text-indigo-500"></i>
                 </div>
                 <div class="my-1.5">
-                    <span id="kpiVolMensal" class="text-2xl font-black text-indigo-600">0</span>
+                    <span id="kpiVolMensal" class="text-3xl font-black text-indigo-600">0</span>
                 </div>
-                <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[10px]">
                     <span class="text-slate-400">Média/mês</span>
                     <strong class="text-indigo-700 font-semibold">Ativações</strong>
                 </div>
             </div>
 
-            <!-- 4. FAT-B (Qtde) (Sem rodapé de segmento) -->
-            <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-purple-500">
+            <!-- 4. FAT-B (Qtde) -->
+            <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-purple-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
-                    <span>FAT-B (Qtde)</span>
+                    <span class="truncate">FAT-B (Qtde)</span>
                     <i class="fa-solid fa-receipt text-purple-500"></i>
                 </div>
-                <div class="my-2 flex items-baseline justify-between">
+                <div class="my-1.5 flex items-baseline justify-between">
                     <span id="kpiFatBQtde" class="text-3xl font-black text-purple-600">0</span>
-                    <span id="kpiFatBPct" class="text-[10px] font-bold text-purple-700 bg-purple-50 px-1.5 py-0.5 rounded">0%</span>
+                    <span id="kpiFatBPct" class="text-[9px] font-bold text-purple-700 bg-purple-50 px-1 py-0.5 rounded">0%</span>
                 </div>
                 <span class="text-[10px] text-slate-400 font-medium">Volume FAT-B</span>
             </div>
 
-            <!-- 5. FAT-B (R$) Ajustado (Sem "faturamento" e sem "do total R$", valor completo) -->
-            <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-emerald-500">
+            <!-- 5. FAT-B (R$) (Card mais largo com span 2 colunas para exibição integral do valor) -->
+            <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-emerald-500 col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 bg-gradient-to-b from-emerald-50/20 to-white">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span>FAT-B (R$)</span>
-                    <i class="fa-solid fa-money-bill-wave text-emerald-500"></i>
+                    <i class="fa-solid fa-money-bill-wave text-emerald-500 text-sm"></i>
                 </div>
                 <div class="my-1.5">
-                    <span id="kpiFatBReais" class="text-lg sm:text-xl font-black text-emerald-600 whitespace-nowrap block">R$ 0,00</span>
+                    <span id="kpiFatBReais" class="text-2xl sm:text-3xl font-black text-emerald-600 tracking-tight whitespace-nowrap block">R$ 0,00</span>
                 </div>
-                <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[11px]">
                     <span class="text-slate-400">Proporção</span>
-                    <span id="kpiFatBReaisPct" class="text-emerald-700 font-bold text-[11px]">0.0%</span>
+                    <span id="kpiFatBReaisPct" class="text-emerald-700 font-extrabold text-[11px]">0.0%</span>
                 </div>
             </div>
 
-            <!-- 6. Alerta SLA >80% -->
-            <div class="card-clean p-3.5 flex flex-col justify-between border-t-4 border-t-amber-500">
+            <!-- 6. Alerta SLA >80% (Tamanho text-3xl font-black) -->
+            <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-amber-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
-                    <span>Alerta SLA >80%</span>
+                    <span class="truncate">Alerta >80%</span>
                     <i class="fa-solid fa-hourglass-half text-amber-500"></i>
                 </div>
                 <div class="my-1.5">
-                    <span id="kpiAcima80" class="text-2xl font-black text-amber-600">0</span>
+                    <span id="kpiAcima80" class="text-3xl font-black text-amber-600">0</span>
                 </div>
-                <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                <div class="pt-1 border-t border-slate-100 flex items-center justify-between text-[10px]">
                     <span class="text-slate-400">Atenção</span>
                     <strong class="text-amber-700 font-semibold">Críticas</strong>
                 </div>
             </div>
 
-            <!-- 7. Vencidas / Risco (Fundo Vermelho com Letras Claras/Brancas) -->
-            <div class="rounded-xl p-3.5 flex flex-col justify-between bg-rose-600 text-white shadow-md border border-rose-700">
+            <!-- 7. Vencidas / Risco (Fundo Vermelho Sólido e Letras Brancas) -->
+            <div class="rounded-xl p-3 flex flex-col justify-between bg-rose-600 text-white shadow-md border border-rose-700">
                 <div class="flex items-center justify-between text-[11px] font-bold text-rose-100 uppercase">
-                    <span>Vencidas / Risco</span>
+                    <span class="truncate">Venc. / Risco</span>
                     <i class="fa-solid fa-triangle-exclamation text-white"></i>
                 </div>
                 <div class="my-1.5">
                     <span id="kpiRiscoTotal" class="text-3xl font-black text-white">0</span>
                 </div>
-                <div class="pt-1.5 border-t border-rose-500/60 flex items-center justify-between text-[11px]">
-                    <span id="kpiRiscoDetail" class="text-rose-100 font-bold text-[11px]">0 Venc. | 0 >90%</span>
+                <div class="pt-1 border-t border-rose-500/60 flex items-center justify-between text-[10px]">
+                    <span id="kpiRiscoDetail" class="text-rose-100 font-bold">0 Venc. | 0 >90%</span>
                 </div>
             </div>
         </div>
@@ -359,7 +359,7 @@
             </div>
         </div>
 
-        <!-- Rankings Operacionais (Bauru e BAURU unificados) -->
+        <!-- Rankings Operacionais -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div class="card-clean p-4 flex flex-col">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
@@ -582,7 +582,6 @@
             return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=748000966&single=true&output=csv&_t=" + Date.now();
         }
 
-        // Função para padronizar e unificar nomes (ex: Bauru e BAURU viram BAURU)
         function normalizarNome(texto) {
             if (!texto) return 'NÃO DEFINIDA';
             return texto.toString().trim().toUpperCase().replace(/\s+/g, ' ');
@@ -1040,7 +1039,7 @@
             // 1. Total OS
             document.getElementById('kpiTotalOS').innerText = total.toLocaleString('pt-BR');
             
-            // 2. Média Diária & Mensal
+            // 2. Média Diária & Mensal (ambas com o mesmo tamanho)
             document.getElementById('kpiMediaDiaria').innerText = mediaDiaria.toFixed(1);
             document.getElementById('kpiVolMensal').innerText = mediaMensal.toLocaleString('pt-BR');
             
@@ -1053,7 +1052,7 @@
             const fatBPctFinanceiro = totalReais > 0 ? ((fatBReais / totalReais) * 100).toFixed(1) : '0.0';
             document.getElementById('kpiFatBReaisPct').innerText = `${fatBPctFinanceiro}%`;
 
-            // 5. Alerta SLA >80%
+            // 5. Alerta SLA >80% (mesmo tamanho que o Total OS)
             document.getElementById('kpiAcima80').innerText = acima80.toLocaleString('pt-BR');
 
             // 6. Vencidas / Risco (Vencidas + Acima de 90%)
@@ -1642,14 +1641,14 @@
             renderTable();
         }
 
-        // Exportação XLSX Real com Múltiplas Abas (Resumo Gerencial + Base Analítica)
+        // Exportação XLSX nativa com 2 abas organizadas (Resumo e Base Analítica sem quebra de texto)
         function exportarExcelMultiAbas() {
             if (filteredDataset.length === 0) {
                 alert('Não há dados filtrados para exportar.');
                 return;
             }
 
-            // 1. Aba Resumo de KPIs e Totais
+            // 1. Aba Resumo Executivo
             const resumoData = [
                 { "Métrica": "Total de OS", "Valor": filteredDataset.length },
                 { "Métrica": "OS FAT-B (Quantidade)", "Valor": filteredDataset.filter(d => d.isFatB).length },
@@ -1683,7 +1682,6 @@
                 "Descrição da OS": (d.descricao || '').replace(/\r?\n/g, ' ')
             }));
 
-            // Criar workbook com as duas abas
             const wb = XLSX.utils.book_new();
             
             const wsResumo = XLSX.utils.json_to_sheet(resumoData);
@@ -1701,7 +1699,6 @@
             XLSX.utils.book_append_sheet(wb, wsResumo, "Resumo Executivo");
             XLSX.utils.book_append_sheet(wb, wsAnalitico, "Base Analítica OS");
 
-            // Download direto em .xlsx
             XLSX.writeFile(wb, `Controle_OS_NC_COR_${new Date().toISOString().slice(0, 10)}.xlsx`);
         }
     </script>
