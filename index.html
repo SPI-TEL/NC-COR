@@ -468,24 +468,23 @@
             </div>
         </div>
 
-        <!-- Tabela Detalhada com Barra de Rolagem Contínua (Sem Paginação) -->
+        <!-- Tabela Detalhada com Barra de Rolagem Contínua -->
         <div class="card-clean p-4 flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-3 pb-2 border-b border-slate-100">
                 <div>
                     <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase">
                         <i class="fa-solid fa-table-list text-cyan-600"></i> Detalhamento Analítico de Ordens de Serviço
                     </h3>
-                    <p class="text-[11px] text-slate-400">Listagem analítica contínua com rolagem até a última ordem de serviço[cite: 15]</p>
+                    <p class="text-[11px] text-slate-400">Listagem analítica contínua com rolagem até a última ordem de serviço</p>
                 </div>
                 <div class="flex items-center gap-2 no-print">
-                    <span id="recordsCount" class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">Exibindo 0 registros</span>[cite: 15]
+                    <span id="recordsCount" class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">Exibindo 0 registros</span>
                     <button onclick="exportarExcelMultiAbas()" class="px-3 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-xs font-semibold text-blue-700 border border-blue-200 transition flex items-center gap-1.5">
                         <i class="fa-solid fa-file-excel"></i> Exportar (.xlsx)
                     </button>
                 </div>
             </div>
 
-            <!-- Contêiner de rolagem contínua com cabeçalho sticky -->
             <div class="overflow-x-auto overflow-y-auto max-h-[580px] custom-scroll rounded-lg border border-slate-200">
                 <table class="w-full text-left text-xs whitespace-nowrap">
                     <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 sticky top-0 z-10 shadow-sm">
@@ -515,7 +514,7 @@
 
     </div>
 
-    <!-- Modal Detalhe da Ação com SC e Previsão Revisada -->
+    <!-- Modal Detalhe da Ação -->
     <div id="modalAcao" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden no-print">
         <div class="card-clean bg-white max-w-lg w-full p-5 shadow-2xl relative flex flex-col gap-3">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -1036,34 +1035,55 @@
             }
 
             // 1. Total OS
-            document.getElementById('kpiTotalOS').innerText = total.toLocaleString('pt-BR');
+            const kpiTotalOSEl = document.getElementById('kpiTotalOS');
+            if (kpiTotalOSEl) kpiTotalOSEl.innerText = total.toLocaleString('pt-BR');
             
             // 2. Média Diária & Mensal
-            document.getElementById('kpiMediaDiaria').innerText = mediaDiaria.toFixed(1);
-            document.getElementById('kpiVolMensal').innerText = mediaMensal.toLocaleString('pt-BR');
+            const kpiMediaDiariaEl = document.getElementById('kpiMediaDiaria');
+            if (kpiMediaDiariaEl) kpiMediaDiariaEl.innerText = mediaDiaria.toFixed(1);
+            
+            const kpiVolMensalEl = document.getElementById('kpiVolMensal');
+            if (kpiVolMensalEl) kpiVolMensalEl.innerText = mediaMensal.toLocaleString('pt-BR');
             
             // 3. FAT-B Qtde
-            document.getElementById('kpiFatBQtde').innerText = fatBQtde.toLocaleString('pt-BR');
-            document.getElementById('kpiFatBPct').innerText = total > 0 ? `${((fatBQtde / total) * 100).toFixed(1)}%` : '0%';
+            const kpiFatBQtdeEl = document.getElementById('kpiFatBQtde');
+            if (kpiFatBQtdeEl) kpiFatBQtdeEl.innerText = fatBQtde.toLocaleString('pt-BR');
+            
+            const kpiFatBPctEl = document.getElementById('kpiFatBPct');
+            if (kpiFatBPctEl) kpiFatBPctEl.innerText = total > 0 ? `${((fatBQtde / total) * 100).toFixed(1)}%` : '0%';
 
             // 4. FAT-B (R$)
-            document.getElementById('kpiFatBReais').innerText = fatBReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            const kpiFatBReaisEl = document.getElementById('kpiFatBReais');
+            if (kpiFatBReaisEl) kpiFatBReaisEl.innerText = fatBReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+            
             const fatBPctFinanceiro = totalReais > 0 ? ((fatBReais / totalReais) * 100).toFixed(1) : '0.0';
-            document.getElementById('kpiFatBReaisPct').innerText = `${fatBPctFinanceiro}%`;
+            const kpiFatBReaisPctEl = document.getElementById('kpiFatBReaisPct');
+            if (kpiFatBReaisPctEl) kpiFatBReaisPctEl.innerText = `${fatBPctFinanceiro}%`;
 
             // 5. Alerta SLA >80%
-            document.getElementById('kpiAcima80').innerText = acima80.toLocaleString('pt-BR');
+            const kpiAcima80El = document.getElementById('kpiAcima80');
+            if (kpiAcima80El) kpiAcima80El.innerText = acima80.toLocaleString('pt-BR');
 
             // 6. Vencidas / Risco (Vencidas + Acima de 90%)
             const riscoContabilizado = vencidas + acima90;
-            document.getElementById('kpiRiscoTotal').innerText = riscoContabilizado.toLocaleString('pt-BR');
-            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Venc. | ${acima90} >90%`;
+            const kpiRiscoTotalEl = document.getElementById('kpiRiscoTotal');
+            if (kpiRiscoTotalEl) kpiRiscoTotalEl.innerText = riscoContabilizado.toLocaleString('pt-BR');
+            
+            const kpiRiscoDetailEl = document.getElementById('kpiRiscoDetail');
+            if (kpiRiscoDetailEl) kpiRiscoDetailEl.innerText = `${vencidas} Venc. | ${acima90} >90%`;
 
             // Faixas Donut Labels
-            document.getElementById('lblFaixa1').innerText = abaixo70.toLocaleString('pt-BR');
-            document.getElementById('lblFaixa2').innerText = entre70e80.toLocaleString('pt-BR');
-            document.getElementById('lblFaixa3').innerText = acima80.toLocaleString('pt-BR');
-            document.getElementById('lblFaixa4').innerText = vencidas.toLocaleString('pt-BR');
+            const lblFaixa1 = document.getElementById('lblFaixa1');
+            if (lblFaixa1) lblFaixa1.innerText = abaixo70.toLocaleString('pt-BR');
+            
+            const lblFaixa2 = document.getElementById('lblFaixa2');
+            if (lblFaixa2) lblFaixa2.innerText = entre70e80.toLocaleString('pt-BR');
+            
+            const lblFaixa3 = document.getElementById('lblFaixa3');
+            if (lblFaixa3) lblFaixa3.innerText = acima80.toLocaleString('pt-BR');
+            
+            const lblFaixa4 = document.getElementById('lblFaixa4');
+            if (lblFaixa4) lblFaixa4.innerText = vencidas.toLocaleString('pt-BR');
 
             renderSlaDonut(abaixo70, entre70e80, acima80, vencidas);
             renderRegionalChart();
@@ -1469,23 +1489,25 @@
 
             const topVolume = [...areasArray].sort((a,b) => b.volume - a.volume).slice(0, 5);
             const tbodyVol = document.getElementById('rankingVolumeBody');
-            tbodyVol.innerHTML = '';
-            if (topVolume.length === 0) {
-                tbodyVol.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhum dado</td></tr>';
-            } else {
-                topVolume.forEach((item, index) => {
-                    const pct = totalOS > 0 ? ((item.volume / totalOS) * 100).toFixed(1) : 0;
-                    tbodyVol.innerHTML += `
-                        <tr class="hover:bg-slate-50">
-                            <td class="py-2 flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
-                                <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
-                            </td>
-                            <td class="py-2 text-right font-bold text-slate-800">${item.volume}</td>
-                            <td class="py-2 text-right text-slate-500">${pct}%</td>
-                        </tr>
-                    `;
-                });
+            if (tbodyVol) {
+                tbodyVol.innerHTML = '';
+                if (topVolume.length === 0) {
+                    tbodyVol.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhum dado</td></tr>';
+                } else {
+                    topVolume.forEach((item, index) => {
+                        const pct = totalOS > 0 ? ((item.volume / totalOS) * 100).toFixed(1) : 0;
+                        tbodyVol.innerHTML += `
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-2 flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
+                                    <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
+                                </td>
+                                <td class="py-2 text-right font-bold text-slate-800">${item.volume}</td>
+                                <td class="py-2 text-right text-slate-500">${pct}%</td>
+                            </tr>
+                        `;
+                    });
+                }
             }
 
             const regionalArray = Object.keys(regionalStats).map(r => ({
@@ -1497,52 +1519,59 @@
 
             const topRegional80 = [...regionalArray].filter(r => r.acima80 > 0).sort((a,b) => b.acima80 - a.acima80).slice(0, 5);
             const tbodyReg80 = document.getElementById('rankingRegional80Body');
-            tbodyReg80.innerHTML = '';
-            if (topRegional80.length === 0) {
-                tbodyReg80.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhuma Regional > 80%</td></tr>';
-            } else {
-                topRegional80.forEach((item, index) => {
-                    tbodyReg80.innerHTML += `
-                        <tr class="hover:bg-slate-50">
-                            <td class="py-2 flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
-                                <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.regional}">${item.regional}</span>
-                            </td>
-                            <td class="py-2 text-right font-bold text-orange-600">${item.acima80}</td>
-                            <td class="py-2 text-right text-slate-500">${item.taxaCritica.toFixed(1)}%</td>
-                        </tr>
-                    `;
-                });
+            if (tbodyReg80) {
+                tbodyReg80.innerHTML = '';
+                if (topRegional80.length === 0) {
+                    tbodyReg80.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhuma Regional > 80%</td></tr>';
+                } else {
+                    topRegional80.forEach((item, index) => {
+                        tbodyReg80.innerHTML += `
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-2 flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
+                                    <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.regional}">${item.regional}</span>
+                                </td>
+                                <td class="py-2 text-right font-bold text-orange-600">${item.acima80}</td>
+                                <td class="py-2 text-right text-slate-500">${item.taxaCritica.toFixed(1)}%</td>
+                            </tr>
+                        `;
+                    });
+                }
             }
 
             const topVencidas = [...areasArray].filter(a => a.vencidas > 0).sort((a,b) => b.vencidas - a.vencidas).slice(0, 5);
             const tbodyVenc = document.getElementById('rankingVencidasBody');
-            tbodyVenc.innerHTML = '';
-            if (topVencidas.length === 0) {
-                tbodyVenc.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhuma OS vencida!</td></tr>';
-            } else {
-                topVencidas.forEach((item, index) => {
-                    tbodyVenc.innerHTML += `
-                        <tr class="hover:bg-slate-50">
-                            <td class="py-2 flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
-                                <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
-                            </td>
-                            <td class="py-2 text-right font-bold text-rose-600">${item.vencidas}</td>
-                            <td class="py-2 text-right text-slate-500">${item.taxaFalha.toFixed(1)}%</td>
-                        </tr>
-                    `;
-                });
+            if (tbodyVenc) {
+                tbodyVenc.innerHTML = '';
+                if (topVencidas.length === 0) {
+                    tbodyVenc.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhuma OS vencida!</td></tr>';
+                } else {
+                    topVencidas.forEach((item, index) => {
+                        tbodyVenc.innerHTML += `
+                            <tr class="hover:bg-slate-50">
+                                <td class="py-2 flex items-center gap-2">
+                                    <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
+                                    <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
+                                </td>
+                                <td class="py-2 text-right font-bold text-rose-600">${item.vencidas}</td>
+                                <td class="py-2 text-right text-slate-500">${item.taxaFalha.toFixed(1)}%</td>
+                            </tr>
+                        `;
+                    });
+                }
             }
         }
 
-        // Renderização contínua com todas as linhas filtradas (sem corte por página)
         function renderTable() {
             const tbody = document.getElementById('tableOSBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             const total = filteredDataset.length;
-            document.getElementById('recordsCount').innerText = `Exibindo ${total.toLocaleString('pt-BR')} registros`;[cite: 15]
+            const recordsCountEl = document.getElementById('recordsCount');
+            if (recordsCountEl) {
+                recordsCountEl.innerText = `Exibindo ${total.toLocaleString('pt-BR')} registros`;
+            }
 
             if (filteredDataset.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="12" class="text-center py-8 text-slate-400 font-medium">Nenhum registro encontrado para estes filtros.</td></tr>';
@@ -1606,24 +1635,34 @@
             const item = rawDataset.find(d => d.os === numOS);
             if (!item) return;
 
-            document.getElementById('modalOSNum').innerText = item.os;
+            const modalOSNum = document.getElementById('modalOSNum');
+            if (modalOSNum) modalOSNum.innerText = item.os;
             
-            // Se não tiver descrição de ação, deixa vazio
-            document.getElementById('modalDescricaoAcao').innerText = item.descricaoAcao || '';
-            document.getElementById('modalDescricaoOS').innerText = item.descricao || '';
+            const modalDescricaoAcao = document.getElementById('modalDescricaoAcao');
+            if (modalDescricaoAcao) modalDescricaoAcao.innerText = item.descricaoAcao || '';
             
-            // Novos campos no modal
-            document.getElementById('modalNumSC').innerText = item.numSC || '-';
-            document.getElementById('modalPrevisaoRevisada').innerText = item.previsaoRevisada || '-';
+            const modalDescricaoOS = document.getElementById('modalDescricaoOS');
+            if (modalDescricaoOS) modalDescricaoOS.innerText = item.descricao || '';
             
-            document.getElementById('modalEtapaEsteira').innerText = item.etapaEsteira || '-';
-            document.getElementById('modalResponsavel').innerText = item.responsavel || '-';
+            const modalNumSC = document.getElementById('modalNumSC');
+            if (modalNumSC) modalNumSC.innerText = item.numSC || '-';
+            
+            const modalPrevisaoRevisada = document.getElementById('modalPrevisaoRevisada');
+            if (modalPrevisaoRevisada) modalPrevisaoRevisada.innerText = item.previsaoRevisada || '-';
+            
+            const modalEtapaEsteira = document.getElementById('modalEtapaEsteira');
+            if (modalEtapaEsteira) modalEtapaEsteira.innerText = item.etapaEsteira || '-';
+            
+            const modalResponsavel = document.getElementById('modalResponsavel');
+            if (modalResponsavel) modalResponsavel.innerText = item.responsavel || '-';
 
-            document.getElementById('modalAcao').classList.remove('hidden');
+            const modalAcao = document.getElementById('modalAcao');
+            if (modalAcao) modalAcao.classList.remove('hidden');
         }
 
         function fecharModalAcao() {
-            document.getElementById('modalAcao').classList.add('hidden');
+            const modalAcao = document.getElementById('modalAcao');
+            if (modalAcao) modalAcao.classList.add('hidden');
         }
 
         window.addEventListener('click', (e) => {
