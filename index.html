@@ -423,7 +423,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                 <div>
                     <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase">
-                        <i class="fa-solid fa-arrow-trend-up text-blue-600"></i> Evolução Geral Histórica (Prazo, Fora do Prazo & Variação)[cite: 2]
+                        <i class="fa-solid fa-arrow-trend-up text-blue-600"></i> Evolução Geral Histórica (Prazo, Fora do Prazo & Variação)
                     </h3>
                     <p class="text-[11px] text-slate-400">Série temporal consolidada do estoque de ordens de serviço (Últimos 12 Meses)</p>
                 </div>
@@ -443,7 +443,7 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
                 <div>
                     <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase">
-                        <i class="fa-solid fa-chart-area text-cyan-600"></i> Evolutivo Temporal de Entrantes (Criação de OS)[cite: 1]
+                        <i class="fa-solid fa-chart-area text-cyan-600"></i> Evolutivo Temporal de Entrantes (Criação de OS)
                     </h3>
                     <p class="text-[11px] text-slate-400">Curva de abertura e entrada de Ordens de Serviço (Último Trimestre)</p>
                 </div>
@@ -466,14 +466,14 @@
             <div class="flex flex-wrap items-center justify-between gap-3 mb-3 pb-2 border-b border-slate-100">
                 <div>
                     <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase">
-                        <i class="fa-solid fa-table-list text-cyan-600"></i> Detalhamento Analítico de Ordens de Serviço[cite: 4]
+                        <i class="fa-solid fa-table-list text-cyan-600"></i> Detalhamento Analítico de Ordens de Serviço
                     </h3>
                     <p class="text-[11px] text-slate-400">Listagem analítica com prazos, dias restantes, estado da OS e ações detalhadas</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span id="recordsCount" class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">Exibindo 0 registros</span>[cite: 4]
+                    <span id="recordsCount" class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">Exibindo 0 registros</span>
                     <button onclick="exportCurrentFilteredCSV()" class="px-3 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 border border-slate-300 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-download"></i> Exportar Visão[cite: 4]
+                        <i class="fa-solid fa-download"></i> Exportar Visão
                     </button>
                 </div>
             </div>
@@ -482,18 +482,18 @@
                 <table class="w-full text-left text-xs whitespace-nowrap">
                     <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
                         <tr>
-                            <th class="py-2.5 px-3">Número OS</th>[cite: 4]
-                            <th class="py-2.5 px-3">Site / Local</th>[cite: 4]
-                            <th class="py-2.5 px-3">Regional</th>[cite: 4]
-                            <th class="py-2.5 px-3">Tipo Serviço</th>[cite: 4]
-                            <th class="py-2.5 px-3">Gestor</th>[cite: 4]
-                            <th class="py-2.5 px-3">Prazo</th>[cite: 4]
-                            <th class="py-2.5 px-3 text-center">Dias Restantes</th>[cite: 4]
-                            <th class="py-2.5 px-3">% SLA</th>[cite: 4]
-                            <th class="py-2.5 px-3">Valor Materiais</th>[cite: 4]
-                            <th class="py-2.5 px-3">N° SC</th>[cite: 4]
+                            <th class="py-2.5 px-3">Número OS</th>
+                            <th class="py-2.5 px-3">Site / Local</th>
+                            <th class="py-2.5 px-3">Regional</th>
+                            <th class="py-2.5 px-3">Tipo Serviço</th>
+                            <th class="py-2.5 px-3">Gestor</th>
+                            <th class="py-2.5 px-3">Prazo</th>
+                            <th class="py-2.5 px-3 text-center">Dias Restantes</th>
+                            <th class="py-2.5 px-3">% SLA</th>
+                            <th class="py-2.5 px-3">Valor Materiais</th>
+                            <th class="py-2.5 px-3">N° SC</th>
                             <th class="py-2.5 px-3">Estado OS</th>
-                            <th class="py-2.5 px-3 text-center">Ação</th>[cite: 4]
+                            <th class="py-2.5 px-3 text-center">Ação</th>
                         </tr>
                     </thead>
                     <tbody id="tableOSBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
@@ -567,7 +567,7 @@
 
     <!-- Script de Lógica e Renderização -->
     <script>
-        // URLs das planilhas fornecidas (convertidas para saída CSV) com parâmetro anti-cache
+        // URLs corrigidas para formato CSV (resolvendo o problema de pubhtml que quebrava o carregamento)
         function getOSUrl() {
             return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=517461846&single=true&output=csv&_t=" + Date.now();
         }
@@ -662,6 +662,8 @@
                             if (res.data && res.data.length > 0) {
                                 processCSVData(res.data);
                                 setBadge('success', 'Base de dados sincronizada via Proxy.');
+                            } else {
+                                setBadge('error', 'Planilha vazia ou sem cabeçalhos válidos.');
                             }
                         }
                     });
@@ -710,9 +712,9 @@
 
         function processEvolucaoRows(rows) {
             evolucaoGeralDataset = rows.map(r => {
-                const dia = (r['Dia'] || r['dia'] || '').trim();
-                const fora = parseInt((r['Fora'] || r['fora'] || '0').toString().replace(/\D/g, '')) || 0;
-                const prazo = parseInt((r['Prazo'] || r['prazo'] || '0').toString().replace(/\D/g, '')) || 0;
+                const dia = (r['Dia'] || r['dia'] || r['DATA'] || r['Data'] || '').toString().trim();
+                const fora = parseInt((r['Fora'] || r['fora'] || r['Fora do Prazo'] || '0').toString().replace(/\D/g, '')) || 0;
+                const prazo = parseInt((r['Prazo'] || r['prazo'] || r['No Prazo'] || '0').toString().replace(/\D/g, '')) || 0;
                 const rawVar = (r['Variação'] || r['Variacao'] || r['variacao'] || '').toString().trim();
                 let variacao = null;
                 if (rawVar !== '') {
@@ -725,47 +727,61 @@
             renderEvolucaoGeralChart();
         }
 
+        function parseBrazilianDate(str) {
+            if (!str) return null;
+            str = str.trim();
+            // DD/MM/YYYY
+            const parts = str.split(/[\/\-]/);
+            if (parts.length === 3) {
+                if (parts[2].length === 4) {
+                    const d = parseInt(parts[0], 10);
+                    const m = parseInt(parts[1], 10) - 1;
+                    const y = parseInt(parts[2], 10);
+                    const dt = new Date(y, m, d);
+                    if (!isNaN(dt.getTime())) return dt;
+                }
+            }
+            const direct = new Date(str);
+            return !isNaN(direct.getTime()) ? direct : null;
+        }
+
         function processCSVData(data) {
             rawDataset = data.filter(row => {
-                const os = (row['Número OS'] || row['Numero OS'] || '').trim();
+                const os = (row['Número OS'] || row['Numero OS'] || row['OS'] || row['N° OS'] || '').toString().trim();
                 return os && os !== '#REF!' && !os.includes('#REF');
             }).map(row => {
-                const valStr = (row['Valor Materiais Externos'] || '0')
+                const valStr = (row['Valor Materiais Externos'] || row['Valor Materiais'] || row['Valor'] || '0')
+                    .toString()
                     .replace('R$', '')
                     .replace(/\./g, '')
                     .replace(',', '.')
                     .trim();
                 const valorMateriais = parseFloat(valStr) || 0;
 
-                const rawPct = (row['%'] || '').toString().trim();
+                const rawPct = (row['%'] || row['% SLA'] || '').toString().trim();
                 let slaNumeric = 0;
                 let isFora = false;
 
-                if (rawPct.toUpperCase().includes('FORA') || (row['Prazo'] || '').toUpperCase().includes('FORA')) {
+                const prazo = (row['Prazo'] || row['Status Prazo'] || '').toString().trim().toUpperCase();
+
+                if (rawPct.toUpperCase().includes('FORA') || prazo.includes('FORA')) {
                     isFora = true;
                     slaNumeric = 100;
                 } else if (rawPct.includes('%')) {
                     slaNumeric = parseFloat(rawPct.replace('%', '').replace(',', '.')) || 0;
                 }
 
-                const prazo = (row['Prazo'] || '').trim().toUpperCase();
                 const isVencida = isFora || prazo === 'FORA DO PRAZO' || prazo === 'FORA';
 
-                const gestor = (row['Último gestor'] || row['Ultimo gestor'] || '').trim().toUpperCase();
-                const segmento = (row['Tipo de Segmento'] || '').trim();
+                const gestor = (row['Último gestor'] || row['Ultimo gestor'] || row['GESTOR'] || row['Gestor'] || '').toString().trim().toUpperCase();
+                const segmento = (row['Tipo de Segmento'] || row['Segmento'] || '').toString().trim();
                 const isFatB = segmento.toUpperCase().includes('FAT_B') || segmento.toUpperCase().includes('FAT-B');
-                const urg = (row['Urgente'] || '').trim();
+                const urg = (row['Urgente'] || row['URGENCIA'] || '').toString().trim();
 
-                const dataCriacaoStr = (row['Data Criação'] || row['Data Criacao'] || '').trim();
-                let dtCriacao = null;
-                if (dataCriacaoStr) {
-                    const parsedDt = new Date(dataCriacaoStr);
-                    if (!isNaN(parsedDt.getTime())) {
-                        dtCriacao = parsedDt;
-                    }
-                }
+                const dataCriacaoStr = (row['Data Criação'] || row['Data Criacao'] || row['Criação'] || '').toString().trim();
+                const dtCriacao = parseBrazilianDate(dataCriacaoStr);
 
-                const tempoRestanteRaw = (row['Tempo Restante'] || '').trim();
+                const tempoRestanteRaw = (row['Tempo Restante'] || row['Dias Restantes'] || '').toString().trim();
                 let tempoRestanteNum = null;
                 if (tempoRestanteRaw && tempoRestanteRaw !== '#REF!') {
                     const parsedRestante = parseFloat(tempoRestanteRaw.replace(',', '.'));
@@ -774,22 +790,22 @@
                     }
                 }
 
-                const necessidade = (row['Necessidade'] || '').trim().toUpperCase();
-                const prioridadeVivo = (row['Prioridade VIVO'] || '').trim().toUpperCase();
-                const descricaoAcao = (row['Descrição Ação'] || row['Descricao Acao'] || '').trim();
-                const etapaEsteira = (row['Etapa Esteira'] || '').trim();
-                const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || '').trim();
+                const necessidade = (row['Necessidade'] || '').toString().trim().toUpperCase();
+                const prioridadeVivo = (row['Prioridade VIVO'] || '').toString().trim().toUpperCase();
+                const descricaoAcao = (row['Descrição Ação'] || row['Descricao Acao'] || '').toString().trim();
+                const etapaEsteira = (row['Etapa Esteira'] || '').toString().trim();
+                const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || row['Estado'] || '').toString().trim();
 
                 const isExecSemAprov = necessidade.includes('EXEC') && (necessidade.includes('SEM') || prioridadeVivo.includes('NÃO EXEC') || prioridadeVivo.includes('SEM APR') || etapaEsteira.toUpperCase().includes('APROV'));
 
                 return {
-                    os: row['Número OS'] || row['Numero OS'],
+                    os: row['Número OS'] || row['Numero OS'] || row['OS'] || row['N° OS'],
                     sgm: row['SGM'] || '',
-                    site: row['Site'] || 'N/A',
+                    site: row['Site'] || row['SITE'] || 'N/A',
                     descricao: row['Descrição OS'] || row['Descricao OS'] || '',
                     estadoOS: estadoOS,
-                    tipoServico: (row['Tipo de Serviço'] || row['Tipo de Servico'] || 'OUTROS').trim(),
-                    regional: (row['Regional'] || 'SEM REGIONAL').trim(),
+                    tipoServico: (row['Tipo de Serviço'] || row['Tipo de Servico'] || row['TIPO'] || 'OUTROS').toString().trim(),
+                    regional: (row['Regional'] || row['REGIONAL'] || 'SEM REGIONAL').toString().trim(),
                     coordenador: row['Coordenador'] || '',
                     dataCriacao: dtCriacao,
                     dataCriacaoStr: dataCriacaoStr,
@@ -803,9 +819,9 @@
                     isVencida: isVencida,
                     urgente: urg,
                     etapaEsteira: etapaEsteira,
-                    numSC: (row['N° SC'] || row['No SC'] || row['SC'] || '').trim(),
+                    numSC: (row['N° SC'] || row['No SC'] || row['SC'] || '').toString().trim(),
                     responsavel: row['Responsável'] || row['Responsavel'] || '',
-                    unidadeNegocio: (row['Denominação Unidade Negócio'] || row['Unidade Negocio'] || 'NÃO DEFINIDA').trim(),
+                    unidadeNegocio: (row['Denominação Unidade Negócio'] || row['Unidade Negocio'] || row['Área'] || 'NÃO DEFINIDA').toString().trim(),
                     tempoRestante: tempoRestanteNum,
                     tempoRestanteRaw: tempoRestanteRaw,
                     descricaoAcao: descricaoAcao,
@@ -1025,7 +1041,7 @@
             document.getElementById('kpiMediaReaisOS').innerText = mediaReaisPorOS.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             document.getElementById('kpiRiscoTotal').innerText = (vencidas + acima80).toLocaleString('pt-BR');
-            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`;
+            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Venc. | ${acima80} >80%`;
 
             document.getElementById('lblFaixa1').innerText = abaixo70.toLocaleString('pt-BR');
             document.getElementById('lblFaixa2').innerText = entre70e80.toLocaleString('pt-BR');
@@ -1508,7 +1524,7 @@
             tbody.innerHTML = '';
 
             const total = filteredDataset.length;
-            document.getElementById('recordsCount').innerText = `Exibindo ${total.toLocaleString('pt-BR')} registros`;[cite: 4]
+            document.getElementById('recordsCount').innerText = `Exibindo ${total.toLocaleString('pt-BR')} registros`;
 
             const totalPages = Math.ceil(total / pageSize) || 1;
             if (currentPage > totalPages) currentPage = totalPages;
