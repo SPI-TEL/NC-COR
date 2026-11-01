@@ -468,14 +468,14 @@
             </div>
         </div>
 
-        <!-- Tabela Detalhada com Barra de Rolagem Contínua -->
+        <!-- Tabela Detalhada com Previsão Revisada -->
         <div class="card-clean p-4 flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-3 pb-2 border-b border-slate-100">
                 <div>
                     <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase">
                         <i class="fa-solid fa-table-list text-cyan-600"></i> Detalhamento Analítico de Ordens de Serviço
                     </h3>
-                    <p class="text-[11px] text-slate-400">Listagem analítica contínua com rolagem até a última ordem de serviço</p>
+                    <p class="text-[11px] text-slate-400">Listagem analítica com previsão revisada, dias restantes, estado da OS e ações detalhadas</p>
                 </div>
                 <div class="flex items-center gap-2 no-print">
                     <span id="recordsCount" class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">Exibindo 0 registros</span>
@@ -485,9 +485,9 @@
                 </div>
             </div>
 
-            <div class="overflow-x-auto overflow-y-auto max-h-[580px] custom-scroll rounded-lg border border-slate-200">
+            <div class="overflow-x-auto custom-scroll rounded-lg border border-slate-200">
                 <table class="w-full text-left text-xs whitespace-nowrap">
-                    <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 sticky top-0 z-10 shadow-sm">
+                    <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
                         <tr>
                             <th class="py-2.5 px-3">Número OS</th>
                             <th class="py-2.5 px-3">Site / Local</th>
@@ -505,6 +505,17 @@
                     </thead>
                     <tbody id="tableOSBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
                 </table>
+            </div>
+
+            <!-- Paginação -->
+            <div class="flex items-center justify-between pt-3 text-xs text-slate-500 font-medium no-print">
+                <div>
+                    Página <strong id="currentPageNum" class="text-slate-800">1</strong> de <strong id="totalPagesNum" class="text-slate-800">1</strong>
+                </div>
+                <div class="flex items-center gap-1.5">
+                    <button onclick="changePage(-1)" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded text-slate-700 disabled:opacity-40 font-semibold" id="btnPrevPage">Anterior</button>
+                    <button onclick="changePage(1)" class="px-3 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded text-slate-700 disabled:opacity-40 font-semibold" id="btnNextPage">Próxima</button>
+                </div>
             </div>
         </div>
 
@@ -535,29 +546,19 @@
             <div class="space-y-2.5 text-xs">
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Descrição da Ação</label>
-                    <div id="modalDescricaoAcao" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed max-h-44 overflow-y-auto custom-scroll whitespace-pre-wrap min-h-[50px]"></div>
+                    <div id="modalDescricaoAcao" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed max-h-48 overflow-y-auto custom-scroll whitespace-pre-wrap"></div>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Descrição Original da OS</label>
-                    <div id="modalDescricaoOS" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed max-h-28 overflow-y-auto custom-scroll whitespace-pre-wrap"></div>
+                    <div id="modalDescricaoOS" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed max-h-32 overflow-y-auto custom-scroll whitespace-pre-wrap"></div>
                 </div>
-                
-                <!-- Grid de 4 Informações Complementares -->
                 <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
                     <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-400 block text-[10px] font-semibold uppercase">N° SC</span>
-                        <span id="modalNumSC" class="font-mono font-bold text-slate-700 truncate block"></span>
-                    </div>
-                    <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-400 block text-[10px] font-semibold uppercase">Previsão Revisada</span>
-                        <span id="modalPrevisaoRevisada" class="font-semibold text-slate-700 truncate block"></span>
-                    </div>
-                    <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-400 block text-[10px] font-semibold uppercase">Etapa Esteira</span>
+                        <span class="text-slate-400 block text-[10px]">Etapa Esteira</span>
                         <span id="modalEtapaEsteira" class="font-semibold text-slate-700 truncate block"></span>
                     </div>
                     <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-400 block text-[10px] font-semibold uppercase">Responsável</span>
+                        <span class="text-slate-400 block text-[10px]">Responsável</span>
                         <span id="modalResponsavel" class="font-semibold text-slate-700 truncate block"></span>
                     </div>
                 </div>
@@ -599,6 +600,9 @@
         let granularidadeEvolutivo = 'mensal';
         let selectedTipos = new Set();
         let availableTipos = [];
+
+        let currentPage = 1;
+        const pageSize = 15;
 
         window.addEventListener('DOMContentLoaded', () => {
             loadAllData();
@@ -802,7 +806,8 @@
                 const etapaEsteira = (row['Etapa Esteira'] || '').toString().trim();
                 const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || row['Estado'] || '').toString().trim();
 
-                const previsaoRevisada = (row['Previsão Revisada'] || row['Previsao Revisada'] || row['Previsão revisada'] || row['Previsao revisada'] || '').toString().trim();
+                // Leitura da Previsão Revisada
+                const previsaoRevisada = (row['Previsão Revisada'] || row['Previsao Revisada'] || row['Previsão revisada'] || row['Previsao revisada'] || '-').toString().trim();
 
                 const isExecSemAprov = necessidade.includes('EXEC') && (necessidade.includes('SEM') || prioridadeVivo.includes('NÃO EXEC') || prioridadeVivo.includes('SEM APR') || etapaEsteira.toUpperCase().includes('APROV'));
 
@@ -960,6 +965,7 @@
                 return true;
             });
 
+            currentPage = 1;
             updateDashboard();
         }
 
@@ -1035,55 +1041,34 @@
             }
 
             // 1. Total OS
-            const kpiTotalOSEl = document.getElementById('kpiTotalOS');
-            if (kpiTotalOSEl) kpiTotalOSEl.innerText = total.toLocaleString('pt-BR');
+            document.getElementById('kpiTotalOS').innerText = total.toLocaleString('pt-BR');
             
             // 2. Média Diária & Mensal
-            const kpiMediaDiariaEl = document.getElementById('kpiMediaDiaria');
-            if (kpiMediaDiariaEl) kpiMediaDiariaEl.innerText = mediaDiaria.toFixed(1);
-            
-            const kpiVolMensalEl = document.getElementById('kpiVolMensal');
-            if (kpiVolMensalEl) kpiVolMensalEl.innerText = mediaMensal.toLocaleString('pt-BR');
+            document.getElementById('kpiMediaDiaria').innerText = mediaDiaria.toFixed(1);
+            document.getElementById('kpiVolMensal').innerText = mediaMensal.toLocaleString('pt-BR');
             
             // 3. FAT-B Qtde
-            const kpiFatBQtdeEl = document.getElementById('kpiFatBQtde');
-            if (kpiFatBQtdeEl) kpiFatBQtdeEl.innerText = fatBQtde.toLocaleString('pt-BR');
-            
-            const kpiFatBPctEl = document.getElementById('kpiFatBPct');
-            if (kpiFatBPctEl) kpiFatBPctEl.innerText = total > 0 ? `${((fatBQtde / total) * 100).toFixed(1)}%` : '0%';
+            document.getElementById('kpiFatBQtde').innerText = fatBQtde.toLocaleString('pt-BR');
+            document.getElementById('kpiFatBPct').innerText = total > 0 ? `${((fatBQtde / total) * 100).toFixed(1)}%` : '0%';
 
             // 4. FAT-B (R$)
-            const kpiFatBReaisEl = document.getElementById('kpiFatBReais');
-            if (kpiFatBReaisEl) kpiFatBReaisEl.innerText = fatBReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-            
+            document.getElementById('kpiFatBReais').innerText = fatBReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             const fatBPctFinanceiro = totalReais > 0 ? ((fatBReais / totalReais) * 100).toFixed(1) : '0.0';
-            const kpiFatBReaisPctEl = document.getElementById('kpiFatBReaisPct');
-            if (kpiFatBReaisPctEl) kpiFatBReaisPctEl.innerText = `${fatBPctFinanceiro}%`;
+            document.getElementById('kpiFatBReaisPct').innerText = `${fatBPctFinanceiro}%`;
 
             // 5. Alerta SLA >80%
-            const kpiAcima80El = document.getElementById('kpiAcima80');
-            if (kpiAcima80El) kpiAcima80El.innerText = acima80.toLocaleString('pt-BR');
+            document.getElementById('kpiAcima80').innerText = acima80.toLocaleString('pt-BR');
 
             // 6. Vencidas / Risco (Vencidas + Acima de 90%)
             const riscoContabilizado = vencidas + acima90;
-            const kpiRiscoTotalEl = document.getElementById('kpiRiscoTotal');
-            if (kpiRiscoTotalEl) kpiRiscoTotalEl.innerText = riscoContabilizado.toLocaleString('pt-BR');
-            
-            const kpiRiscoDetailEl = document.getElementById('kpiRiscoDetail');
-            if (kpiRiscoDetailEl) kpiRiscoDetailEl.innerText = `${vencidas} Venc. | ${acima90} >90%`;
+            document.getElementById('kpiRiscoTotal').innerText = riscoContabilizado.toLocaleString('pt-BR');
+            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Venc. | ${acima90} >90%`;
 
             // Faixas Donut Labels
-            const lblFaixa1 = document.getElementById('lblFaixa1');
-            if (lblFaixa1) lblFaixa1.innerText = abaixo70.toLocaleString('pt-BR');
-            
-            const lblFaixa2 = document.getElementById('lblFaixa2');
-            if (lblFaixa2) lblFaixa2.innerText = entre70e80.toLocaleString('pt-BR');
-            
-            const lblFaixa3 = document.getElementById('lblFaixa3');
-            if (lblFaixa3) lblFaixa3.innerText = acima80.toLocaleString('pt-BR');
-            
-            const lblFaixa4 = document.getElementById('lblFaixa4');
-            if (lblFaixa4) lblFaixa4.innerText = vencidas.toLocaleString('pt-BR');
+            document.getElementById('lblFaixa1').innerText = abaixo70.toLocaleString('pt-BR');
+            document.getElementById('lblFaixa2').innerText = entre70e80.toLocaleString('pt-BR');
+            document.getElementById('lblFaixa3').innerText = acima80.toLocaleString('pt-BR');
+            document.getElementById('lblFaixa4').innerText = vencidas.toLocaleString('pt-BR');
 
             renderSlaDonut(abaixo70, entre70e80, acima80, vencidas);
             renderRegionalChart();
@@ -1489,25 +1474,23 @@
 
             const topVolume = [...areasArray].sort((a,b) => b.volume - a.volume).slice(0, 5);
             const tbodyVol = document.getElementById('rankingVolumeBody');
-            if (tbodyVol) {
-                tbodyVol.innerHTML = '';
-                if (topVolume.length === 0) {
-                    tbodyVol.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhum dado</td></tr>';
-                } else {
-                    topVolume.forEach((item, index) => {
-                        const pct = totalOS > 0 ? ((item.volume / totalOS) * 100).toFixed(1) : 0;
-                        tbodyVol.innerHTML += `
-                            <tr class="hover:bg-slate-50">
-                                <td class="py-2 flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
-                                    <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
-                                </td>
-                                <td class="py-2 text-right font-bold text-slate-800">${item.volume}</td>
-                                <td class="py-2 text-right text-slate-500">${pct}%</td>
-                            </tr>
-                        `;
-                    });
-                }
+            tbodyVol.innerHTML = '';
+            if (topVolume.length === 0) {
+                tbodyVol.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhum dado</td></tr>';
+            } else {
+                topVolume.forEach((item, index) => {
+                    const pct = totalOS > 0 ? ((item.volume / totalOS) * 100).toFixed(1) : 0;
+                    tbodyVol.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-2 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
+                                <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
+                            </td>
+                            <td class="py-2 text-right font-bold text-slate-800">${item.volume}</td>
+                            <td class="py-2 text-right text-slate-500">${pct}%</td>
+                        </tr>
+                    `;
+                });
             }
 
             const regionalArray = Object.keys(regionalStats).map(r => ({
@@ -1519,66 +1502,69 @@
 
             const topRegional80 = [...regionalArray].filter(r => r.acima80 > 0).sort((a,b) => b.acima80 - a.acima80).slice(0, 5);
             const tbodyReg80 = document.getElementById('rankingRegional80Body');
-            if (tbodyReg80) {
-                tbodyReg80.innerHTML = '';
-                if (topRegional80.length === 0) {
-                    tbodyReg80.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhuma Regional > 80%</td></tr>';
-                } else {
-                    topRegional80.forEach((item, index) => {
-                        tbodyReg80.innerHTML += `
-                            <tr class="hover:bg-slate-50">
-                                <td class="py-2 flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
-                                    <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.regional}">${item.regional}</span>
-                                </td>
-                                <td class="py-2 text-right font-bold text-orange-600">${item.acima80}</td>
-                                <td class="py-2 text-right text-slate-500">${item.taxaCritica.toFixed(1)}%</td>
-                            </tr>
-                        `;
-                    });
-                }
+            tbodyReg80.innerHTML = '';
+            if (topRegional80.length === 0) {
+                tbodyReg80.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhuma Regional > 80%</td></tr>';
+            } else {
+                topRegional80.forEach((item, index) => {
+                    tbodyReg80.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-2 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-orange-100 text-orange-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
+                                <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.regional}">${item.regional}</span>
+                            </td>
+                            <td class="py-2 text-right font-bold text-orange-600">${item.acima80}</td>
+                            <td class="py-2 text-right text-slate-500">${item.taxaCritica.toFixed(1)}%</td>
+                        </tr>
+                    `;
+                });
             }
 
             const topVencidas = [...areasArray].filter(a => a.vencidas > 0).sort((a,b) => b.vencidas - a.vencidas).slice(0, 5);
             const tbodyVenc = document.getElementById('rankingVencidasBody');
-            if (tbodyVenc) {
-                tbodyVenc.innerHTML = '';
-                if (topVencidas.length === 0) {
-                    tbodyVenc.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhuma OS vencida!</td></tr>';
-                } else {
-                    topVencidas.forEach((item, index) => {
-                        tbodyVenc.innerHTML += `
-                            <tr class="hover:bg-slate-50">
-                                <td class="py-2 flex items-center gap-2">
-                                    <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
-                                    <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
-                                </td>
-                                <td class="py-2 text-right font-bold text-rose-600">${item.vencidas}</td>
-                                <td class="py-2 text-right text-slate-500">${item.taxaFalha.toFixed(1)}%</td>
-                            </tr>
-                        `;
-                    });
-                }
+            tbodyVenc.innerHTML = '';
+            if (topVencidas.length === 0) {
+                tbodyVenc.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-400">Nenhuma OS vencida!</td></tr>';
+            } else {
+                topVencidas.forEach((item, index) => {
+                    tbodyVenc.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-2 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600'}">${index + 1}</span>
+                                <span class="font-medium text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
+                            </td>
+                            <td class="py-2 text-right font-bold text-rose-600">${item.vencidas}</td>
+                            <td class="py-2 text-right text-slate-500">${item.taxaFalha.toFixed(1)}%</td>
+                        </tr>
+                    `;
+                });
             }
         }
 
         function renderTable() {
             const tbody = document.getElementById('tableOSBody');
-            if (!tbody) return;
             tbody.innerHTML = '';
 
             const total = filteredDataset.length;
-            const recordsCountEl = document.getElementById('recordsCount');
-            if (recordsCountEl) {
-                recordsCountEl.innerText = `Exibindo ${total.toLocaleString('pt-BR')} registros`;
-            }
+            document.getElementById('recordsCount').innerText = `Exibindo ${total.toLocaleString('pt-BR')} registros`;
 
-            if (filteredDataset.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="12" class="text-center py-8 text-slate-400 font-medium">Nenhum registro encontrado para estes filtros.</td></tr>';
+            const totalPages = Math.ceil(total / pageSize) || 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+
+            document.getElementById('currentPageNum').innerText = currentPage;
+            document.getElementById('totalPagesNum').innerText = totalPages;
+            document.getElementById('btnPrevPage').disabled = currentPage <= 1;
+            document.getElementById('btnNextPage').disabled = currentPage >= totalPages;
+
+            const startIdx = (currentPage - 1) * pageSize;
+            const pageData = filteredDataset.slice(startIdx, startIdx + pageSize);
+
+            if (pageData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="12" class="text-center py-6 text-slate-400">Nenhum registro encontrado para estes filtros.</td></tr>';
                 return;
             }
 
-            filteredDataset.forEach(row => {
+            pageData.forEach(row => {
                 let slaBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">${row.slaPctStr || '0%'}</span>`;
                 if (row.isVencida) {
                     slaBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">FORA PRAZO</span>`;
@@ -1635,40 +1621,28 @@
             const item = rawDataset.find(d => d.os === numOS);
             if (!item) return;
 
-            const modalOSNum = document.getElementById('modalOSNum');
-            if (modalOSNum) modalOSNum.innerText = item.os;
-            
-            const modalDescricaoAcao = document.getElementById('modalDescricaoAcao');
-            if (modalDescricaoAcao) modalDescricaoAcao.innerText = item.descricaoAcao || '';
-            
-            const modalDescricaoOS = document.getElementById('modalDescricaoOS');
-            if (modalDescricaoOS) modalDescricaoOS.innerText = item.descricao || '';
-            
-            const modalNumSC = document.getElementById('modalNumSC');
-            if (modalNumSC) modalNumSC.innerText = item.numSC || '-';
-            
-            const modalPrevisaoRevisada = document.getElementById('modalPrevisaoRevisada');
-            if (modalPrevisaoRevisada) modalPrevisaoRevisada.innerText = item.previsaoRevisada || '-';
-            
-            const modalEtapaEsteira = document.getElementById('modalEtapaEsteira');
-            if (modalEtapaEsteira) modalEtapaEsteira.innerText = item.etapaEsteira || '-';
-            
-            const modalResponsavel = document.getElementById('modalResponsavel');
-            if (modalResponsavel) modalResponsavel.innerText = item.responsavel || '-';
+            document.getElementById('modalOSNum').innerText = item.os;
+            document.getElementById('modalDescricaoAcao').innerText = item.descricaoAcao || 'Nenhuma descrição de ação preenchida nesta OS.';
+            document.getElementById('modalDescricaoOS').innerText = item.descricao || 'Sem descrição cadastrada.';
+            document.getElementById('modalEtapaEsteira').innerText = item.etapaEsteira || 'Não informada';
+            document.getElementById('modalResponsavel').innerText = item.responsavel || 'Não informado';
 
-            const modalAcao = document.getElementById('modalAcao');
-            if (modalAcao) modalAcao.classList.remove('hidden');
+            document.getElementById('modalAcao').classList.remove('hidden');
         }
 
         function fecharModalAcao() {
-            const modalAcao = document.getElementById('modalAcao');
-            if (modalAcao) modalAcao.classList.add('hidden');
+            document.getElementById('modalAcao').classList.add('hidden');
         }
 
         window.addEventListener('click', (e) => {
             const modal = document.getElementById('modalAcao');
             if (e.target === modal) fecharModalAcao();
         });
+
+        function changePage(direction) {
+            currentPage += direction;
+            renderTable();
+        }
 
         function exportarExcelMultiAbas() {
             if (filteredDataset.length === 0) {
