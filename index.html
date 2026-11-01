@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Torre de Controle OS | NC / COR</title>
+    <title>Controle de Ordens de Serviço | NC / COR</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
@@ -14,94 +14,124 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
+        
         .custom-scroll::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         .custom-scroll::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
+            background: #f1f5f9;
         }
         .custom-scroll::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #cbd5e1;
             border-radius: 4px;
         }
         .custom-scroll::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: #94a3b8;
+        }
+        
+        /* Efeito de card corporativo leve */
+        .card-clean {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col custom-scroll">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col custom-scroll antialiased">
 
-    <!-- Top Header -->
-    <header class="border-b border-slate-800 bg-slate-900/80 sticky top-0 z-50 backdrop-blur-md px-6 py-4">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-xl shadow-lg shadow-blue-500/20">
-                    <i class="fa-solid fa-chart-line text-white text-xl"></i>
+    <!-- Top Container & Header Enterprise Dark Navy -->
+    <div class="max-w-[1580px] w-full mx-auto p-4 sm:p-6 pb-0">
+        <header class="bg-[#0B1325] text-white rounded-2xl shadow-xl px-5 py-4 sm:px-7 sm:py-5 flex flex-wrap items-center justify-between gap-4 border border-slate-800">
+            <!-- Título e Logo -->
+            <div class="flex items-center gap-3.5">
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-600 to-sky-400 flex items-center justify-center shadow-lg shadow-cyan-500/25 shrink-0">
+                    <i class="fa-solid fa-clock-rotate-left text-white text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        Controle de Ordens de Serviços <span class="text-xs font-semibold px-2 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800">NC / COR</span>
-                    </h1>
-                    <p class="text-xs text-slate-400">Monitoramento Operacional, SLA & Eficiência em Tempo Real</p>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white uppercase">
+                            Controle de Ordens de Serviço
+                        </h1>
+                        <span class="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-950/80 text-cyan-300 border border-cyan-700/60">
+                            NC / COR • Google Sheets Live
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-0.5 font-normal">
+                        Contrato Vivo • Acompanhamento Gerencial de Operação, Eficiência & SLA em Tempo Real
+                    </p>
                 </div>
             </div>
 
-            <!-- Ações rápidas & Status Online -->
-            <div class="flex items-center gap-3">
-                <button id="btnReload" onclick="loadAllData()" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-medium text-white transition flex items-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-rotate"></i> Recarregar Planilha
-                </button>
-                <div id="statusBadge" class="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <!-- Status de sincronização & Ações Rápidas -->
+            <div class="flex flex-wrap items-center gap-3 ml-auto sm:ml-0">
+                <div class="text-right pr-2 hidden md:block">
+                    <span class="block text-[10px] uppercase font-bold tracking-wider text-slate-400">Última Sincronização</span>
+                    <span id="horaSincronizacao" class="text-xs font-semibold text-white font-mono">--:--:--</span>
+                </div>
+
+                <div id="statusBadge" class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30">
                     <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
                     <span id="statusText">A carregar planilha...</span>
                 </div>
+
+                <button id="btnReload" onclick="loadAllData()" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white transition-all flex items-center gap-2 shadow-sm shadow-emerald-950 active:scale-95">
+                    <i class="fa-solid fa-rotate"></i> Sincronizar
+                </button>
+
+                <button onclick="window.print()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition-all border border-slate-700 flex items-center gap-1.5 active:scale-95">
+                    <i class="fa-solid fa-print"></i> Relatório / PDF
+                </button>
+
+                <button onclick="exportCurrentFilteredCSV()" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white transition-all flex items-center gap-1.5 shadow-sm shadow-sky-950 active:scale-95">
+                    <i class="fa-solid fa-file-export"></i> Exportar Base
+                </button>
             </div>
+        </header>
+    </div>
+
+    <!-- Barra de Alerta / Sucesso de Sincronização -->
+    <div class="max-w-[1580px] w-full mx-auto px-4 sm:px-6 pt-3">
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div class="flex items-center gap-2 text-emerald-800 font-medium">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-sm"></i>
+                <span><strong class="font-bold">Sucesso:</strong> Base de dados sincronizada e atualizada em tempo real com a planilha oficial.</span>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-md bg-amber-100 text-amber-800 border border-amber-200 text-[11px] font-semibold">
+                Objetivo: Redução de Fora do Prazo e Agilidade no Atendimento
+            </span>
         </div>
-    </header>
+    </div>
 
     <!-- Barra de Filtros e Busca -->
-    <section class="border-b border-slate-800/80 bg-slate-900/40 px-6 py-4">
-        <div class="max-w-7xl mx-auto flex flex-col gap-3">
-            <div class="flex flex-wrap items-center justify-between gap-2">
-                <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
-                    <i class="fa-solid fa-filter text-cyan-400"></i> Filtros de Operação
+    <section class="max-w-[1580px] w-full mx-auto p-4 sm:p-6 pb-2">
+        <div class="card-clean rounded-2xl p-4 sm:p-5 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100">
+                <span class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
+                    <i class="fa-solid fa-filter text-sky-600"></i> Filtros de Pesquisa
                 </span>
-                <button onclick="resetFilters()" class="text-xs text-slate-400 hover:text-white transition underline">
-                    Limpar Todos
+                <button onclick="resetFilters()" class="text-xs font-semibold text-slate-500 hover:text-sky-600 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-eraser text-[11px]"></i> Limpar Filtros
                 </button>
             </div>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-2.5">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-3">
                 <!-- Filtro Gestor -->
                 <div>
-                    <label class="block text-[10px] text-slate-400 font-medium mb-1">GESTOR</label>
-                    <select id="filterGestor" onchange="onGestorChange()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
+                    <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">GESTOR</label>
+                    <select id="filterGestor" onchange="applyFilters()" class="w-full bg-slate-50 hover:bg-white text-xs text-slate-700 font-medium border border-slate-200 rounded-xl px-2.5 py-2 focus:border-sky-500 focus:bg-white focus:outline-none transition">
                         <option value="TEL" selected>TEL</option>
                         <option value="VIVO">VIVO</option>
                         <option value="TODOS">Todos</option>
                     </select>
                 </div>
 
-                <!-- Filtro Status / Ativa (Coluna AV) -->
-                <div>
-                    <label class="block text-[10px] text-emerald-400 font-medium mb-1">STATUS (ATIVA)</label>
-                    <select id="filterAtiva" onchange="onAtivaChange()" class="w-full bg-slate-800 text-xs text-emerald-200 border border-emerald-800 rounded-lg px-2.5 py-1.5 focus:border-emerald-500 focus:outline-none">
-                        <option value="TODOS">Todos</option>
-                    </select>
-                </div>
-
                 <!-- Filtro Executadas sem Aprovação -->
                 <div>
-                    <label class="block text-[10px] text-cyan-400 font-medium mb-1">EXEC. S/ APROV.</label>
-                    <select id="filterExecSemAprov" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-cyan-200 border border-cyan-800 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
+                    <label class="block text-[10px] text-sky-700 font-bold uppercase mb-1">EXEC. S/ APROV.</label>
+                    <select id="filterExecSemAprov" onchange="applyFilters()" class="w-full bg-sky-50/50 hover:bg-white text-xs text-sky-900 font-medium border border-sky-200 rounded-xl px-2.5 py-2 focus:border-sky-500 focus:bg-white focus:outline-none transition">
                         <option value="TODOS">Todas</option>
                         <option value="SIM">Apenas Exec. s/ Aprov.</option>
                         <option value="NAO">Outras</option>
@@ -110,8 +140,8 @@
 
                 <!-- Filtro FAT-B -->
                 <div>
-                    <label class="block text-[10px] text-slate-400 font-medium mb-1">FATURAMENTO</label>
-                    <select id="filterFatB" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
+                    <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">FATURAMENTO</label>
+                    <select id="filterFatB" onchange="applyFilters()" class="w-full bg-slate-50 hover:bg-white text-xs text-slate-700 font-medium border border-slate-200 rounded-xl px-2.5 py-2 focus:border-sky-500 focus:bg-white focus:outline-none transition">
                         <option value="TODOS">Todos</option>
                         <option value="FAT_B">Apenas FAT-B</option>
                         <option value="NAO_FAT_B">Outros / Fat_A</option>
@@ -120,29 +150,31 @@
 
                 <!-- Filtro Faixa SLA -->
                 <div>
-                    <label class="block text-[10px] text-slate-400 font-medium mb-1">STATUS DO SLA</label>
-                    <select id="filterSLA" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
+                    <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">STATUS DO SLA</label>
+                    <select id="filterSLA" onchange="applyFilters()" class="w-full bg-slate-50 hover:bg-white text-xs text-slate-700 font-medium border border-slate-200 rounded-xl px-2.5 py-2 focus:border-sky-500 focus:bg-white focus:outline-none transition">
                         <option value="TODOS">Todos</option>
                         <option value="VENCIDAS">Vencidas (Fora)</option>
-                        <option value="ACIMA_90">&gt; 90% SLA</option>
-                        <option value="ACIMA_80">&gt; 80% SLA</option>
+                        <option value="ACIMA_90">> 90% SLA</option>
+                        <option value="ACIMA_80">> 80% SLA</option>
                         <option value="70_80">70% a 80% SLA</option>
-                        <option value="ABAIXO_70">&lt; 70% SLA</option>
+                        <option value="ABAIXO_70">< 70% SLA</option>
                     </select>
                 </div>
 
-                <!-- Filtro Estado OS -->
+                <!-- Filtro Urgente -->
                 <div>
-                    <label class="block text-[10px] text-slate-400 font-medium mb-1">ESTADO OS</label>
-                    <select id="filterEstadoOS" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
+                    <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">URGÊNCIA</label>
+                    <select id="filterUrgente" onchange="applyFilters()" class="w-full bg-slate-50 hover:bg-white text-xs text-slate-700 font-medium border border-slate-200 rounded-xl px-2.5 py-2 focus:border-sky-500 focus:bg-white focus:outline-none transition">
                         <option value="TODOS">Todos</option>
+                        <option value="SIM">Apenas Urgentes</option>
+                        <option value="NAO">Não Urgentes</option>
                     </select>
                 </div>
 
                 <!-- Filtro com SC -->
                 <div>
-                    <label class="block text-[10px] text-slate-400 font-medium mb-1">STATUS SC</label>
-                    <select id="filterSC" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
+                    <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">STATUS SC</label>
+                    <select id="filterSC" onchange="applyFilters()" class="w-full bg-slate-50 hover:bg-white text-xs text-slate-700 font-medium border border-slate-200 rounded-xl px-2.5 py-2 focus:border-sky-500 focus:bg-white focus:outline-none transition">
                         <option value="TODOS">Todos</option>
                         <option value="COM_SC">Com SC preenchida</option>
                         <option value="SEM_SC">Sem SC</option>
@@ -151,34 +183,18 @@
 
                 <!-- Filtro Regional -->
                 <div>
-                    <label class="block text-[10px] text-slate-400 font-medium mb-1">REGIONAL</label>
-                    <select id="filterRegional" onchange="applyFilters()" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
+                    <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">REGIONAL</label>
+                    <select id="filterRegional" onchange="applyFilters()" class="w-full bg-slate-50 hover:bg-white text-xs text-slate-700 font-medium border border-slate-200 rounded-xl px-2.5 py-2 focus:border-sky-500 focus:bg-white focus:outline-none transition">
                         <option value="TODOS">Todas</option>
                     </select>
                 </div>
 
-                <!-- Filtro Tipo de Serviço com Múltipla Escolha -->
-                <div class="relative">
-                    <label class="block text-[10px] text-slate-400 font-medium mb-1">TIPO SERVIÇO</label>
-                    <button type="button" id="btnDropdownTipo" onclick="toggleTipoDropdown(event)" class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 flex items-center justify-between focus:border-cyan-500 focus:outline-none">
-                        <span id="labelDropdownTipo" class="truncate text-left pr-1">Todos</span>
-                        <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
-                    </button>
-                    <div id="menuDropdownTipo" class="absolute left-0 mt-1 w-52 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl p-2 z-50 hidden max-h-56 overflow-y-auto custom-scroll">
-                        <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-800 text-[11px]">
-                            <button type="button" onclick="selectAllTipos(true)" class="text-cyan-400 hover:underline">Marcar Todos</button>
-                            <button type="button" onclick="selectAllTipos(false)" class="text-slate-400 hover:underline">Limpar</button>
-                        </div>
-                        <div id="listaOpcoesTipo" class="space-y-1 text-xs"></div>
-                    </div>
-                </div>
-
                 <!-- Busca Livre -->
                 <div>
-                    <label class="block text-[10px] text-slate-400 font-medium mb-1">BUSCA LIVRE</label>
+                    <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">BUSCA LIVRE</label>
                     <div class="relative">
-                        <input type="text" id="filterSearch" oninput="applyFilters()" placeholder="OS, Site, Ação..." class="w-full bg-slate-800 text-xs text-slate-200 border border-slate-700 rounded-lg pl-7 pr-2.5 py-1.5 focus:border-cyan-500 focus:outline-none">
-                        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-[10px] text-slate-400"></i>
+                        <input type="text" id="filterSearch" oninput="applyFilters()" placeholder="OS, Site, Ação..." class="w-full bg-slate-50 hover:bg-white text-xs text-slate-700 border border-slate-200 rounded-xl pl-8 pr-2.5 py-2 focus:border-sky-500 focus:bg-white focus:outline-none transition">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-[11px] text-slate-400"></i>
                     </div>
                 </div>
             </div>
@@ -186,355 +202,381 @@
     </section>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto w-full p-6 flex-1 flex flex-col gap-6">
+    <main class="max-w-[1580px] mx-auto w-full p-4 sm:p-6 pt-2 flex-1 flex flex-col gap-5">
 
-        <!-- Grid de KPIs Primários -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3">
-            <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-blue-500">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Volume Total</span>
-                    <i class="fa-solid fa-list-check text-blue-400/70 text-sm"></i>
+        <!-- Grid de KPIs Primários - Clean Style da Referência -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3.5">
+            <!-- Total OS -->
+            <div class="card-clean rounded-2xl p-4 flex flex-col justify-between border-t-4 border-t-sky-600">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">TOTAL ORDENS</span>
+                    <i class="fa-solid fa-list-check text-sky-500 text-sm"></i>
                 </div>
-                <div class="mt-2"><span id="kpiTotalOS" class="text-2xl font-bold text-white tracking-tight">0</span></div>
-                <span class="text-[10px] text-slate-500 mt-1">OS Válidas apuradas</span>
+                <div class="mt-2.5">
+                    <span id="kpiTotalOS" class="text-3xl font-extrabold text-slate-900 tracking-tight">0</span>
+                </div>
+                <div class="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400">Valor Base</span>
+                    <strong id="kpiTotalBaseReais" class="text-slate-700 font-bold">R$ 0</strong>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-cyan-500">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Média Diária</span>
-                    <i class="fa-solid fa-calendar-day text-cyan-400/70 text-sm"></i>
+            <!-- Média Diária -->
+            <div class="card-clean rounded-2xl p-4 flex flex-col justify-between border-t-4 border-t-cyan-500">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">MÉDIA DIÁRIA</span>
+                    <i class="fa-solid fa-calendar-day text-cyan-500 text-sm"></i>
                 </div>
-                <div class="mt-2"><span id="kpiMediaDiaria" class="text-2xl font-bold text-cyan-400 tracking-tight">0.0</span></div>
-                <span class="text-[10px] text-slate-500 mt-1">Entrantes / dias c/ reg.</span>
+                <div class="mt-2.5">
+                    <span id="kpiMediaDiaria" class="text-3xl font-extrabold text-cyan-600 tracking-tight">0.0</span>
+                </div>
+                <div class="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400">Entrantes</span>
+                    <span class="text-cyan-700 font-semibold">por dia ativo</span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-indigo-500">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Vol. Mensal</span>
-                    <i class="fa-solid fa-calendar-week text-indigo-400/70 text-sm"></i>
+            <!-- Volume Mensal -->
+            <div class="card-clean rounded-2xl p-4 flex flex-col justify-between border-t-4 border-t-indigo-500">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">VOL. MENSAL</span>
+                    <i class="fa-solid fa-calendar-week text-indigo-500 text-sm"></i>
                 </div>
-                <div class="mt-2"><span id="kpiVolMensal" class="text-2xl font-bold text-indigo-300 tracking-tight">0</span></div>
-                <span class="text-[10px] text-slate-500 mt-1">Média mensal de criação</span>
+                <div class="mt-2.5">
+                    <span id="kpiVolMensal" class="text-3xl font-extrabold text-indigo-600 tracking-tight">0</span>
+                </div>
+                <div class="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400">Média</span>
+                    <span class="text-indigo-700 font-semibold">Criação / mês</span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-purple-500">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">FAT-B (Qtde)</span>
-                    <i class="fa-solid fa-receipt text-purple-400/70 text-sm"></i>
+            <!-- FAT-B Quantidade -->
+            <div class="card-clean rounded-2xl p-4 flex flex-col justify-between border-t-4 border-t-purple-500">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">FAT-B (QTDE)</span>
+                    <i class="fa-solid fa-receipt text-purple-500 text-sm"></i>
                 </div>
-                <div class="mt-2"><span id="kpiFatBQtde" class="text-2xl font-bold text-purple-400 tracking-tight">0</span></div>
-                <span id="kpiFatBPct" class="text-[10px] text-purple-300/80 mt-1">0% da base</span>
+                <div class="mt-2.5">
+                    <span id="kpiFatBQtde" class="text-3xl font-extrabold text-purple-600 tracking-tight">0</span>
+                </div>
+                <div class="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span id="kpiFatBPct" class="text-purple-700 font-semibold">0% do total</span>
+                    <span class="text-slate-400 text-[10px]">Segmento</span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-emerald-500">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">FAT-B (R$)</span>
-                    <i class="fa-solid fa-money-bill-wave text-emerald-400/70 text-sm"></i>
+            <!-- FAT-B Reais -->
+            <div class="card-clean rounded-2xl p-4 flex flex-col justify-between border-t-4 border-t-emerald-500">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">FAT-B (R$)</span>
+                    <i class="fa-solid fa-money-bill-wave text-emerald-500 text-sm"></i>
                 </div>
-                <div class="mt-2"><span id="kpiFatBReais" class="text-xl font-bold text-emerald-400 tracking-tight">R$ 0</span></div>
-                <span class="text-[10px] text-slate-500 mt-1">Soma de materiais</span>
+                <div class="mt-2.5">
+                    <span id="kpiFatBReais" class="text-2xl font-extrabold text-emerald-600 tracking-tight">R$ 0</span>
+                </div>
+                <div class="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400">Materiais</span>
+                    <span class="text-emerald-700 font-semibold">Soma Fat-B</span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-teal-500">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">R$ Médio / OS</span>
-                    <i class="fa-solid fa-calculator text-teal-400/70 text-sm"></i>
+            <!-- Custo Médio / OS -->
+            <div class="card-clean rounded-2xl p-4 flex flex-col justify-between border-t-4 border-t-teal-500">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">R$ MÉDIO / OS</span>
+                    <i class="fa-solid fa-calculator text-teal-500 text-sm"></i>
                 </div>
-                <div class="mt-2"><span id="kpiMediaReaisOS" class="text-xl font-bold text-teal-400 tracking-tight">R$ 0</span></div>
-                <span class="text-[10px] text-slate-500 mt-1">Custo médio unitário</span>
+                <div class="mt-2.5">
+                    <span id="kpiMediaReaisOS" class="text-2xl font-extrabold text-teal-600 tracking-tight">R$ 0</span>
+                </div>
+                <div class="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span class="text-slate-400">Unitário</span>
+                    <span class="text-teal-700 font-semibold">Geral base</span>
+                </div>
             </div>
 
-            <div class="glass-card rounded-xl p-3.5 flex flex-col justify-between border-l-4 border-l-rose-500">
-                <div class="flex items-center justify-between">
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wide">Vencidas / >80%</span>
-                    <i class="fa-solid fa-triangle-exclamation text-rose-400/70 text-sm"></i>
+            <!-- Risco Total (>80% e Vencidas) -->
+            <div class="card-clean rounded-2xl p-4 flex flex-col justify-between border-t-4 border-t-rose-500">
+                <div class="flex items-center justify-between text-slate-400">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">FORA / >80%</span>
+                    <i class="fa-solid fa-triangle-exclamation text-rose-500 text-sm"></i>
                 </div>
-                <div class="mt-2"><span id="kpiRiscoTotal" class="text-2xl font-bold text-rose-400 tracking-tight">0</span></div>
-                <span id="kpiRiscoDetail" class="text-[10px] text-rose-300/80 mt-1">0 Venc. | 0 >80%</span>
+                <div class="mt-2.5">
+                    <span id="kpiRiscoTotal" class="text-3xl font-extrabold text-rose-600 tracking-tight">0</span>
+                </div>
+                <div class="pt-2 mt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                    <span id="kpiRiscoDetail" class="text-rose-600 font-bold truncate">0 Fora | 0 >80%</span>
+                </div>
             </div>
         </div>
 
-        <!-- Linha de Gráficos (SLA, Volume por Regional e Valores por Regional) -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Linha de Gráficos Operacionais (SLA, Volume por Regional e Valores por Regional) -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <!-- Gráfico SLA Donut -->
-            <div class="glass-card rounded-2xl p-4 flex flex-col justify-between">
-                <div class="flex items-center justify-between mb-1">
-                    <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
-                        <i class="fa-solid fa-chart-pie text-cyan-400"></i> Distribuição por Faixa de SLA
+            <div class="card-clean rounded-2xl p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-sky-600"></i> Distribuição por Faixa de SLA
                     </h3>
-                    <span class="text-[10px] text-slate-400">Tempo de Atendimento</span>
+                    <span class="text-[11px] text-slate-400 font-medium">Tempo de Atendimento</span>
                 </div>
-                <div class="relative w-full h-[125px] flex items-center justify-center">
+                <div class="relative w-full h-[150px] flex items-center justify-center my-2">
                     <canvas id="chartSlaPizza"></canvas>
                 </div>
-                <div class="grid grid-cols-2 gap-x-2 gap-y-1 pt-2 border-t border-slate-800 text-[11px]">
-                    <div class="flex items-center justify-between bg-slate-800/40 px-2 py-0.5 rounded">
-                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>&lt; 70%:</span>
-                        <strong id="lblFaixa1" class="text-emerald-400 font-bold ml-1">0</strong>
+                <div class="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 text-xs">
+                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-100">
+                        <span class="flex items-center gap-1.5 text-slate-600 font-medium"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>&lt; 70%:</span>
+                        <strong id="lblFaixa1" class="text-emerald-700 font-bold">0</strong>
                     </div>
-                    <div class="flex items-center justify-between bg-slate-800/40 px-2 py-0.5 rounded">
-                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2 h-2 rounded-full bg-yellow-500"></span>70% a 80%:</span>
-                        <strong id="lblFaixa2" class="text-yellow-400 font-bold ml-1">0</strong>
+                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-100">
+                        <span class="flex items-center gap-1.5 text-slate-600 font-medium"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>70% a 80%:</span>
+                        <strong id="lblFaixa2" class="text-amber-700 font-bold">0</strong>
                     </div>
-                    <div class="flex items-center justify-between bg-slate-800/40 px-2 py-0.5 rounded">
-                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2 h-2 rounded-full bg-orange-500"></span>&gt; 80%:</span>
-                        <strong id="lblFaixa3" class="text-orange-400 font-bold ml-1">0</strong>
+                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-100">
+                        <span class="flex items-center gap-1.5 text-slate-600 font-medium"><span class="w-2.5 h-2.5 rounded-full bg-orange-500"></span>&gt; 80%:</span>
+                        <strong id="lblFaixa3" class="text-orange-700 font-bold">0</strong>
                     </div>
-                    <div class="flex items-center justify-between bg-slate-800/40 px-2 py-0.5 rounded">
-                        <span class="flex items-center gap-1.5 text-slate-300"><span class="w-2 h-2 rounded-full bg-rose-600"></span>Vencidas:</span>
-                        <strong id="lblFaixa4" class="text-rose-400 font-bold ml-1">0</strong>
+                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-100">
+                        <span class="flex items-center gap-1.5 text-slate-600 font-medium"><span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>Fora Prazo:</span>
+                        <strong id="lblFaixa4" class="text-rose-700 font-bold">0</strong>
                     </div>
                 </div>
             </div>
 
             <!-- Gráfico Volume Regional -->
-            <div class="glass-card rounded-2xl p-4 pb-2 flex flex-col">
-                <div class="flex items-center justify-between mb-1">
-                    <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
-                        <i class="fa-solid fa-chart-bar text-blue-400"></i> Volume por Regional
+            <div class="card-clean rounded-2xl p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-chart-column text-sky-600"></i> Volume por Regional
                     </h3>
-                    <span class="text-[10px] text-slate-400">Total vs Vencidas</span>
+                    <span class="text-[11px] text-slate-400 font-medium">Total vs Fora do Prazo</span>
                 </div>
-                <div class="relative w-full h-[155px] flex-1">
+                <div class="relative w-full h-[190px] flex-1">
                     <canvas id="chartRegional"></canvas>
                 </div>
             </div>
 
-            <!-- Gráfico: Valores por Regional -->
-            <div class="glass-card rounded-2xl p-4 pb-2 flex flex-col border border-emerald-500/20">
-                <div class="flex items-center justify-between mb-1">
-                    <h3 class="text-xs font-bold text-white flex items-center gap-1.5">
-                        <i class="fa-solid fa-sack-dollar text-emerald-400"></i> Valores por Regional (R$)
+            <!-- Gráfico Valores Financeiros por Regional -->
+            <div class="card-clean rounded-2xl p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-2">
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-sack-dollar text-emerald-600"></i> Valores por Regional (R$)
                     </h3>
-                    <span class="text-[10px] text-slate-400">Materiais Externos</span>
+                    <span class="text-[11px] text-slate-400 font-medium">Materiais Externos</span>
                 </div>
-                <div class="relative w-full h-[155px] flex-1">
+                <div class="relative w-full h-[190px] flex-1">
                     <canvas id="chartValoresRegional"></canvas>
                 </div>
             </div>
         </div>
 
-        <!-- Seção de Rankings -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="glass-card rounded-2xl p-5 flex flex-col">
-                <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
-                    <h3 class="text-sm font-bold text-amber-400 flex items-center gap-2">
+        <!-- Seção de 3 Rankings Analíticos -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            <!-- Ranking Volume -->
+            <div class="card-clean rounded-2xl p-5 flex flex-col">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
+                    <h3 class="text-xs font-bold text-amber-700 uppercase tracking-wide flex items-center gap-2">
                         <i class="fa-solid fa-fire text-amber-500"></i> Área Ofensora de Volume
                     </h3>
-                    <span class="text-[10px] uppercase font-bold text-slate-500">Top Unidades</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-400">Top Unidades</span>
                 </div>
                 <div class="overflow-y-auto max-h-56 custom-scroll pr-1">
                     <table class="w-full text-left text-xs">
                         <thead>
-                            <tr class="text-slate-400 border-b border-slate-800">
-                                <th class="py-2">Área / Unidade Negócio</th>
-                                <th class="py-2 text-right">Volume</th>
-                                <th class="py-2 text-right">% Total</th>
+                            <tr class="text-slate-400 border-b border-slate-100 text-[11px]">
+                                <th class="py-2 font-semibold">Unidade de Negócio</th>
+                                <th class="py-2 text-right font-semibold">Volume</th>
+                                <th class="py-2 text-right font-semibold">% Total</th>
                             </tr>
                         </thead>
-                        <tbody id="rankingVolumeBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+                        <tbody id="rankingVolumeBody" class="divide-y divide-slate-100 text-slate-700 font-medium"></tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-5 flex flex-col border border-orange-500/20">
-                <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
-                    <h3 class="text-sm font-bold text-orange-400 flex items-center gap-2">
+            <!-- Ranking Regional > 80% -->
+            <div class="card-clean rounded-2xl p-5 flex flex-col border-t-2 border-t-orange-400">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
+                    <h3 class="text-xs font-bold text-orange-700 uppercase tracking-wide flex items-center gap-2">
                         <i class="fa-solid fa-clock-rotate-left text-orange-500"></i> Regional Ofensora > 80%
                     </h3>
-                    <span class="text-[10px] uppercase font-bold text-slate-500">Alerta SLA</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-400">Alerta de SLA</span>
                 </div>
                 <div class="overflow-y-auto max-h-56 custom-scroll pr-1">
                     <table class="w-full text-left text-xs">
                         <thead>
-                            <tr class="text-slate-400 border-b border-slate-800">
-                                <th class="py-2">Regional</th>
-                                <th class="py-2 text-right">> 80%</th>
-                                <th class="py-2 text-right">% Crítica</th>
+                            <tr class="text-slate-400 border-b border-slate-100 text-[11px]">
+                                <th class="py-2 font-semibold">Regional</th>
+                                <th class="py-2 text-right font-semibold">> 80%</th>
+                                <th class="py-2 text-right font-semibold">% Crítica</th>
                             </tr>
                         </thead>
-                        <tbody id="rankingRegional80Body" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+                        <tbody id="rankingRegional80Body" class="divide-y divide-slate-100 text-slate-700 font-medium"></tbody>
                     </table>
                 </div>
             </div>
 
-            <div class="glass-card rounded-2xl p-5 flex flex-col">
-                <div class="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
-                    <h3 class="text-sm font-bold text-rose-400 flex items-center gap-2">
-                        <i class="fa-solid fa-skull-crossbones text-rose-500"></i> Área Ofensora de Vencidas
+            <!-- Ranking Fora do Prazo -->
+            <div class="card-clean rounded-2xl p-5 flex flex-col border-t-2 border-t-rose-400">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
+                    <h3 class="text-xs font-bold text-rose-700 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Área Ofensora de Fora do Prazo
                     </h3>
-                    <span class="text-[10px] uppercase font-bold text-slate-500">Maior Risco SLA</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-400">Maior Risco SLA</span>
                 </div>
                 <div class="overflow-y-auto max-h-56 custom-scroll pr-1">
                     <table class="w-full text-left text-xs">
                         <thead>
-                            <tr class="text-slate-400 border-b border-slate-800">
-                                <th class="py-2">Área / Unidade Negócio</th>
-                                <th class="py-2 text-right">Vencidas</th>
-                                <th class="py-2 text-right">Taxa Falha</th>
+                            <tr class="text-slate-400 border-b border-slate-100 text-[11px]">
+                                <th class="py-2 font-semibold">Unidade de Negócio</th>
+                                <th class="py-2 text-right font-semibold">Fora Prazo</th>
+                                <th class="py-2 text-right font-semibold">Taxa Falha</th>
                             </tr>
                         </thead>
-                        <tbody id="rankingVencidasBody" class="divide-y divide-slate-800/60 text-slate-300"></tbody>
+                        <tbody id="rankingVencidasBody" class="divide-y divide-slate-100 text-slate-700 font-medium"></tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        <!-- GRÁFICO EVOLUÇÃO GERAL -->
-        <div class="glass-card rounded-2xl p-5 flex flex-col border border-blue-500/20">
+        <!-- GRÁFICO EVOLUÇÃO GERAL HISTÓRICA (ÚLTIMOS 12 MESES) -->
+        <div class="card-clean rounded-2xl p-5 flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-arrow-trend-up text-blue-400"></i> Evolução Geral Histórica (Prazo, Fora do Prazo & Variação)
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-trend-up text-sky-600"></i> Evolução Geral Histórica (Prazo, Fora do Prazo & Variação)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Série temporal consolidada do estoque de ordens de serviço por dia (Últimos 12 Meses)</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Série temporal consolidada do estoque de ordens de serviço por dia (Últimos 12 Meses)</p>
                 </div>
                 <div class="flex items-center gap-3 text-xs">
-                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-blue-500"></span><span class="text-slate-300">No Prazo</span></div>
-                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-rose-500"></span><span class="text-slate-300">Fora do Prazo</span></div>
-                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-cyan-400"></span><span class="text-slate-300">Variação Diária</span></div>
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-sky-500"></span><span class="text-slate-600 font-medium">No Prazo</span></div>
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-rose-500"></span><span class="text-slate-600 font-medium">Fora do Prazo</span></div>
+                    <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-emerald-500"></span><span class="text-slate-600 font-medium">Variação Diária</span></div>
                 </div>
             </div>
-            <div class="relative w-full h-[260px]">
+            <div class="relative w-full h-[250px]">
                 <canvas id="chartEvolucaoGeral"></canvas>
             </div>
         </div>
 
-        <!-- Gráfico Evolutivo de Quantidades de Entrantes -->
-        <div class="glass-card rounded-2xl p-5 flex flex-col">
+        <!-- GRÁFICO EVOLUTIVO DE ENTRANTES (ÚLTIMO TRIMESTRE) -->
+        <div class="card-clean rounded-2xl p-5 flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-chart-area text-cyan-400"></i> Evolutivo Temporal de Entrantes (Data de Criação)
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-chart-area text-cyan-600"></i> Evolutivo Temporal de Entrantes (Criação de OS)
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Acompanhamento de volume e linha de média operacional de entradas</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Acompanhamento do ritmo de entrada de Ordens de Serviço (Último Trimestre)</p>
                 </div>
-                <div class="flex flex-wrap items-center gap-2">
-                    <!-- Seletor de Período -->
-                    <div class="flex items-center gap-1.5 bg-slate-800/80 px-2 py-1 rounded-lg border border-slate-700/60 text-xs">
-                        <label for="selectPeriodoEvolutivo" class="text-slate-400 text-[10px] font-semibold uppercase">Período:</label>
-                        <select id="selectPeriodoEvolutivo" onchange="onPeriodoEvolutivoChange()" class="bg-transparent text-slate-200 text-xs focus:outline-none cursor-pointer">
-                            <option value="todos" selected>Histórico Completo</option>
-                            <option value="30d">Últimos 30 Dias</option>
-                            <option value="3m">Últimos 3 Meses</option>
-                            <option value="6m">Últimos 6 Meses</option>
-                            <option value="12m">Último 1 Ano</option>
-                            <option value="24m">Últimos 2 Anos</option>
-                        </select>
-                    </div>
-
-                    <!-- Granularidade (Mensal / Diário) -->
-                    <div class="flex items-center gap-1 bg-slate-800/80 p-1 rounded-lg border border-slate-700/60 text-xs">
-                        <button id="btnEvolutivoMensal" onclick="setEvolutivoGranularidade('mensal')" class="px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm">
-                            Mensal
-                        </button>
-                        <button id="btnEvolutivoDiario" onclick="setEvolutivoGranularidade('diario')" class="px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition">
-                            Diário
-                        </button>
-                    </div>
+                <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-semibold">
+                    <button id="btnEvolutivoMensal" onclick="setEvolutivoGranularidade('mensal')" class="px-3.5 py-1.5 rounded-lg text-white bg-sky-600 transition shadow-sm">
+                        Mensal
+                    </button>
+                    <button id="btnEvolutivoDiario" onclick="setEvolutivoGranularidade('diario')" class="px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition">
+                        Diário
+                    </button>
                 </div>
             </div>
-            <div class="relative w-full h-[230px]">
+            <div class="relative w-full h-[220px]">
                 <canvas id="chartEvolutivoEntrantes"></canvas>
             </div>
         </div>
 
-        <!-- Tabela Detalhada -->
-        <div class="glass-card rounded-2xl p-5 flex flex-col">
+        <!-- Tabela Detalhada com Coluna Estado OS -->
+        <div class="card-clean rounded-2xl p-5 flex flex-col">
             <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
                 <div>
-                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i class="fa-solid fa-table-list text-cyan-400"></i> Detalhamento Analítico de Ordens de Serviço
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-table-list text-sky-600"></i> Detalhamento Analítico de Ordens de Serviço
                     </h3>
-                    <p class="text-xs text-slate-400 mt-0.5">Listagem com prazos, dias restantes, esteira e ações detalhadas</p>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Listagem analítica com prazos, dias restantes, estado da OS e ações detalhadas</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <span id="recordsCount" class="text-xs text-slate-400">Exibindo 0 registros</span>
-                    <button onclick="exportCurrentFilteredCSV()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 transition flex items-center gap-1.5">
-                        <i class="fa-solid fa-download"></i> Exportar Visão
+                <div class="flex items-center gap-3">
+                    <span id="recordsCount" class="text-xs font-semibold text-slate-500">Exibindo 0 registros</span>
+                    <button onclick="exportCurrentFilteredCSV()" class="px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 border border-slate-200 transition flex items-center gap-1.5 shadow-sm active:scale-95">
+                        <i class="fa-solid fa-download text-slate-500"></i> Exportar Visão
                     </button>
                 </div>
             </div>
 
-            <div class="overflow-x-auto custom-scroll rounded-lg border border-slate-800">
+            <div class="overflow-x-auto custom-scroll rounded-xl border border-slate-200">
                 <table class="w-full text-left text-xs whitespace-nowrap">
-                    <thead class="bg-slate-900/90 text-slate-400 font-medium border-b border-slate-800">
+                    <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
                         <tr>
-                            <th class="py-3 px-3">Número OS</th>
-                            <th class="py-3 px-3">Status</th>
-                            <th class="py-3 px-3">Site / Local</th>
-                            <th class="py-3 px-3">Regional</th>
-                            <th class="py-3 px-3">Tipo Serviço</th>
-                            <th class="py-3 px-3">Estado OS</th>
-                            <th class="py-3 px-3">Gestor</th>
-                            <th class="py-3 px-3">Prazo</th>
-                            <th class="py-3 px-3 text-center">Dias Restantes</th>
-                            <th class="py-3 px-3">% SLA</th>
-                            <th class="py-3 px-3">Valor Materiais</th>
-                            <th class="py-3 px-3">N° SC</th>
-                            <th class="py-3 px-3">Etapa Esteira</th>
-                            <th class="py-3 px-3 text-center">Ação</th>
+                            <th class="py-3 px-3.5">Número OS</th>
+                            <th class="py-3 px-3.5">Site / Local</th>
+                            <th class="py-3 px-3.5">Regional</th>
+                            <th class="py-3 px-3.5">Tipo Serviço</th>
+                            <th class="py-3 px-3.5">Gestor</th>
+                            <th class="py-3 px-3.5">Prazo</th>
+                            <th class="py-3 px-3.5 text-center">Dias Restantes</th>
+                            <th class="py-3 px-3.5">% SLA</th>
+                            <th class="py-3 px-3.5">Valor Materiais</th>
+                            <th class="py-3 px-3.5">N° SC</th>
+                            <th class="py-3 px-3.5">Estado OS</th>
+                            <th class="py-3 px-3.5 text-center">Ação</th>
                         </tr>
                     </thead>
-                    <tbody id="tableOSBody" class="divide-y divide-slate-800/80 text-slate-300"></tbody>
+                    <tbody id="tableOSBody" class="divide-y divide-slate-100 text-slate-700"></tbody>
                 </table>
             </div>
 
             <!-- Paginação -->
-            <div class="flex items-center justify-between pt-4 text-xs text-slate-400">
+            <div class="flex items-center justify-between pt-4 text-xs text-slate-500">
                 <div class="flex items-center gap-2">
-                    <span>Página <strong id="currentPageNum" class="text-white">1</strong> de <strong id="totalPagesNum" class="text-white">1</strong></span>
+                    <span>Página <strong id="currentPageNum" class="text-slate-800">1</strong> de <strong id="totalPagesNum" class="text-slate-800">1</strong></span>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <button onclick="changePage(-1)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 disabled:opacity-40" id="btnPrevPage">Anterior</button>
-                    <button onclick="changePage(1)" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 rounded text-slate-300 disabled:opacity-40" id="btnNextPage">Próxima</button>
+                    <button onclick="changePage(-1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 font-medium disabled:opacity-40 border border-slate-200 transition" id="btnPrevPage">Anterior</button>
+                    <button onclick="changePage(1)" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg text-slate-700 font-medium disabled:opacity-40 border border-slate-200 transition" id="btnNextPage">Próxima</button>
                 </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Modal Detalhe da Ação -->
-    <div id="modalAcao" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-        <div class="glass-card bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative flex flex-col gap-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
-                        <i class="fa-solid fa-clipboard-list text-sm"></i>
+    <!-- Modal Detalhe da Ação (Estilo Clean Branco) -->
+    <div id="modalAcao" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 shadow-2xl relative flex flex-col gap-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center border border-sky-100">
+                        <i class="fa-solid fa-clipboard-list text-base"></i>
                     </div>
                     <div>
-                        <h4 class="text-sm font-bold text-white">Detalhamento da Ação</h4>
-                        <p class="text-[11px] text-slate-400">OS: <span id="modalOSNum" class="text-cyan-400 font-mono font-semibold"></span></p>
+                        <h4 class="text-sm font-bold text-slate-900">Detalhamento da Ação</h4>
+                        <p class="text-xs text-slate-500">OS: <span id="modalOSNum" class="text-sky-600 font-mono font-bold"></span></p>
                     </div>
                 </div>
-                <button onclick="fecharModalAcao()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+                <button onclick="fecharModalAcao()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
-            <div class="space-y-3 text-xs">
+            <div class="space-y-3.5 text-xs">
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Descrição da Ação</label>
-                    <div id="modalDescricaoAcao" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-slate-200 leading-relaxed max-h-48 overflow-y-auto custom-scroll whitespace-pre-wrap"></div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Descrição da Ação</label>
+                    <div id="modalDescricaoAcao" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-800 leading-relaxed max-h-48 overflow-y-auto custom-scroll whitespace-pre-wrap font-medium"></div>
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase font-bold text-slate-400 mb-1">Descrição Original da OS</label>
-                    <div id="modalDescricaoOS" class="p-3 bg-slate-950/60 rounded-xl border border-slate-800 text-slate-300 leading-relaxed max-h-36 overflow-y-auto custom-scroll whitespace-pre-wrap"></div>
+                    <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Descrição Original da OS</label>
+                    <div id="modalDescricaoOS" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed max-h-36 overflow-y-auto custom-scroll whitespace-pre-wrap font-medium"></div>
                 </div>
-                <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
-                    <div class="p-2 rounded-lg bg-slate-800/50 border border-slate-800">
-                        <span class="text-slate-400 block text-[10px]">Etapa Esteira</span>
-                        <span id="modalEtapaEsteira" class="font-medium text-slate-200 truncate block"></span>
+                <div class="grid grid-cols-2 gap-2.5 text-[11px] pt-1">
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Estado da OS</span>
+                        <span id="modalEstadoOS" class="font-bold text-slate-800 truncate block mt-0.5"></span>
                     </div>
-                    <div class="p-2 rounded-lg bg-slate-800/50 border border-slate-800">
-                        <span class="text-slate-400 block text-[10px]">Responsável</span>
-                        <span id="modalResponsavel" class="font-medium text-slate-200 truncate block"></span>
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-slate-400 block text-[10px] uppercase font-bold">Responsável</span>
+                        <span id="modalResponsavel" class="font-bold text-slate-800 truncate block mt-0.5"></span>
                     </div>
                 </div>
             </div>
 
-            <div class="flex justify-end pt-2 border-t border-slate-800">
-                <button onclick="fecharModalAcao()" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-200 transition">
+            <div class="flex justify-end pt-3 border-t border-slate-100">
+                <button onclick="fecharModalAcao()" class="px-5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-xs font-bold text-slate-700 border border-slate-200 transition">
                     Fechar
                 </button>
             </div>
@@ -542,18 +584,19 @@
     </div>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-900 bg-slate-950 py-4 text-center text-xs text-slate-500">
-        Portal de Gestão Operacional NC/COR • Conectado à Base Oficial Vivo / TEL
+    <footer class="border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500 font-medium">
+        Portal de Gestão Operacional NC / COR • Conectado à Base Oficial Vivo / TEL
     </footer>
 
     <!-- Lógica de Dados e Gráficos -->
     <script>
+        // URLs base com parâmetro anti-cache
         function getOSUrl() {
-            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=517461846&single=true&output=csv&_t=" + Date.now();
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=1552048729&single=true&output=csv&_t=" + Date.now();
         }
 
         function getEvolucaoUrl() {
-            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=517461846&single=true&output=csv&_t=" + Date.now();
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=510754929&single=true&output=csv&_t=" + Date.now();
         }
 
         let rawDataset = [];
@@ -567,13 +610,10 @@
         let chartEvolucaoGeralInstance = null;
 
         let granularidadeEvolutivo = 'mensal';
-        let periodoEvolutivo = 'todos';
-        let selectedTipos = new Set();
-        let availableTipos = [];
-
         let currentPage = 1;
         const pageSize = 15;
 
+        // Início
         window.addEventListener('DOMContentLoaded', () => {
             loadAllData();
         });
@@ -582,6 +622,16 @@
             setBadge('loading', 'A carregar planilha...');
             loadFromOnlineSpreadsheet();
             loadEvolucaoGeralData();
+            atualizarHoraSincronizacao();
+        }
+
+        function atualizarHoraSincronizacao() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const el = document.getElementById('horaSincronizacao');
+            if (el) el.innerText = `${h}:${m}:${s}`;
         }
 
         function setBadge(state, text) {
@@ -591,11 +641,11 @@
             statusText.innerText = text;
             
             if (state === 'loading') {
-                badge.className = "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20";
+                badge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30";
             } else if (state === 'success') {
-                badge.className = "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                badge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-emerald-500/15 text-emerald-300 border border-emerald-500/30";
             } else {
-                badge.className = "flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                badge.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-rose-500/15 text-rose-300 border border-rose-500/30";
             }
         }
 
@@ -694,102 +744,11 @@
             renderEvolucaoGeralChart();
         }
 
-        // Leitura precisa de datas: evita distorções de ano futuro (ex: 2027/2028 por troca de dia por ano)
-        function parseDataCriacao(val) {
-            if (!val) return null;
-            const str = String(val).trim();
-            if (!str || str.includes('#')) return null;
-
-            // Formato ISO: YYYY-MM-DD
-            const isoMatch = str.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/);
-            if (isoMatch) {
-                const ano = parseInt(isoMatch[1], 10);
-                const mes = parseInt(isoMatch[2], 10) - 1;
-                const dia = parseInt(isoMatch[3], 10);
-                const d = new Date(ano, mes, dia);
-                if (!isNaN(d.getTime())) return d;
-            }
-
-            // Formato com separador: DD/MM/YYYY ou DD-MM-YYYY
-            const partsMatch = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-            if (partsMatch) {
-                let p1 = parseInt(partsMatch[1], 10);
-                let p2 = parseInt(partsMatch[2], 10);
-                let ano = parseInt(partsMatch[3], 10);
-
-                if (ano < 100) {
-                    ano += (ano < 50 ? 2000 : 1900);
-                }
-
-                let dia = p1;
-                let mes = p2 - 1;
-
-                // Se o segundo termo for maior que 12, é certamente MM/DD/YYYY
-                if (p2 > 12) {
-                    dia = p2;
-                    mes = p1 - 1;
-                }
-
-                // Proteção contra leitura invertida (se o ano resultante for anómalo no futuro)
-                const anoAtualLimite = new Date().getFullYear() + 1;
-                if (ano > anoAtualLimite) {
-                    if (p1 + 2000 <= anoAtualLimite) {
-                        dia = ano % 100;
-                        ano = 2000 + p1;
-                    }
-                }
-
-                const d = new Date(ano, mes, dia);
-                if (!isNaN(d.getTime())) return d;
-            }
-
-            const iso = new Date(str);
-            if (!isNaN(iso.getTime()) && iso.getFullYear() <= new Date().getFullYear() + 1) {
-                return iso;
-            }
-
-            return null;
-        }
-
         function processCSVData(data) {
             rawDataset = data.filter(row => {
                 const os = (row['Número OS'] || row['Numero OS'] || '').trim();
                 return os && os !== '#REF!' && !os.includes('#REF');
             }).map(row => {
-                const rowKeys = Object.keys(row);
-
-                // Mapeamento Coluna AV (Status / Ativa) por cabeçalho ou por índice da coluna (47/48)
-                let statusAtiva = (
-                    row['Ativa'] || 
-                    row['ATIVA'] || 
-                    row['Status Ativa'] || 
-                    row['Status'] || 
-                    row['Situação'] || 
-                    row['SITUACAO'] || 
-                    ''
-                ).trim();
-
-                if (!statusAtiva && rowKeys.length >= 48) {
-                    statusAtiva = String(row[rowKeys[47]] || row[rowKeys[48]] || '').trim();
-                }
-                if (!statusAtiva) statusAtiva = 'NÃO INFORMADO';
-
-                // Mapeamento Coluna N (Data Criação) por cabeçalho ou índice 13
-                let dataCriacaoStr = (
-                    row['Data Criação'] || 
-                    row['Data Criacao'] || 
-                    row['DATA CRIAÇÃO'] || 
-                    row['Data de Criação'] || 
-                    row['Criação'] || 
-                    ''
-                ).trim();
-
-                if (!dataCriacaoStr && rowKeys.length >= 14) {
-                    dataCriacaoStr = String(row[rowKeys[13]] || '').trim();
-                }
-
-                const dtCriacao = parseDataCriacao(dataCriacaoStr);
-
                 const valStr = (row['Valor Materiais Externos'] || '0')
                     .replace('R$', '')
                     .replace(/\./g, '')
@@ -814,9 +773,16 @@
                 const gestor = (row['Último gestor'] || row['Ultimo gestor'] || '').trim().toUpperCase();
                 const segmento = (row['Tipo de Segmento'] || '').trim();
                 const isFatB = segmento.toUpperCase().includes('FAT_B') || segmento.toUpperCase().includes('FAT-B');
+                const urg = (row['Urgente'] || '').trim();
 
-                // Coluna J: Denominação Estado OS
-                const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || row['Estado'] || 'N/A').trim();
+                const dataCriacaoStr = (row['Data Criação'] || row['Data Criacao'] || '').trim();
+                let dtCriacao = null;
+                if (dataCriacaoStr) {
+                    const parsedDt = new Date(dataCriacaoStr);
+                    if (!isNaN(parsedDt.getTime())) {
+                        dtCriacao = parsedDt;
+                    }
+                }
 
                 const tempoRestanteRaw = (row['Tempo Restante'] || '').trim();
                 let tempoRestanteNum = null;
@@ -831,6 +797,7 @@
                 const prioridadeVivo = (row['Prioridade VIVO'] || '').trim().toUpperCase();
                 const descricaoAcao = (row['Descrição Ação'] || row['Descricao Acao'] || '').trim();
                 const etapaEsteira = (row['Etapa Esteira'] || '').trim();
+                const estadoOS = (row['Denominação Estado OS'] || row['Denominacao Estado OS'] || row['Estado OS'] || '').trim();
 
                 const isExecSemAprov = necessidade.includes('EXEC') && (necessidade.includes('SEM') || prioridadeVivo.includes('NÃO EXEC') || prioridadeVivo.includes('SEM APR') || etapaEsteira.toUpperCase().includes('APROV'));
 
@@ -840,7 +807,6 @@
                     site: row['Site'] || 'N/A',
                     descricao: row['Descrição OS'] || row['Descricao OS'] || '',
                     estadoOS: estadoOS,
-                    statusAtiva: statusAtiva,
                     tipoServico: (row['Tipo de Serviço'] || row['Tipo de Servico'] || 'OUTROS').trim(),
                     regional: (row['Regional'] || 'SEM REGIONAL').trim(),
                     coordenador: row['Coordenador'] || '',
@@ -854,6 +820,7 @@
                     slaPctNum: slaNumeric,
                     prazo: prazo,
                     isVencida: isVencida,
+                    urgente: urg,
                     etapaEsteira: etapaEsteira,
                     numSC: (row['N° SC'] || row['No SC'] || row['SC'] || '').trim(),
                     responsavel: row['Responsável'] || row['Responsavel'] || '',
@@ -870,125 +837,21 @@
             applyFilters();
         }
 
-        // Vinculação Dinâmica: Atualiza as opções de Estado OS cruzando com Gestor E Status da Coluna AV
-        function updateEstadoOSOptions() {
-            const fGestor = document.getElementById('filterGestor').value;
-            const fAtiva = document.getElementById('filterAtiva') ? document.getElementById('filterAtiva').value : 'TODOS';
-            const selEstadoOS = document.getElementById('filterEstadoOS');
-            const valorAtual = selEstadoOS.value;
-
-            const baseFiltrada = rawDataset.filter(d => {
-                if (fGestor === 'TEL' && !d.gestor.includes('TEL')) return false;
-                if (fGestor === 'VIVO' && !d.gestor.includes('VIVO')) return false;
-                if (fAtiva !== 'TODOS' && d.statusAtiva.toUpperCase() !== fAtiva.toUpperCase()) return false;
-                return true;
-            });
-
-            const estados = [...new Set(baseFiltrada.map(d => d.estadoOS))].filter(Boolean).sort();
-
-            selEstadoOS.innerHTML = '<option value="TODOS">Todos</option>';
-            estados.forEach(e => {
-                selEstadoOS.innerHTML += `<option value="${e}">${e}</option>`;
-            });
-
-            if (estados.includes(valorAtual)) {
-                selEstadoOS.value = valorAtual;
-            } else {
-                selEstadoOS.value = 'TODOS';
-            }
-        }
-
-        function onGestorChange() {
-            updateEstadoOSOptions();
-            applyFilters();
-        }
-
-        function onAtivaChange() {
-            updateEstadoOSOptions();
-            applyFilters();
-        }
-
         function populateDropdownFilters() {
             const regionais = [...new Set(rawDataset.map(d => d.regional))].filter(Boolean).sort();
-            availableTipos = [...new Set(rawDataset.map(d => d.tipoServico))].filter(Boolean).sort();
-
-            // Opções da coluna AV (Ativa / Encerrada / Cancelada...)
-            const statusAtivas = [...new Set(rawDataset.map(d => d.statusAtiva))].filter(Boolean).sort();
-            const selAtiva = document.getElementById('filterAtiva');
-            selAtiva.innerHTML = '<option value="TODOS">Todos</option>';
-            statusAtivas.forEach(s => {
-                selAtiva.innerHTML += `<option value="${s}">${s}</option>`;
-            });
-
             const selRegional = document.getElementById('filterRegional');
             selRegional.innerHTML = '<option value="TODOS">Todas</option>';
             regionais.forEach(r => {
                 selRegional.innerHTML += `<option value="${r}">${r}</option>`;
             });
-
-            updateEstadoOSOptions();
-
-            const containerTipos = document.getElementById('listaOpcoesTipo');
-            containerTipos.innerHTML = '';
-            selectedTipos.clear();
-
-            availableTipos.forEach(t => {
-                containerTipos.innerHTML += `
-                    <label class="flex items-center gap-2 p-1 rounded hover:bg-slate-800 cursor-pointer">
-                        <input type="checkbox" value="${t}" onchange="onTipoCheckboxChange()" class="chk-tipo rounded bg-slate-800 border-slate-700 text-cyan-500 focus:ring-0">
-                        <span class="text-slate-200 text-xs">${t}</span>
-                    </label>
-                `;
-            });
-            updateTipoDropdownLabel();
         }
-
-        function toggleTipoDropdown(e) {
-            e.stopPropagation();
-            const menu = document.getElementById('menuDropdownTipo');
-            menu.classList.toggle('hidden');
-        }
-
-        function selectAllTipos(marcar) {
-            const chks = document.querySelectorAll('.chk-tipo');
-            chks.forEach(c => c.checked = marcar);
-            onTipoCheckboxChange();
-        }
-
-        function onTipoCheckboxChange() {
-            selectedTipos.clear();
-            const chks = document.querySelectorAll('.chk-tipo:checked');
-            chks.forEach(c => selectedTipos.add(c.value));
-            updateTipoDropdownLabel();
-            applyFilters();
-        }
-
-        function updateTipoDropdownLabel() {
-            const lbl = document.getElementById('labelDropdownTipo');
-            if (selectedTipos.size === 0) {
-                lbl.innerText = 'Todos';
-            } else if (selectedTipos.size === 1) {
-                lbl.innerText = Array.from(selectedTipos)[0];
-            } else {
-                lbl.innerText = `${selectedTipos.size} selecionados`;
-            }
-        }
-
-        window.addEventListener('click', (e) => {
-            const menu = document.getElementById('menuDropdownTipo');
-            const btn = document.getElementById('btnDropdownTipo');
-            if (menu && !menu.contains(e.target) && !btn.contains(e.target)) {
-                menu.classList.add('hidden');
-            }
-        });
 
         function applyFilters() {
             const fGestor = document.getElementById('filterGestor').value;
-            const fAtiva = document.getElementById('filterAtiva').value;
             const fExecSemAprov = document.getElementById('filterExecSemAprov').value;
             const fFatB = document.getElementById('filterFatB').value;
             const fSLA = document.getElementById('filterSLA').value;
-            const fEstadoOS = document.getElementById('filterEstadoOS').value;
+            const fUrgente = document.getElementById('filterUrgente').value;
             const fSC = document.getElementById('filterSC').value;
             const fRegional = document.getElementById('filterRegional').value;
             const fSearch = document.getElementById('filterSearch').value.toLowerCase().trim();
@@ -996,8 +859,6 @@
             filteredDataset = rawDataset.filter(item => {
                 if (fGestor === 'TEL' && !item.gestor.includes('TEL')) return false;
                 if (fGestor === 'VIVO' && !item.gestor.includes('VIVO')) return false;
-
-                if (fAtiva !== 'TODOS' && item.statusAtiva.toUpperCase() !== fAtiva.toUpperCase()) return false;
 
                 if (fExecSemAprov === 'SIM' && !item.isExecSemAprov) return false;
                 if (fExecSemAprov === 'NAO' && item.isExecSemAprov) return false;
@@ -1011,16 +872,13 @@
                 if (fSLA === '70_80' && (item.isVencida || item.slaPctNum < 70 || item.slaPctNum >= 80)) return false;
                 if (fSLA === 'ABAIXO_70' && (item.isVencida || item.slaPctNum >= 70)) return false;
 
-                if (fEstadoOS !== 'TODOS' && item.estadoOS !== fEstadoOS) return false;
+                if (fUrgente === 'SIM' && !item.urgente.toLowerCase().includes('urgente')) return false;
+                if (fUrgente === 'NAO' && item.urgente.toLowerCase().includes('não urgente') === false && item.urgente.toLowerCase().includes('nao urgente') === false && item.urgente.toLowerCase().includes('urgente')) return false;
 
                 if (fSC === 'COM_SC' && (!item.numSC || item.numSC === '#REF!')) return false;
                 if (fSC === 'SEM_SC' && (item.numSC && item.numSC !== '#REF!')) return false;
 
                 if (fRegional !== 'TODOS' && item.regional !== fRegional) return false;
-
-                if (selectedTipos.size > 0 && !selectedTipos.has(item.tipoServico)) {
-                    return false;
-                }
 
                 if (fSearch) {
                     const match = (item.os && item.os.toLowerCase().includes(fSearch)) ||
@@ -1028,7 +886,6 @@
                                   (item.descricao && item.descricao.toLowerCase().includes(fSearch)) ||
                                   (item.descricaoAcao && item.descricaoAcao.toLowerCase().includes(fSearch)) ||
                                   (item.estadoOS && item.estadoOS.toLowerCase().includes(fSearch)) ||
-                                  (item.statusAtiva && item.statusAtiva.toLowerCase().includes(fSearch)) ||
                                   (item.unidadeNegocio && item.unidadeNegocio.toLowerCase().includes(fSearch));
                     if (!match) return false;
                 }
@@ -1042,16 +899,14 @@
 
         function resetFilters() {
             document.getElementById('filterGestor').value = 'TEL';
-            document.getElementById('filterAtiva').value = 'TODOS';
             document.getElementById('filterExecSemAprov').value = 'TODOS';
             document.getElementById('filterFatB').value = 'TODOS';
             document.getElementById('filterSLA').value = 'TODOS';
+            document.getElementById('filterUrgente').value = 'TODOS';
             document.getElementById('filterSC').value = 'TODOS';
             document.getElementById('filterRegional').value = 'TODOS';
             document.getElementById('filterSearch').value = '';
             
-            updateEstadoOSOptions();
-            selectAllTipos(false);
             applyFilters();
         }
 
@@ -1061,17 +916,12 @@
             const btnD = document.getElementById('btnEvolutivoDiario');
 
             if (gran === 'mensal') {
-                btnM.className = "px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm";
-                btnD.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
+                btnM.className = "px-3.5 py-1.5 rounded-lg text-white bg-sky-600 transition shadow-sm";
+                btnD.className = "px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition";
             } else {
-                btnD.className = "px-3 py-1 rounded-md font-medium text-white bg-cyan-600 transition shadow-sm";
-                btnM.className = "px-3 py-1 rounded-md font-medium text-slate-400 hover:text-white transition";
+                btnD.className = "px-3.5 py-1.5 rounded-lg text-white bg-sky-600 transition shadow-sm";
+                btnM.className = "px-3.5 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 transition";
             }
-            renderEvolutivoChart();
-        }
-
-        function onPeriodoEvolutivoChange() {
-            periodoEvolutivo = document.getElementById('selectPeriodoEvolutivo').value;
             renderEvolutivoChart();
         }
 
@@ -1119,6 +969,7 @@
             }
 
             document.getElementById('kpiTotalOS').innerText = total.toLocaleString('pt-BR');
+            document.getElementById('kpiTotalBaseReais').innerText = totalReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             document.getElementById('kpiMediaDiaria').innerText = mediaDiaria.toFixed(1);
             document.getElementById('kpiVolMensal').innerText = mediaMensal.toLocaleString('pt-BR');
             document.getElementById('kpiFatBQtde').innerText = fatBQtde.toLocaleString('pt-BR');
@@ -1128,7 +979,7 @@
             document.getElementById('kpiMediaReaisOS').innerText = mediaReaisPorOS.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
             document.getElementById('kpiRiscoTotal').innerText = (vencidas + acima80).toLocaleString('pt-BR');
-            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Vencidas | ${acima80} >80%`;
+            document.getElementById('kpiRiscoDetail').innerText = `${vencidas} Fora | ${acima80} >80%`;
 
             document.getElementById('lblFaixa1').innerText = abaixo70.toLocaleString('pt-BR');
             document.getElementById('lblFaixa2').innerText = entre70e80.toLocaleString('pt-BR');
@@ -1143,6 +994,7 @@
             renderTable();
         }
 
+        // Gráfico Donut de SLA em fundo claro
         function renderSlaDonut(f1, f2, f3, f4) {
             const canvas = document.getElementById('chartSlaPizza');
             if (!canvas) return;
@@ -1152,12 +1004,13 @@
             chartSlaInstance = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Abaixo de 70%', 'Entre 70% e 80%', 'Acima de 80%', 'Vencidas'],
+                    labels: ['Abaixo de 70%', 'Entre 70% e 80%', 'Acima de 80%', 'Fora do Prazo'],
                     datasets: [{
                         data: [f1, f2, f3, f4],
-                        backgroundColor: ['#10b981', '#eab308', '#f97316', '#e11d48'],
-                        borderWidth: 0,
-                        hoverOffset: 3
+                        backgroundColor: ['#10b981', '#f59e0b', '#f97316', '#e11d48'],
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                        hoverOffset: 4
                     }]
                 },
                 options: {
@@ -1166,6 +1019,11 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#cbd5e1',
+                            padding: 8,
+                            boxPadding: 4,
                             callbacks: {
                                 label: function(context) {
                                     const total = context.dataset.data.reduce((a, b) => a + b, 0);
@@ -1176,11 +1034,12 @@
                             }
                         }
                     },
-                    cutout: '68%'
+                    cutout: '70%'
                 }
             });
         }
 
+        // Gráfico de Volume Regional em fundo claro
         function renderRegionalChart() {
             const canvas = document.getElementById('chartRegional');
             if (!canvas) return;
@@ -1205,20 +1064,18 @@
                 {
                     label: 'Total de OS',
                     data: totalData,
-                    backgroundColor: 'rgba(59, 130, 246, 0.75)',
-                    borderRadius: 4
+                    backgroundColor: '#0284c7',
+                    borderRadius: 6
                 }
             ];
 
             if (totalVencidasGeral > 0) {
                 datasets.push({
-                    label: 'Vencidas',
+                    label: 'Fora do Prazo',
                     data: vencidasData,
-                    backgroundColor: 'rgba(225, 29, 72, 0.95)',
-                    borderColor: '#fda4af',
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    minBarLength: 7
+                    backgroundColor: '#e11d48',
+                    borderRadius: 6,
+                    minBarLength: 5
                 });
             }
 
@@ -1231,41 +1088,35 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: { padding: 0 },
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { 
-                                color: '#94a3b8', 
-                                font: { size: 9 },
-                                padding: 2 
-                            }
+                            ticks: { color: '#64748b', font: { size: 10, weight: 600 } }
                         },
                         y: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
-                            ticks: { color: '#94a3b8', font: { size: 9 }, maxTicksLimit: 4 }
+                            grid: { color: '#f1f5f9' },
+                            ticks: { color: '#94a3b8', font: { size: 10 }, maxTicksLimit: 4 }
                         }
                     },
                     plugins: {
                         legend: {
                             position: 'top',
-                            align: 'center',
-                            labels: { color: '#cbd5e1', boxWidth: 10, font: { size: 10 }, padding: 6 }
+                            align: 'end',
+                            labels: { color: '#475569', boxWidth: 10, font: { size: 10, weight: 600 }, padding: 8 }
                         },
                         tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const val = context.raw !== null ? context.raw : 0;
-                                    return ` ${context.dataset.label}: ${val}`;
-                                }
-                            }
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#cbd5e1',
+                            padding: 8
                         }
                     }
                 }
             });
         }
 
+        // Gráfico de Valores por Regional
         function renderValoresRegionalChart() {
             const canvas = document.getElementById('chartValoresRegional');
             if (!canvas) return;
@@ -1291,30 +1142,25 @@
                     datasets: [{
                         label: 'Total em R$',
                         data: valoresData,
-                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
-                        hoverBackgroundColor: 'rgba(52, 211, 153, 0.95)',
-                        borderRadius: 4
+                        backgroundColor: '#10b981',
+                        hoverBackgroundColor: '#059669',
+                        borderRadius: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: { padding: 0 },
                     scales: {
                         x: {
                             grid: { display: false },
-                            ticks: { 
-                                color: '#94a3b8', 
-                                font: { size: 9 },
-                                padding: 2 
-                            }
+                            ticks: { color: '#64748b', font: { size: 10, weight: 600 } }
                         },
                         y: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            grid: { color: '#f1f5f9' },
                             ticks: { 
                                 color: '#94a3b8', 
-                                font: { size: 9 }, 
+                                font: { size: 10 }, 
                                 maxTicksLimit: 4,
                                 callback: function(value) {
                                     if (value >= 1000000) return 'R$ ' + (value / 1000000).toFixed(1) + 'M';
@@ -1327,6 +1173,10 @@
                     plugins: {
                         legend: { display: false },
                         tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#cbd5e1',
+                            padding: 8,
                             callbacks: {
                                 label: function(context) {
                                     const val = context.raw || 0;
@@ -1339,6 +1189,7 @@
             });
         }
 
+        // Gráfico de Evolução Geral (Últimos 12 meses)
         function renderEvolucaoGeralChart() {
             const canvas = document.getElementById('chartEvolucaoGeral');
             if (!canvas || evolucaoGeralDataset.length === 0) return;
@@ -1353,8 +1204,8 @@
             const dataVar = dadosUltimos12Meses.map(d => d.variacao !== null ? d.variacao : 0);
 
             const gradientPrazo = ctx.createLinearGradient(0, 0, 0, 240);
-            gradientPrazo.addColorStop(0, 'rgba(59, 130, 246, 0.35)');
-            gradientPrazo.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+            gradientPrazo.addColorStop(0, 'rgba(2, 132, 199, 0.2)');
+            gradientPrazo.addColorStop(1, 'rgba(2, 132, 199, 0.0)');
 
             chartEvolucaoGeralInstance = new Chart(ctx, {
                 type: 'bar',
@@ -1365,7 +1216,7 @@
                             type: 'line',
                             label: 'No Prazo',
                             data: dataPrazo,
-                            borderColor: '#3b82f6',
+                            borderColor: '#0284c7',
                             backgroundColor: gradientPrazo,
                             borderWidth: 2,
                             fill: true,
@@ -1379,10 +1230,9 @@
                             type: 'line',
                             label: 'Fora do Prazo',
                             data: dataFora,
-                            borderColor: '#f43f5e',
+                            borderColor: '#e11d48',
                             backgroundColor: 'transparent',
                             borderWidth: 2,
-                            fill: true,
                             tension: 0.3,
                             yAxisID: 'y',
                             pointRadius: 0,
@@ -1393,8 +1243,8 @@
                             type: 'bar',
                             label: 'Variação',
                             data: dataVar,
-                            backgroundColor: dataVar.map(v => v >= 0 ? 'rgba(34, 197, 94, 0.5)' : 'rgba(239, 68, 68, 0.5)'),
-                            borderRadius: 2,
+                            backgroundColor: dataVar.map(v => v >= 0 ? 'rgba(16, 185, 129, 0.6)' : 'rgba(239, 68, 68, 0.6)'),
+                            borderRadius: 3,
                             yAxisID: 'yVar',
                             order: 3
                         }
@@ -1409,7 +1259,7 @@
                     },
                     scales: {
                         x: {
-                            grid: { color: 'rgba(51, 65, 85, 0.2)' },
+                            grid: { display: false },
                             ticks: {
                                 color: '#94a3b8',
                                 font: { size: 9 },
@@ -1421,22 +1271,26 @@
                             type: 'linear',
                             display: true,
                             position: 'left',
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            grid: { color: '#f1f5f9' },
                             ticks: { color: '#94a3b8', font: { size: 9 } },
-                            title: { display: true, text: 'Estoque de OS', color: '#64748b', font: { size: 9 } }
+                            title: { display: true, text: 'Estoque de OS', color: '#64748b', font: { size: 9, weight: 600 } }
                         },
                         yVar: {
                             type: 'linear',
                             display: true,
                             position: 'right',
                             grid: { drawOnChartArea: false },
-                            ticks: { color: '#64748b', font: { size: 8 } },
-                            title: { display: true, text: 'Variação Diária', color: '#64748b', font: { size: 9 } }
+                            ticks: { color: '#94a3b8', font: { size: 8 } },
+                            title: { display: true, text: 'Variação Diária', color: '#64748b', font: { size: 9, weight: 600 } }
                         }
                     },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#cbd5e1',
+                            padding: 8,
                             callbacks: {
                                 label: function(context) {
                                     if (context.dataset.type === 'bar') {
@@ -1451,91 +1305,17 @@
             });
         }
 
-        // Gráfico Evolutivo de Entrantes (Coluna N + Média + Filtro de Período)
+        // Gráfico Evolutivo de Entrantes (Último trimestre)
         function renderEvolutivoChart() {
             const canvas = document.getElementById('chartEvolutivoEntrantes');
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             if (chartEvolutivoInstance) chartEvolutivoInstance.destroy();
 
-            const fAtiva = document.getElementById('filterAtiva').value;
-            const fExecSemAprov = document.getElementById('filterExecSemAprov').value;
-            const fFatB = document.getElementById('filterFatB').value;
-            const fSLA = document.getElementById('filterSLA').value;
-            const fEstadoOS = document.getElementById('filterEstadoOS').value;
-            const fSC = document.getElementById('filterSC').value;
-            const fRegional = document.getElementById('filterRegional').value;
-            const fSearch = document.getElementById('filterSearch').value.toLowerCase().trim();
-
-            const datasetSemGestor = rawDataset.filter(item => {
-                if (fAtiva !== 'TODOS' && item.statusAtiva.toUpperCase() !== fAtiva.toUpperCase()) return false;
-                if (fExecSemAprov === 'SIM' && !item.isExecSemAprov) return false;
-                if (fExecSemAprov === 'NAO' && item.isExecSemAprov) return false;
-
-                if (fFatB === 'FAT_B' && !item.isFatB) return false;
-                if (fFatB === 'NAO_FAT_B' && item.isFatB) return false;
-
-                if (fSLA === 'VENCIDAS' && !item.isVencida) return false;
-                if (fSLA === 'ACIMA_90' && (item.isVencida || item.slaPctNum < 90)) return false;
-                if (fSLA === 'ACIMA_80' && (item.isVencida || item.slaPctNum < 80)) return false;
-                if (fSLA === '70_80' && (item.isVencida || item.slaPctNum < 70 || item.slaPctNum >= 80)) return false;
-                if (fSLA === 'ABAIXO_70' && (item.isVencida || item.slaPctNum >= 70)) return false;
-
-                if (fEstadoOS !== 'TODOS' && item.estadoOS !== fEstadoOS) return false;
-
-                if (fSC === 'COM_SC' && (!item.numSC || item.numSC === '#REF!')) return false;
-                if (fSC === 'SEM_SC' && (item.numSC && item.numSC !== '#REF!')) return false;
-
-                if (fRegional !== 'TODOS' && item.regional !== fRegional) return false;
-
-                if (selectedTipos.size > 0 && !selectedTipos.has(item.tipoServico)) {
-                    return false;
-                }
-
-                if (fSearch) {
-                    const match = (item.os && item.os.toLowerCase().includes(fSearch)) ||
-                                  (item.site && item.site.toLowerCase().includes(fSearch)) ||
-                                  (item.descricao && item.descricao.toLowerCase().includes(fSearch)) ||
-                                  (item.descricaoAcao && item.descricaoAcao.toLowerCase().includes(fSearch)) ||
-                                  (item.estadoOS && item.estadoOS.toLowerCase().includes(fSearch)) ||
-                                  (item.statusAtiva && item.statusAtiva.toLowerCase().includes(fSearch)) ||
-                                  (item.unidadeNegocio && item.unidadeNegocio.toLowerCase().includes(fSearch));
-                    if (!match) return false;
-                }
-
-                return true;
-            });
-
-            // Encontrar data de referência real da base
-            const datasValidas = datasetSemGestor.map(d => d.dataCriacao).filter(Boolean);
-            let maxDate = new Date();
-            if (datasValidas.length > 0) {
-                maxDate = new Date(Math.max(...datasValidas.map(d => d.getTime())));
-            }
-
-            let dataLimiteInicio = null;
-            if (periodoEvolutivo === '30d') {
-                dataLimiteInicio = new Date(maxDate);
-                dataLimiteInicio.setDate(dataLimiteInicio.getDate() - 30);
-            } else if (periodoEvolutivo === '3m') {
-                dataLimiteInicio = new Date(maxDate);
-                dataLimiteInicio.setMonth(dataLimiteInicio.getMonth() - 3);
-            } else if (periodoEvolutivo === '6m') {
-                dataLimiteInicio = new Date(maxDate);
-                dataLimiteInicio.setMonth(dataLimiteInicio.getMonth() - 6);
-            } else if (periodoEvolutivo === '12m') {
-                dataLimiteInicio = new Date(maxDate);
-                dataLimiteInicio.setFullYear(dataLimiteInicio.getFullYear() - 1);
-            } else if (periodoEvolutivo === '24m') {
-                dataLimiteInicio = new Date(maxDate);
-                dataLimiteInicio.setFullYear(dataLimiteInicio.getFullYear() - 2);
-            }
-
             const timelineMap = {};
 
-            datasetSemGestor.forEach(d => {
+            filteredDataset.forEach(d => {
                 if (!d.dataCriacao) return;
-                if (dataLimiteInicio && d.dataCriacao < dataLimiteInicio) return;
 
                 let key = '';
                 let label = '';
@@ -1552,91 +1332,44 @@
                 }
 
                 if (!timelineMap[key]) {
-                    timelineMap[key] = { label: label, count: 0, dateObj: d.dataCriacao };
+                    timelineMap[key] = { label: label, count: 0 };
                 }
                 timelineMap[key].count++;
             });
 
             let sortedKeys = Object.keys(timelineMap).sort();
 
-            if (granularidadeEvolutivo === 'mensal' && sortedKeys.length > 0) {
-                const minKey = sortedKeys[0];
-                const maxKey = sortedKeys[sortedKeys.length - 1];
-                const [startAno, startMes] = minKey.split('-').map(Number);
-                const [endAno, endMes] = maxKey.split('-').map(Number);
-
-                const fullKeys = [];
-                let curAno = startAno;
-                let curMes = startMes;
-
-                while (curAno < endAno || (curAno === endAno && curMes <= endMes)) {
-                    const k = `${curAno}-${String(curMes).padStart(2, '0')}`;
-                    const lbl = `${String(curMes).padStart(2, '0')}/${curAno}`;
-                    if (!timelineMap[k]) {
-                        timelineMap[k] = { label: lbl, count: 0 };
-                    }
-                    fullKeys.push(k);
-                    curMes++;
-                    if (curMes > 12) {
-                        curMes = 1;
-                        curAno++;
-                    }
-                }
-                sortedKeys = fullKeys;
-                if (periodoEvolutivo === 'todos') {
-                    sortedKeys = sortedKeys.slice(-24);
-                }
-            } else if (granularidadeEvolutivo === 'diario') {
-                if (periodoEvolutivo === 'todos') {
-                    sortedKeys = sortedKeys.slice(-90);
-                }
+            if (granularidadeEvolutivo === 'mensal') {
+                sortedKeys = sortedKeys.slice(-3);
+            } else {
+                sortedKeys = sortedKeys.slice(-90);
             }
 
             const labels = sortedKeys.map(k => timelineMap[k].label);
             const dataCounts = sortedKeys.map(k => timelineMap[k].count);
 
-            const totalSoma = dataCounts.reduce((acc, c) => acc + c, 0);
-            const mediaEntrantes = dataCounts.length > 0 ? (totalSoma / dataCounts.length) : 0;
-            const dataMedia = dataCounts.map(() => Number(mediaEntrantes.toFixed(1)));
-
             const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-            gradient.addColorStop(0, 'rgba(6, 182, 212, 0.45)');
-            gradient.addColorStop(1, 'rgba(6, 182, 212, 0.0)');
+            gradient.addColorStop(0, 'rgba(8, 145, 178, 0.25)');
+            gradient.addColorStop(1, 'rgba(8, 145, 178, 0.0)');
 
             chartEvolutivoInstance = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [
-                        {
-                            label: 'OS Abertas (Coluna N)',
-                            data: dataCounts,
-                            borderColor: '#06b6d4',
-                            backgroundColor: gradient,
-                            borderWidth: 2.5,
-                            fill: true,
-                            tension: 0.35,
-                            pointBackgroundColor: '#0891b2',
-                            pointBorderColor: '#ffffff',
-                            pointBorderWidth: 1.5,
-                            pointRadius: labels.length > 40 ? 1 : 3.5,
-                            pointHoverRadius: 5,
-                            order: 2
-                        },
-                        {
-                            label: `Média (${mediaEntrantes.toFixed(1)})`,
-                            data: dataMedia,
-                            borderColor: '#f59e0b',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            borderDash: [6, 4],
-                            pointRadius: 0,
-                            pointHoverRadius: 0,
-                            fill: false,
-                            tension: 0,
-                            order: 1
-                        }
-                    ]
+                    datasets: [{
+                        label: 'OS Entrantes',
+                        data: dataCounts,
+                        borderColor: '#0891b2',
+                        backgroundColor: gradient,
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#0891b2',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: labels.length > 35 ? 2 : 4,
+                        pointHoverRadius: 6
+                    }]
                 },
                 options: {
                     responsive: true,
@@ -1647,17 +1380,17 @@
                     },
                     scales: {
                         x: {
-                            grid: { color: 'rgba(51, 65, 85, 0.2)' },
+                            grid: { display: false },
                             ticks: { 
-                                color: '#94a3b8', 
-                                font: { size: 10 },
+                                color: '#64748b', 
+                                font: { size: 10, weight: 600 },
                                 maxRotation: 45,
                                 maxTicksLimit: 14
                             }
                         },
                         y: {
                             beginAtZero: true,
-                            grid: { color: 'rgba(51, 65, 85, 0.3)' },
+                            grid: { color: '#f1f5f9' },
                             ticks: { 
                                 color: '#94a3b8', 
                                 font: { size: 10 },
@@ -1666,23 +1399,14 @@
                         }
                     },
                     plugins: {
-                        legend: { 
-                            display: true,
-                            position: 'top',
-                            align: 'end',
-                            labels: {
-                                color: '#cbd5e1',
-                                boxWidth: 12,
-                                font: { size: 11 },
-                                padding: 8
-                            }
-                        },
+                        legend: { display: false },
                         tooltip: {
+                            backgroundColor: '#0f172a',
+                            titleColor: '#f8fafc',
+                            bodyColor: '#cbd5e1',
+                            padding: 8,
                             callbacks: {
                                 label: function(context) {
-                                    if (context.dataset.borderDash) {
-                                        return ` Média do Período: ${context.raw} ordens`;
-                                    }
                                     return ` Entrantes: ${context.raw} ordens`;
                                 }
                             }
@@ -1722,27 +1446,29 @@
                 taxaFalha: areaStats[a].volume > 0 ? (areaStats[a].vencidas / areaStats[a].volume) * 100 : 0
             }));
 
+            // Ranking Volume
             const topVolume = [...areasArray].sort((a,b) => b.volume - a.volume).slice(0, 5);
             const tbodyVol = document.getElementById('rankingVolumeBody');
             tbodyVol.innerHTML = '';
             if (topVolume.length === 0) {
-                tbodyVol.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-500">Nenhum dado</td></tr>';
+                tbodyVol.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-slate-400">Nenhum dado</td></tr>';
             } else {
                 topVolume.forEach((item, index) => {
                     const pct = totalOS > 0 ? ((item.volume / totalOS) * 100).toFixed(1) : 0;
                     tbodyVol.innerHTML += `
-                        <tr class="hover:bg-slate-800/40">
-                            <td class="py-2 flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-amber-500/20 text-amber-400' : 'bg-slate-800 text-slate-400'}">${index + 1}</span>
-                                <span class="font-medium text-slate-200 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-2.5 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-amber-100 text-amber-800' : 'bg-slate-100 text-slate-500'}">${index + 1}</span>
+                                <span class="font-semibold text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
                             </td>
-                            <td class="py-2 text-right font-semibold text-white">${item.volume}</td>
-                            <td class="py-2 text-right text-slate-400">${pct}%</td>
+                            <td class="py-2.5 text-right font-bold text-slate-900">${item.volume}</td>
+                            <td class="py-2.5 text-right text-slate-500 font-semibold">${pct}%</td>
                         </tr>
                     `;
                 });
             }
 
+            // Ranking Regional > 80%
             const regionalArray = Object.keys(regionalStats).map(r => ({
                 regional: r,
                 acima80: regionalStats[r].acima80,
@@ -1754,37 +1480,38 @@
             const tbodyReg80 = document.getElementById('rankingRegional80Body');
             tbodyReg80.innerHTML = '';
             if (topRegional80.length === 0) {
-                tbodyReg80.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-500">Nenhuma Regional > 80%</td></tr>';
+                tbodyReg80.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-slate-400">Nenhuma Regional > 80%</td></tr>';
             } else {
                 topRegional80.forEach((item, index) => {
                     tbodyReg80.innerHTML += `
-                        <tr class="hover:bg-slate-800/40">
-                            <td class="py-2 flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-orange-500/20 text-orange-400' : 'bg-slate-800 text-slate-400'}">${index + 1}</span>
-                                <span class="font-medium text-slate-200 truncate max-w-[130px]" title="${item.regional}">${item.regional}</span>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-2.5 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-orange-100 text-orange-800' : 'bg-slate-100 text-slate-500'}">${index + 1}</span>
+                                <span class="font-semibold text-slate-800 truncate max-w-[130px]" title="${item.regional}">${item.regional}</span>
                             </td>
-                            <td class="py-2 text-right font-bold text-orange-400">${item.acima80}</td>
-                            <td class="py-2 text-right text-slate-400">${item.taxaCritica.toFixed(1)}%</td>
+                            <td class="py-2.5 text-right font-bold text-orange-600">${item.acima80}</td>
+                            <td class="py-2.5 text-right text-slate-500 font-semibold">${item.taxaCritica.toFixed(1)}%</td>
                         </tr>
                     `;
                 });
             }
 
+            // Ranking Fora do Prazo
             const topVencidas = [...areasArray].filter(a => a.vencidas > 0).sort((a,b) => b.vencidas - a.vencidas).slice(0, 5);
             const tbodyVenc = document.getElementById('rankingVencidasBody');
             tbodyVenc.innerHTML = '';
             if (topVencidas.length === 0) {
-                tbodyVenc.innerHTML = '<tr><td colspan="3" class="text-center py-3 text-slate-500">Nenhuma OS vencida!</td></tr>';
+                tbodyVenc.innerHTML = '<tr><td colspan="3" class="text-center py-4 text-emerald-600 font-semibold">Nenhuma OS fora do prazo!</td></tr>';
             } else {
                 topVencidas.forEach((item, index) => {
                     tbodyVenc.innerHTML += `
-                        <tr class="hover:bg-slate-800/40">
-                            <td class="py-2 flex items-center gap-2">
-                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-800 text-slate-400'}">${index + 1}</span>
-                                <span class="font-medium text-slate-200 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="py-2.5 flex items-center gap-2">
+                                <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${index === 0 ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-500'}">${index + 1}</span>
+                                <span class="font-semibold text-slate-800 truncate max-w-[130px]" title="${item.area}">${item.area}</span>
                             </td>
-                            <td class="py-2 text-right font-bold text-rose-400">${item.vencidas}</td>
-                            <td class="py-2 text-right text-slate-400">${item.taxaFalha.toFixed(1)}%</td>
+                            <td class="py-2.5 text-right font-bold text-rose-600">${item.vencidas}</td>
+                            <td class="py-2.5 text-right text-slate-500 font-semibold">${item.taxaFalha.toFixed(1)}%</td>
                         </tr>
                     `;
                 });
@@ -1810,67 +1537,55 @@
             const pageData = filteredDataset.slice(startIdx, startIdx + pageSize);
 
             if (pageData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="14" class="text-center py-6 text-slate-500">Nenhum registro encontrado para estes filtros.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="12" class="text-center py-8 text-slate-400 font-medium">Nenhum registro encontrado para estes filtros.</td></tr>';
                 return;
             }
 
             pageData.forEach(row => {
-                let slaBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${row.slaPctStr || '0%'}</span>`;
+                let slaBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">${row.slaPctStr || '0%'}</span>`;
                 if (row.isVencida) {
-                    slaBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">FORA PRAZO</span>`;
+                    slaBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">FORA PRAZO</span>`;
                 } else if (row.slaPctNum >= 80) {
-                    slaBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">${row.slaPctNum}%</span>`;
-                }
-
-                let statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700">${row.statusAtiva}</span>`;
-                const sUpper = row.statusAtiva.toUpperCase();
-                if (sUpper.includes('ATIVA') || sUpper.includes('SIM') || sUpper.includes('ABERTA')) {
-                    statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">${row.statusAtiva}</span>`;
-                } else if (sUpper.includes('ENCERRAD') || sUpper.includes('CONCLU') || sUpper.includes('FINALIZ')) {
-                    statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">${row.statusAtiva}</span>`;
-                } else if (sUpper.includes('CANCEL') || sUpper.includes('EXPIRAD')) {
-                    statusBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">${row.statusAtiva}</span>`;
+                    slaBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">${row.slaPctNum}%</span>`;
                 }
 
                 const gestorTag = row.gestor.includes('VIVO')
-                    ? `<span class="px-1.5 py-0.5 rounded text-[10px] bg-purple-500/20 text-purple-300 font-medium">VIVO</span>`
-                    : `<span class="px-1.5 py-0.5 rounded text-[10px] bg-blue-500/20 text-blue-300 font-medium">TEL</span>`;
+                    ? `<span class="px-2 py-0.5 rounded-md text-[10px] bg-purple-50 text-purple-700 font-bold border border-purple-200">VIVO</span>`
+                    : `<span class="px-2 py-0.5 rounded-md text-[10px] bg-sky-50 text-sky-700 font-bold border border-sky-200">TEL</span>`;
 
-                let tempoRestanteBadge = '<span class="text-slate-500 text-[11px]">-</span>';
+                let tempoRestanteBadge = '<span class="text-slate-400 text-[11px]">-</span>';
                 if (row.tempoRestante !== null) {
                     if (row.tempoRestante < 0) {
-                        tempoRestanteBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-500/20 text-rose-400 border border-rose-500/30">${row.tempoRestante} d</span>`;
+                        tempoRestanteBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200">${row.tempoRestante} d</span>`;
                     } else if (row.tempoRestante <= 5) {
-                        tempoRestanteBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30">${row.tempoRestante} d</span>`;
+                        tempoRestanteBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200">${row.tempoRestante} d</span>`;
                     } else {
-                        tempoRestanteBadge = `<span class="px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300">${row.tempoRestante} d</span>`;
+                        tempoRestanteBadge = `<span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-700">${row.tempoRestante} d</span>`;
                     }
                 } else if (row.tempoRestanteRaw) {
-                    tempoRestanteBadge = `<span class="text-slate-400 text-[10px]">${row.tempoRestanteRaw}</span>`;
+                    tempoRestanteBadge = `<span class="text-slate-500 text-[11px] font-medium">${row.tempoRestanteRaw}</span>`;
                 }
 
                 const valorFormatado = row.valorMateriais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
                 const valorClass = row.valorMateriais > 0 
-                    ? 'font-medium text-emerald-400' 
-                    : 'text-slate-500 font-normal';
+                    ? 'font-bold text-emerald-700' 
+                    : 'text-slate-400 font-normal';
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-800/40 transition">
-                        <td class="py-2.5 px-3 font-semibold text-white">${row.os}</td>
-                        <td class="py-2.5 px-3">${statusBadge}</td>
-                        <td class="py-2.5 px-3 text-slate-300 max-w-[160px] truncate" title="${row.site}">${row.site}</td>
-                        <td class="py-2.5 px-3 text-slate-400">${row.regional}</td>
-                        <td class="py-2.5 px-3 text-slate-300"><span class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300 font-mono text-[10px]">${row.tipoServico}</span></td>
-                        <td class="py-2.5 px-3 text-slate-300"><span class="px-1.5 py-0.5 bg-slate-800/70 border border-slate-700 rounded text-slate-300 text-[10px]">${row.estadoOS}</span></td>
-                        <td class="py-2.5 px-3">${gestorTag}</td>
-                        <td class="py-2.5 px-3 ${row.isVencida ? 'text-rose-400 font-semibold' : 'text-slate-400'}">${row.prazo || 'N/A'}</td>
-                        <td class="py-2.5 px-3 text-center">${tempoRestanteBadge}</td>
-                        <td class="py-2.5 px-3">${slaBadge}</td>
-                        <td class="py-2.5 px-3 ${valorClass}">${valorFormatado}</td>
-                        <td class="py-2.5 px-3 text-slate-300 font-mono">${row.numSC || '-'}</td>
-                        <td class="py-2.5 px-3 text-slate-400 max-w-[150px] truncate" title="${row.etapaEsteira}">${row.etapaEsteira || '-'}</td>
-                        <td class="py-2.5 px-3 text-center">
-                            <button onclick="abrirModalAcao('${row.os}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-cyan-600 text-slate-300 hover:text-white border border-slate-700 hover:border-cyan-500 text-[11px] font-medium transition flex items-center gap-1.5 mx-auto">
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="py-3 px-3.5 font-bold text-slate-900">${row.os}</td>
+                        <td class="py-3 px-3.5 text-slate-700 font-medium max-w-[160px] truncate" title="${row.site}">${row.site}</td>
+                        <td class="py-3 px-3.5 text-slate-600 font-medium">${row.regional}</td>
+                        <td class="py-3 px-3.5"><span class="px-2 py-0.5 bg-slate-100 rounded text-slate-700 font-mono text-[10px] font-medium border border-slate-200">${row.tipoServico}</span></td>
+                        <td class="py-3 px-3.5">${gestorTag}</td>
+                        <td class="py-3 px-3.5 ${row.isVencida ? 'text-rose-700 font-bold' : 'text-slate-600 font-medium'}">${row.prazo || 'N/A'}</td>
+                        <td class="py-3 px-3.5 text-center">${tempoRestanteBadge}</td>
+                        <td class="py-3 px-3.5">${slaBadge}</td>
+                        <td class="py-3 px-3.5 ${valorClass}">${valorFormatado}</td>
+                        <td class="py-3 px-3.5 text-slate-700 font-mono text-[11px]">${row.numSC || '-'}</td>
+                        <td class="py-3 px-3.5 text-slate-700 font-medium max-w-[160px] truncate" title="${row.estadoOS}">${row.estadoOS || '-'}</td>
+                        <td class="py-3 px-3.5 text-center">
+                            <button onclick="abrirModalAcao('${row.os}')" class="px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-600 text-sky-700 hover:text-white border border-sky-200 hover:border-sky-600 text-[11px] font-bold transition-all flex items-center gap-1.5 mx-auto active:scale-95">
                                 <i class="fa-solid fa-eye text-[10px]"></i> Ação
                             </button>
                         </td>
@@ -1886,7 +1601,7 @@
             document.getElementById('modalOSNum').innerText = item.os;
             document.getElementById('modalDescricaoAcao').innerText = item.descricaoAcao || 'Nenhuma descrição de ação preenchida nesta OS.';
             document.getElementById('modalDescricaoOS').innerText = item.descricao || 'Sem descrição cadastrada.';
-            document.getElementById('modalEtapaEsteira').innerText = item.etapaEsteira || 'Não informada';
+            document.getElementById('modalEstadoOS').innerText = item.estadoOS || 'Não informado';
             document.getElementById('modalResponsavel').innerText = item.responsavel || 'Não informado';
 
             document.getElementById('modalAcao').classList.remove('hidden');
@@ -1908,7 +1623,6 @@
 
         function exportCurrentFilteredCSV() {
             if (filteredDataset.length === 0) {
-                alert('Não há dados filtrados para exportar.');
                 return;
             }
             const csv = Papa.unparse(filteredDataset);
@@ -1916,7 +1630,7 @@
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
             link.setAttribute("href", url);
-            link.setAttribute("download", `painel_os_filtrado_${new Date().toISOString().slice(0,10)}.csv`);
+            link.setAttribute("download", `controle_os_filtrado_${new Date().toISOString().slice(0,10)}.csv`);
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
