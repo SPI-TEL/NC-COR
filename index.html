@@ -96,7 +96,7 @@
             </div>
         </div>
 
-        <!-- KPIs Cards (8 Colunas: FAT-B ocupa 2 e os demais ocupam 1, todos estilizados e harmonizados) -->
+        <!-- KPIs Cards (8 Colunas: FAT-B ocupa 2 e os demais ocupam 1) -->
         <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-2.5">
             <!-- 1. Total OS -->
             <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-blue-500">
@@ -110,7 +110,7 @@
                 <span class="text-[10px] text-slate-400 font-medium">Ordens apuradas</span>
             </div>
 
-            <!-- 2. Média Diária (Tamanho text-3xl font-black) -->
+            <!-- 2. Média Diária -->
             <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-cyan-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span class="truncate">Média Diária</span>
@@ -125,7 +125,7 @@
                 </div>
             </div>
 
-            <!-- 3. Vol. Mensal (Tamanho text-3xl font-black) -->
+            <!-- 3. Vol. Mensal -->
             <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-indigo-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span class="truncate">Vol. Mensal</span>
@@ -153,7 +153,7 @@
                 <span class="text-[10px] text-slate-400 font-medium">Volume FAT-B</span>
             </div>
 
-            <!-- 5. FAT-B (R$) (Card mais largo com span 2 colunas para exibição integral do valor) -->
+            <!-- 5. FAT-B (R$) -->
             <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-emerald-500 col-span-2 sm:col-span-2 md:col-span-2 lg:col-span-2 bg-gradient-to-b from-emerald-50/20 to-white">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span>FAT-B (R$)</span>
@@ -168,7 +168,7 @@
                 </div>
             </div>
 
-            <!-- 6. Alerta SLA >80% (Tamanho text-3xl font-black) -->
+            <!-- 6. Alerta SLA >80% -->
             <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-amber-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span class="truncate">Alerta >80%</span>
@@ -183,7 +183,7 @@
                 </div>
             </div>
 
-            <!-- 7. Vencidas / Risco (Fundo Vermelho Sólido e Letras Brancas) -->
+            <!-- 7. Vencidas / Risco -->
             <div class="rounded-xl p-3 flex flex-col justify-between bg-rose-600 text-white shadow-md border border-rose-700">
                 <div class="flex items-center justify-between text-[11px] font-bold text-rose-100 uppercase">
                     <span class="truncate">Venc. / Risco</span>
@@ -359,16 +359,16 @@
             </div>
         </div>
 
-        <!-- Rankings Operacionais -->
+        <!-- Rankings Operacionais (Sem barra de rolagem vertical) -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <div class="card-clean p-4 flex flex-col">
+            <div class="card-clean p-4 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
                     <h3 class="text-xs font-bold text-amber-600 flex items-center gap-1.5 uppercase">
                         <i class="fa-solid fa-fire text-amber-500"></i> Top Áreas Ofensoras (Volume)
                     </h3>
                     <span class="text-[10px] uppercase font-bold text-slate-400">Unidades</span>
                 </div>
-                <div class="overflow-y-auto max-h-52 custom-scroll pr-1">
+                <div>
                     <table class="w-full text-left text-xs">
                         <thead>
                             <tr class="text-slate-400 border-b border-slate-100 font-semibold">
@@ -382,14 +382,14 @@
                 </div>
             </div>
 
-            <div class="card-clean p-4 flex flex-col border border-orange-200">
+            <div class="card-clean p-4 flex flex-col justify-between border border-orange-200">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
                     <h3 class="text-xs font-bold text-orange-600 flex items-center gap-1.5 uppercase">
                         <i class="fa-solid fa-clock-rotate-left text-orange-500"></i> Regional Ofensora > 80%
                     </h3>
                     <span class="text-[10px] uppercase font-bold text-slate-400">Alerta SLA</span>
                 </div>
-                <div class="overflow-y-auto max-h-52 custom-scroll pr-1">
+                <div>
                     <table class="w-full text-left text-xs">
                         <thead>
                             <tr class="text-slate-400 border-b border-slate-100 font-semibold">
@@ -403,14 +403,14 @@
                 </div>
             </div>
 
-            <div class="card-clean p-4 flex flex-col">
+            <div class="card-clean p-4 flex flex-col justify-between">
                 <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
                     <h3 class="text-xs font-bold text-rose-600 flex items-center gap-1.5 uppercase">
                         <i class="fa-solid fa-triangle-exclamation text-rose-500"></i> Área Ofensora de Vencidas
                     </h3>
                     <span class="text-[10px] uppercase font-bold text-slate-400">Risco SLA</span>
                 </div>
-                <div class="overflow-y-auto max-h-52 custom-scroll pr-1">
+                <div>
                     <table class="w-full text-left text-xs">
                         <thead>
                             <tr class="text-slate-400 border-b border-slate-100 font-semibold">
@@ -1039,7 +1039,7 @@
             // 1. Total OS
             document.getElementById('kpiTotalOS').innerText = total.toLocaleString('pt-BR');
             
-            // 2. Média Diária & Mensal (ambas com o mesmo tamanho)
+            // 2. Média Diária & Mensal (com o mesmo tamanho visual)
             document.getElementById('kpiMediaDiaria').innerText = mediaDiaria.toFixed(1);
             document.getElementById('kpiVolMensal').innerText = mediaMensal.toLocaleString('pt-BR');
             
@@ -1047,7 +1047,7 @@
             document.getElementById('kpiFatBQtde').innerText = fatBQtde.toLocaleString('pt-BR');
             document.getElementById('kpiFatBPct').innerText = total > 0 ? `${((fatBQtde / total) * 100).toFixed(1)}%` : '0%';
 
-            // 4. FAT-B (R$) - Exibição Integral e Sem Truncamento
+            // 4. FAT-B (R$)
             document.getElementById('kpiFatBReais').innerText = fatBReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             const fatBPctFinanceiro = totalReais > 0 ? ((fatBReais / totalReais) * 100).toFixed(1) : '0.0';
             document.getElementById('kpiFatBReaisPct').innerText = `${fatBPctFinanceiro}%`;
@@ -1641,14 +1641,12 @@
             renderTable();
         }
 
-        // Exportação XLSX nativa com 2 abas organizadas (Resumo e Base Analítica sem quebra de texto)
         function exportarExcelMultiAbas() {
             if (filteredDataset.length === 0) {
                 alert('Não há dados filtrados para exportar.');
                 return;
             }
 
-            // 1. Aba Resumo Executivo
             const resumoData = [
                 { "Métrica": "Total de OS", "Valor": filteredDataset.length },
                 { "Métrica": "OS FAT-B (Quantidade)", "Valor": filteredDataset.filter(d => d.isFatB).length },
@@ -1660,7 +1658,6 @@
                 { "Métrica": "Executadas sem Aprovação", "Valor": filteredDataset.filter(d => d.isExecSemAprov).length }
             ];
 
-            // 2. Aba Analítica Completa com Colunas Devidamente Formatadas
             const analiticoData = filteredDataset.map(d => ({
                 "Número OS": d.os,
                 "Site / Local": d.site,
@@ -1687,7 +1684,6 @@
             const wsResumo = XLSX.utils.json_to_sheet(resumoData);
             const wsAnalitico = XLSX.utils.json_to_sheet(analiticoData);
 
-            // Ajustar largura das colunas da aba analítica
             wsAnalitico['!cols'] = [
                 { wch: 14 }, { wch: 20 }, { wch: 12 }, { wch: 22 },
                 { wch: 14 }, { wch: 10 }, { wch: 14 }, { wch: 14 },
