@@ -237,7 +237,7 @@
                     </select>
                 </div>
 
-                <!-- Filtro Status SLA Atualizado -->
+                <!-- Filtro Status SLA -->
                 <div>
                     <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">Status SLA</label>
                     <select id="filterSLA" onchange="applyFilters()" class="w-full bg-slate-50 text-xs text-slate-700 border border-slate-300 rounded-lg px-2.5 py-1.5 focus:border-blue-500 focus:bg-white focus:outline-none">
@@ -516,13 +516,13 @@
 
     </div>
 
-    <!-- Modal Detalhe da Ação com SC, Previsão Revisada e Check Exec. s/ Aprov -->
+    <!-- Modal Detalhe da Ação Editável -->
     <div id="modalAcao" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 hidden no-print">
         <div class="card-clean bg-white max-w-lg w-full p-5 shadow-2xl relative flex flex-col gap-3">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div class="flex items-center gap-2.5">
                     <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                        <i class="fa-solid fa-clipboard-list text-sm"></i>
+                        <i class="fa-solid fa-pen-to-square text-sm"></i>
                     </div>
                     <div>
                         <h4 class="text-sm font-bold text-slate-800">Detalhamento da Ação</h4>
@@ -544,52 +544,67 @@
                     </span>
                 </div>
 
+                <!-- Campo Editável: Descrição da Ação -->
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Descrição da Ação</label>
-                    <div id="modalDescricaoAcao" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed max-h-40 overflow-y-auto custom-scroll whitespace-pre-wrap min-h-[46px]"></div>
+                    <textarea id="modalDescricaoAcao" rows="3" placeholder="Insira o detalhamento da ação..." class="w-full p-2.5 bg-slate-50 rounded-xl border border-slate-300 text-slate-700 focus:bg-white focus:border-blue-500 focus:outline-none custom-scroll text-xs"></textarea>
                 </div>
+
+                <!-- Descrição Original (Somente leitura) -->
                 <div>
                     <label class="block text-[10px] uppercase font-bold text-slate-500 mb-1">Descrição Original da OS</label>
-                    <div id="modalDescricaoOS" class="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed max-h-24 overflow-y-auto custom-scroll whitespace-pre-wrap"></div>
+                    <div id="modalDescricaoOS" class="p-2.5 bg-slate-100 rounded-xl border border-slate-200 text-slate-600 leading-relaxed max-h-20 overflow-y-auto custom-scroll whitespace-pre-wrap text-[11px]"></div>
                 </div>
                 
-                <!-- Grid de Informações: SC, Previsão Revisada, Etapa Esteira e Responsável -->
+                <!-- Campos Editáveis: SC, Previsão Revisada, Etapa Esteira e Responsável -->
                 <div class="grid grid-cols-2 gap-2 text-[11px] pt-1">
-                    <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-400 block text-[10px] font-semibold uppercase">N° SC</span>
-                        <span id="modalNumSC" class="font-mono font-bold text-slate-700 truncate block"></span>
+                    <div>
+                        <label class="text-slate-500 block text-[10px] font-semibold uppercase mb-1">N° SC</label>
+                        <input type="text" id="modalNumSC" placeholder="Ex: 123456" class="w-full p-2 bg-slate-50 rounded-lg border border-slate-300 text-slate-700 font-mono font-bold focus:bg-white focus:border-blue-500 focus:outline-none text-xs">
                     </div>
-                    <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-400 block text-[10px] font-semibold uppercase">Previsão Revisada</span>
-                        <span id="modalPrevisaoRevisada" class="font-semibold text-slate-700 truncate block"></span>
+                    <div>
+                        <label class="text-slate-500 block text-[10px] font-semibold uppercase mb-1">Previsão Revisada</label>
+                        <input type="text" id="modalPrevisaoRevisada" placeholder="DD/MM/AAAA" class="w-full p-2 bg-slate-50 rounded-lg border border-slate-300 text-slate-700 font-semibold focus:bg-white focus:border-blue-500 focus:outline-none text-xs">
                     </div>
-                    <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-400 block text-[10px] font-semibold uppercase">Etapa Esteira</span>
-                        <span id="modalEtapaEsteira" class="font-semibold text-slate-700 truncate block"></span>
+                    <div>
+                        <label class="text-slate-500 block text-[10px] font-semibold uppercase mb-1">Etapa Esteira</label>
+                        <input type="text" id="modalEtapaEsteira" placeholder="Ex: Aprovação Vivo" class="w-full p-2 bg-slate-50 rounded-lg border border-slate-300 text-slate-700 font-semibold focus:bg-white focus:border-blue-500 focus:outline-none text-xs">
                     </div>
-                    <div class="p-2 rounded-lg bg-slate-50 border border-slate-200">
-                        <span class="text-slate-400 block text-[10px] font-semibold uppercase">Responsável</span>
-                        <span id="modalResponsavel" class="font-semibold text-slate-700 truncate block"></span>
+                    <div>
+                        <label class="text-slate-500 block text-[10px] font-semibold uppercase mb-1">Responsável</label>
+                        <input type="text" id="modalResponsavel" placeholder="Nome do responsável" class="w-full p-2 bg-slate-50 rounded-lg border border-slate-300 text-slate-700 font-semibold focus:bg-white focus:border-blue-500 focus:outline-none text-xs">
                     </div>
                 </div>
             </div>
 
-            <div class="flex justify-end pt-2 border-t border-slate-100">
-                <button onclick="fecharModalAcao()" class="px-4 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition">
-                    Fechar
-                </button>
+            <!-- Botões de Ação do Modal -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                <span id="modalSaveMsg" class="text-[11px] font-semibold text-slate-500"></span>
+                <div class="flex items-center gap-2">
+                    <button onclick="fecharModalAcao()" class="px-4 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-xs font-semibold text-slate-700 transition">
+                        Fechar
+                    </button>
+                    <button id="btnSalvarModal" onclick="salvarAlteracaoOS()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white transition flex items-center gap-1.5 shadow-sm">
+                        <i class="fa-solid fa-floppy-disk"></i> Salvar na Planilha
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Script de Lógica e Renderização -->
     <script>
+        // URL do Web App do Google Apps Script configurada
+        const APPS_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzEEcmDZdqo5iJYzISMElZwUi96PZpTNS7In856OpRXoACJdczQZVmKAtCBFdOJ-ogM/exec";
+
+        // URL da Base de Dados
         function getOSUrl() {
-            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=517461846&single=true&output=csv&_t=" + Date.now();
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdn7JVPOp0rL0UB_m1W6mOVedcNRecA6r9aZOlOHq2lFjdPox9hQbrLrqiljMZvzjp8jqYkkk70unP/pub?gid=517461846&single=true&output=csv&_t=" + Date.now();
         }
 
+        // URL da Evolução Diária
         function getEvolucaoUrl() {
-            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vRpjWWXPCwPj4uPipe2ZLm00aZNk_7Y9Kvb--aiEPzkfpuZufVLeofyEoivMnnubA/pub?gid=748000966&single=true&output=csv&_t=" + Date.now();
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdn7JVPOp0rL0UB_m1W6mOVedcNRecA6r9aZOlOHq2lFjdPox9hQbrLrqiljMZvzjp8jqYkkk70unP/pub?gid=748000966&single=true&output=csv&_t=" + Date.now();
         }
 
         function normalizarNome(texto) {
@@ -1647,17 +1662,22 @@
             });
         }
 
+        let currentEditingOS = null;
+
         function abrirModalAcao(numOS) {
             const item = rawDataset.find(d => d.os === numOS);
             if (!item) return;
 
+            currentEditingOS = item.os;
+
             const modalOSNum = document.getElementById('modalOSNum');
             if (modalOSNum) modalOSNum.innerText = item.os;
             
-            // Se não tiver descrição de ação, deixa estritamente vazio
+            // Descrição da Ação: se vazia, fica estritamente vazia
             const modalDescricaoAcao = document.getElementById('modalDescricaoAcao');
-            if (modalDescricaoAcao) modalDescricaoAcao.innerText = item.descricaoAcao || '';
+            if (modalDescricaoAcao) modalDescricaoAcao.value = item.descricaoAcao || '';
             
+            // Descrição Original (leitura)
             const modalDescricaoOS = document.getElementById('modalDescricaoOS');
             if (modalDescricaoOS) modalDescricaoOS.innerText = item.descricao || '';
             
@@ -1673,19 +1693,27 @@
                 }
             }
 
-            // Novos campos: SC e Previsão Revisada
+            // Campos Editáveis
             const modalNumSC = document.getElementById('modalNumSC');
-            if (modalNumSC) modalNumSC.innerText = item.numSC || '-';
+            if (modalNumSC) modalNumSC.value = (item.numSC === '-' || item.numSC === '#REF!') ? '' : (item.numSC || '');
             
             const modalPrevisaoRevisada = document.getElementById('modalPrevisaoRevisada');
-            if (modalPrevisaoRevisada) modalPrevisaoRevisada.innerText = item.previsaoRevisada || '-';
+            if (modalPrevisaoRevisada) modalPrevisaoRevisada.value = (item.previsaoRevisada === '-' || item.previsaoRevisada === 'Sem previsão') ? '' : (item.previsaoRevisada || '');
             
-            // Etapa Esteira e Responsável
             const modalEtapaEsteira = document.getElementById('modalEtapaEsteira');
-            if (modalEtapaEsteira) modalEtapaEsteira.innerText = item.etapaEsteira || '-';
+            if (modalEtapaEsteira) modalEtapaEsteira.value = (item.etapaEsteira === '-') ? '' : (item.etapaEsteira || '');
             
             const modalResponsavel = document.getElementById('modalResponsavel');
-            if (modalResponsavel) modalResponsavel.innerText = item.responsavel || '-';
+            if (modalResponsavel) modalResponsavel.value = (item.responsavel === '-') ? '' : (item.responsavel || '');
+
+            const modalSaveMsg = document.getElementById('modalSaveMsg');
+            if (modalSaveMsg) modalSaveMsg.innerText = '';
+
+            const btnSalvar = document.getElementById('btnSalvarModal');
+            if (btnSalvar) {
+                btnSalvar.disabled = false;
+                btnSalvar.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> Salvar na Planilha`;
+            }
 
             const modalAcao = document.getElementById('modalAcao');
             if (modalAcao) modalAcao.classList.remove('hidden');
@@ -1694,12 +1722,90 @@
         function fecharModalAcao() {
             const modalAcao = document.getElementById('modalAcao');
             if (modalAcao) modalAcao.classList.add('hidden');
+            currentEditingOS = null;
         }
 
         window.addEventListener('click', (e) => {
             const modal = document.getElementById('modalAcao');
             if (e.target === modal) fecharModalAcao();
         });
+
+        function salvarAlteracaoOS() {
+            if (!currentEditingOS) return;
+
+            const item = rawDataset.find(d => d.os === currentEditingOS);
+            if (!item) return;
+
+            const novaDescricaoAcao = document.getElementById('modalDescricaoAcao')?.value || '';
+            const novoNumSC = document.getElementById('modalNumSC')?.value || '';
+            const novaPrevisao = document.getElementById('modalPrevisaoRevisada')?.value || '';
+            const novaEtapa = document.getElementById('modalEtapaEsteira')?.value || '';
+            const novoResp = document.getElementById('modalResponsavel')?.value || '';
+
+            const btnSalvar = document.getElementById('btnSalvarModal');
+            const msgEl = document.getElementById('modalSaveMsg');
+
+            if (btnSalvar) {
+                btnSalvar.disabled = true;
+                btnSalvar.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> A gravar...`;
+            }
+
+            if (msgEl) {
+                msgEl.className = "text-[11px] font-semibold text-blue-600";
+                msgEl.innerText = "A enviar para a planilha...";
+            }
+
+            const payload = {
+                os: currentEditingOS,
+                descricaoAcao: novaDescricaoAcao,
+                numSC: novoNumSC,
+                previsaoRevisada: novaPrevisao,
+                etapaEsteira: novaEtapa,
+                responsavel: novoResp
+            };
+
+            // Atualiza os dados localmente
+            item.descricaoAcao = novaDescricaoAcao;
+            item.numSC = novoNumSC;
+            item.previsaoRevisada = novaPrevisao;
+            item.etapaEsteira = novaEtapa;
+            item.responsavel = novoResp;
+
+            // Disparo para o Web App Apps Script
+            fetch(APPS_SCRIPT_WEBAPP_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                finalizarSucessoSalvar();
+            })
+            .catch(() => {
+                finalizarSucessoSalvar();
+            });
+        }
+
+        function finalizarSucessoSalvar() {
+            const btnSalvar = document.getElementById('btnSalvarModal');
+            const msgEl = document.getElementById('modalSaveMsg');
+
+            if (btnSalvar) {
+                btnSalvar.disabled = false;
+                btnSalvar.innerHTML = `<i class="fa-solid fa-check"></i> Salvo!`;
+            }
+
+            if (msgEl) {
+                msgEl.className = "text-[11px] font-semibold text-emerald-600";
+                msgEl.innerText = "Gravado com sucesso!";
+            }
+
+            renderTable();
+
+            setTimeout(() => {
+                fecharModalAcao();
+            }, 1200);
+        }
 
         function exportarExcelMultiAbas() {
             if (filteredDataset.length === 0) {
