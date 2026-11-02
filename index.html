@@ -237,7 +237,6 @@
                     </select>
                 </div>
 
-                <!-- Filtro Status SLA Atualizado com Análise >10% -->
                 <div>
                     <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">Status SLA</label>
                     <select id="filterSLA" onchange="applyFilters()" class="w-full bg-slate-50 text-xs text-slate-700 border border-slate-300 rounded-lg px-2.5 py-1.5 focus:border-blue-500 focus:bg-white focus:outline-none">
@@ -729,12 +728,10 @@
             if (!str) return null;
             str = str.trim();
             
-            // Pega apenas a data antes do espaço (ignora o horário)
             const apenasData = str.split(' ')[0];
             const parts = apenasData.split(/[\/\-]/);
             
             if (parts.length === 3) {
-                // Formato DD/MM/AAAA ou DD/MM/AA
                 if (parts[2].length === 4 || parts[2].length === 2) {
                     const d = parseInt(parts[0], 10);
                     const m = parseInt(parts[1], 10) - 1;
@@ -744,7 +741,6 @@
                     const dt = new Date(y, m, d);
                     if (!isNaN(dt.getTime())) return dt;
                 }
-                // Formato AAAA-MM-DD
                 if (parts[0].length === 4) {
                     const y = parseInt(parts[0], 10);
                     const m = parseInt(parts[1], 10) - 1;
@@ -1403,7 +1399,6 @@
             filteredDataset.forEach(d => {
                 if (!d.dataCriacao) return;
 
-                // Não computa datas no futuro
                 if (d.dataCriacao > agora) return;
 
                 let key = '';
@@ -1745,6 +1740,7 @@
             if (e.target === modal) fecharModalAcao();
         });
 
+        // Salvamento otimista imediato
         function salvarAlteracaoOS() {
             if (!currentEditingOS) return;
 
@@ -1779,7 +1775,7 @@
                 responsavel: novoResp
             };
 
-            // Atualização imediata em memória
+            // Atualização imediata em memória e tabela
             item.descricaoAcao = novaDescricaoAcao;
             item.numSC = novoNumSC;
             item.previsaoRevisada = novaPrevisao;
