@@ -539,7 +539,6 @@
                         <i class="fa-solid fa-circle-check text-cyan-600"></i> Executada Sem Aprovação
                     </span>
                     <span id="modalCheckExecSemAprov" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border">
-                        <!-- Preenchido via JS -->
                     </span>
                 </div>
 
@@ -668,8 +667,7 @@
         }
 
         function fallbackProxyOS() {
-            const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(getOSUrl());
-            fetch(proxyUrl)
+            fetch(getOSUrl())
                 .then(r => r.text())
                 .then(csv => {
                     Papa.parse(csv, {
@@ -678,7 +676,7 @@
                         complete: (res) => {
                             if (res.data && res.data.length > 0) {
                                 processCSVData(res.data);
-                                setBadge('success', 'Base de dados sincronizada via Proxy.');
+                                setBadge('success', 'Base de dados sincronizada diretamente.');
                             } else {
                                 setBadge('error', 'Planilha vazia ou sem cabeçalhos válidos.');
                             }
@@ -710,8 +708,7 @@
         }
 
         function fallbackProxyEvolucao() {
-            const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(getEvolucaoUrl());
-            fetch(proxyUrl)
+            fetch(getEvolucaoUrl())
                 .then(r => r.text())
                 .then(csv => {
                     Papa.parse(csv, {
