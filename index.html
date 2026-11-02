@@ -724,15 +724,31 @@
             renderEvolucaoGeralChart();
         }
 
+        // Leitor robusto de data brasileira (com ou sem horário)
         function parseBrazilianDate(str) {
             if (!str) return null;
             str = str.trim();
-            const parts = str.split(/[\/\-]/);
+            
+            // Pega apenas a data antes do espaço (ignora o horário)
+            const apenasData = str.split(' ')[0];
+            const parts = apenasData.split(/[\/\-]/);
+            
             if (parts.length === 3) {
-                if (parts[2].length === 4) {
+                // Formato DD/MM/AAAA ou DD/MM/AA
+                if (parts[2].length === 4 || parts[2].length === 2) {
                     const d = parseInt(parts[0], 10);
                     const m = parseInt(parts[1], 10) - 1;
-                    const y = parseInt(parts[2], 10);
+                    let y = parseInt(parts[2], 10);
+                    if (y < 100) y += 2000;
+                    
+                    const dt = new Date(y, m, d);
+                    if (!isNaN(dt.getTime())) return dt;
+                }
+                // Formato AAAA-MM-DD
+                if (parts[0].length === 4) {
+                    const y = parseInt(parts[0], 10);
+                    const m = parseInt(parts[1], 10) - 1;
+                    const d = parseInt(parts[2], 10);
                     const dt = new Date(y, m, d);
                     if (!isNaN(dt.getTime())) return dt;
                 }
@@ -930,12 +946,11 @@
                 if (fFatB === 'FAT_B' && !item.isFatB) return false;
                 if (fFatB === 'NAO_FAT_B' && item.isFatB) return false;
 
-                // Nova regra de Análise >10%
+                // Regra Análise >10%
                 if (fSLA === 'ANALISE_10') {
                     const atendeSLA = item.isVencida || item.slaPctNum > 10;
                     if (!atendeSLA) return false;
 
-                    // Não ter previsão OU ter previsão com data anterior a hoje
                     const semPrevisao = !item.previsaoRevisada || item.previsaoRevisada === '-' || item.previsaoRevisada.toLowerCase().includes('sem previsão') || item.previsaoRevisada.toLowerCase().includes('sem previsao');
                     const previsaoPassada = item.dtPrevisaoRevisada && item.dtPrevisaoRevisada < hoje;
 
@@ -1383,9 +1398,13 @@
             if (chartEvolutivoInstance) chartEvolutivoInstance.destroy();
 
             const timelineMap = {};
+            const agora = new Date();
 
             filteredDataset.forEach(d => {
                 if (!d.dataCriacao) return;
+
+                // Não computa datas no futuro
+                if (d.dataCriacao > agora) return;
 
                 let key = '';
                 let label = '';
@@ -1760,6 +1779,7 @@
                 responsavel: novoResp
             };
 
+            // Atualização imediata em memória
             item.descricaoAcao = novaDescricaoAcao;
             item.numSC = novoNumSC;
             item.previsaoRevisada = novaPrevisao;
@@ -1767,6 +1787,7 @@
             item.etapaEsteira = novaEtapa;
             item.responsavel = novoResp;
 
+            // Disparo assíncrono para a planilha
             fetch(APPS_SCRIPT_WEBAPP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
