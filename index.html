@@ -237,10 +237,12 @@
                     </select>
                 </div>
 
+                <!-- Filtro Status SLA Atualizado -->
                 <div>
                     <label class="block text-[10px] text-slate-500 font-bold uppercase mb-1">Status SLA</label>
                     <select id="filterSLA" onchange="applyFilters()" class="w-full bg-slate-50 text-xs text-slate-700 border border-slate-300 rounded-lg px-2.5 py-1.5 focus:border-blue-500 focus:bg-white focus:outline-none">
                         <option value="TODOS">Todos</option>
+                        <option value="ACIMA_10">Análise >10%</option>
                         <option value="VENCIDAS">Vencidas (Fora)</option>
                         <option value="ACIMA_90">> 90% SLA</option>
                         <option value="ACIMA_80">> 80% SLA</option>
@@ -942,6 +944,8 @@
                 if (fFatB === 'FAT_B' && !item.isFatB) return false;
                 if (fFatB === 'NAO_FAT_B' && item.isFatB) return false;
 
+                // Regras do Status SLA
+                if (fSLA === 'ACIMA_10' && !item.isVencida && item.slaPctNum <= 10) return false;
                 if (fSLA === 'VENCIDAS' && !item.isVencida) return false;
                 if (fSLA === 'ACIMA_90' && (item.isVencida || item.slaPctNum < 90)) return false;
                 if (fSLA === 'ACIMA_80' && (item.isVencida || item.slaPctNum < 80)) return false;
