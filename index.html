@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PapaParse para CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- SheetJS para exportação XLSX com abas reais -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <!-- FontAwesome Icons -->
@@ -138,7 +140,7 @@
                 </div>
             </div>
 
-            <!-- 4. FAT-B (Qtde) -->
+            <!-- 4. FAT-B (Qtde) - Ajustado com regra de Valor > 0 -->
             <div class="card-clean p-3 flex flex-col justify-between border-t-4 border-t-purple-500">
                 <div class="flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase">
                     <span class="truncate">FAT-B (Qtde)</span>
@@ -597,6 +599,14 @@
     <script>
         const APPS_SCRIPT_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzEEcmDZdqo5iJYzISMElZwUi96PZpTNS7In856OpRXoACJdczQZVmKAtCBFdOJ-ogM/exec";
 
+        function getOSUrl() {
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdn7JVPOp0rL0UB_m1W6mOVedcNRecA6r9aZOlOHq2lFjdPox9hQbrLrqiljMZvzjp8jqYkkk70unP/pub?gid=517461846&single=true&output=csv&_t=" + Date.now();
+        }
+
+        function getEvolucaoUrl() {
+            return "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdn7JVPOp0rL0UB_m1W6mOVedcNRecA6r9aZOlOHq2lFjdPox9hQbrLrqiljMZvzjp8jqYkkk70unP/pub?gid=748000966&single=true&output=csv&_t=" + Date.now();
+        }
+
         function normalizarNome(texto) {
             if (!texto) return 'NÃO DEFINIDA';
             return texto.toString().trim().toUpperCase().replace(/\s+/g, ' ');
@@ -651,50 +661,45 @@
         }
 
         function loadAllData() {
-            setBadge('loading', 'A sincronizar dados diretamente da planilha...');
+            setBadge('loading', 'A sincronizar dados da folha de cálculo...');
+            loadFromOnlineSpreadsheet();
+            loadEvolucaoGeralData();
+        }
 
-            const callbackName = 'gsCallback_' + Date.now();
-            const scriptId = 'gs-jsonp-loader';
-
-            const oldScript = document.getElementById(scriptId);
-            if (oldScript) oldScript.remove();
-
-            const timeoutId = setTimeout(() => {
-                delete window[callbackName];
-                setBadge('error', 'Tempo esgotado. Verifique se publicou uma "Nova versão" no Apps Script.');
-            }, 15000);
-
-            window[callbackName] = function(json) {
-                clearTimeout(timeoutId);
-                delete window[callbackName];
-
-                if (json && json.status === "success") {
-                    if (json.osData && json.osData.length > 0) {
-                        processCSVData(json.osData);
+        function loadFromOnlineSpreadsheet() {
+            Papa.parse(getOSUrl(), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data && results.data.length > 0) {
+                        processCSVData(results.data);
+                        setBadge('success', 'Base de dados sincronizada e atualizada em tempo real com a planilha.');
                     } else {
-                        setBadge('error', 'Planilha principal vazia ou sem cabeçalhos válidos.');
-                        return;
+                        setBadge('error', 'Planilha vazia ou sem cabeçalhos válidos.');
                     }
-
-                    if (json.evolucaoData && json.evolucaoData.length > 0) {
-                        processEvolucaoRows(json.evolucaoData);
-                    }
-
-                    setBadge('success', 'Base de dados sincronizada e atualizada em tempo real com a planilha.');
-                } else {
-                    setBadge('error', 'Erro no script: ' + (json?.message || 'Falha desconhecida'));
+                },
+                error: function(err) {
+                    console.error("Erro ao carregar OS:", err);
+                    setBadge('error', 'Falha ao sincronizar dados da base principal.');
                 }
-            };
+            });
+        }
 
-            const script = document.createElement('script');
-            script.id = scriptId;
-            script.src = `${APPS_SCRIPT_WEBAPP_URL}?callback=${callbackName}&t=${Date.now()}`;
-            script.onerror = function() {
-                clearTimeout(timeoutId);
-                delete window[callbackName];
-                setBadge('error', 'Falha ao conectar no Apps Script. Verifique a URL e a permissão "Qualquer pessoa".');
-            };
-            document.body.appendChild(script);
+        function loadEvolucaoGeralData() {
+            Papa.parse(getEvolucaoUrl(), {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    if (results.data && results.data.length > 0) {
+                        processEvolucaoRows(results.data);
+                    }
+                },
+                error: function(err) {
+                    console.warn("Erro ao descarregar evolução geral:", err);
+                }
+            });
         }
 
         function processEvolucaoRows(rows) {
@@ -852,12 +857,10 @@
 
             const selRegional = document.getElementById('filterRegional');
             if (selRegional) {
-                const currentVal = selRegional.value;
                 selRegional.innerHTML = '<option value="TODOS">Todas</option>';
                 regionais.forEach(r => {
                     selRegional.innerHTML += `<option value="${r}">${r}</option>`;
                 });
-                if (regionais.includes(currentVal)) selRegional.value = currentVal;
             }
 
             const containerTipos = document.getElementById('listaOpcoesTipo');
@@ -937,9 +940,11 @@
                 if (fExecSemAprov === 'SIM' && !item.isExecSemAprov) return false;
                 if (fExecSemAprov === 'NAO' && item.isExecSemAprov) return false;
 
+                // Filtro atualizado para FAT-B com valor > 0
                 if (fFatB === 'FAT_B' && !item.isFatB) return false;
                 if (fFatB === 'NAO_FAT_B' && item.isFatB) return false;
 
+                // Regra Análise >10%
                 if (fSLA === 'ANALISE_10') {
                     const atendeSLA = item.isVencida || item.slaPctNum > 10;
                     if (!atendeSLA) return false;
@@ -1024,6 +1029,7 @@
         function updateDashboard() {
             const total = filteredDataset.length;
 
+            // FAT-B: ordens que atendem ao critério de FAT-B e têm valor de material > 0
             const fatBList = filteredDataset.filter(d => d.isFatB);
             const fatBQtde = fatBList.length;
             const fatBReais = fatBList.reduce((acc, curr) => acc + curr.valorMateriais, 0);
@@ -1063,6 +1069,7 @@
                 mediaMensal = total;
             }
 
+            // Atualização dos KPIs
             const kpiTotalOS = document.getElementById('kpiTotalOS');
             if (kpiTotalOS) kpiTotalOS.innerText = total.toLocaleString('pt-BR');
             
@@ -1072,12 +1079,14 @@
             const kpiVolMensal = document.getElementById('kpiVolMensal');
             if (kpiVolMensal) kpiVolMensal.innerText = mediaMensal.toLocaleString('pt-BR');
             
+            // FAT-B (Qtde) e porcentagem em relação ao total
             const kpiFatBQtde = document.getElementById('kpiFatBQtde');
             if (kpiFatBQtde) kpiFatBQtde.innerText = fatBQtde.toLocaleString('pt-BR');
             
             const kpiFatBPct = document.getElementById('kpiFatBPct');
             if (kpiFatBPct) kpiFatBPct.innerText = total > 0 ? `${((fatBQtde / total) * 100).toFixed(1)}%` : '0%';
 
+            // FAT-B (R$) e proporção financeira
             const kpiFatBReais = document.getElementById('kpiFatBReais');
             if (kpiFatBReais) kpiFatBReais.innerText = fatBReais.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
             
@@ -1095,6 +1104,7 @@
             const kpiRiscoDetail = document.getElementById('kpiRiscoDetail');
             if (kpiRiscoDetail) kpiRiscoDetail.innerText = `${vencidas} Venc. | ${acima90} >90%`;
 
+            // Faixas Donut Labels
             const lblFaixa1 = document.getElementById('lblFaixa1');
             if (lblFaixa1) lblFaixa1.innerText = abaixo70.toLocaleString('pt-BR');
             const lblFaixa2 = document.getElementById('lblFaixa2');
