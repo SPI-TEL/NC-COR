@@ -652,36 +652,49 @@
 
         function loadAllData() {
             setBadge('loading', 'A sincronizar dados diretamente da planilha...');
-            
-            const url = APPS_SCRIPT_WEBAPP_URL + "?t=" + Date.now();
 
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) throw new Error("Erro HTTP: " + response.status);
-                    return response.json();
-                })
-                .then(json => {
-                    if (json.status === "success") {
-                        if (json.osData && json.osData.length > 0) {
-                            processCSVData(json.osData);
-                        } else {
-                            setBadge('error', 'Planilha principal vazia ou sem cabeçalhos válidos.');
-                            return;
-                        }
+            const callbackName = 'gsCallback_' + Date.now();
+            const scriptId = 'gs-jsonp-loader';
 
-                        if (json.evolucaoData && json.evolucaoData.length > 0) {
-                            processEvolucaoRows(json.evolucaoData);
-                        }
+            const oldScript = document.getElementById(scriptId);
+            if (oldScript) oldScript.remove();
 
-                        setBadge('success', 'Base de dados sincronizada e atualizada em tempo real com a planilha.');
+            const timeoutId = setTimeout(() => {
+                delete window[callbackName];
+                setBadge('error', 'Tempo esgotado. Verifique se publicou uma "Nova versão" no Apps Script.');
+            }, 15000);
+
+            window[callbackName] = function(json) {
+                clearTimeout(timeoutId);
+                delete window[callbackName];
+
+                if (json && json.status === "success") {
+                    if (json.osData && json.osData.length > 0) {
+                        processCSVData(json.osData);
                     } else {
-                        setBadge('error', 'Erro no script: ' + (json.message || 'Falha desconhecida'));
+                        setBadge('error', 'Planilha principal vazia ou sem cabeçalhos válidos.');
+                        return;
                     }
-                })
-                .catch(err => {
-                    console.error("Erro ao sincronizar:", err);
-                    setBadge('error', 'Falha na comunicação com a planilha. Verifique a implantação do Apps Script.');
-                });
+
+                    if (json.evolucaoData && json.evolucaoData.length > 0) {
+                        processEvolucaoRows(json.evolucaoData);
+                    }
+
+                    setBadge('success', 'Base de dados sincronizada e atualizada em tempo real com a planilha.');
+                } else {
+                    setBadge('error', 'Erro no script: ' + (json?.message || 'Falha desconhecida'));
+                }
+            };
+
+            const script = document.createElement('script');
+            script.id = scriptId;
+            script.src = `${APPS_SCRIPT_WEBAPP_URL}?callback=${callbackName}&t=${Date.now()}`;
+            script.onerror = function() {
+                clearTimeout(timeoutId);
+                delete window[callbackName];
+                setBadge('error', 'Falha ao conectar no Apps Script. Verifique a URL e a permissão "Qualquer pessoa".');
+            };
+            document.body.appendChild(script);
         }
 
         function processEvolucaoRows(rows) {
