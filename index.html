@@ -473,7 +473,7 @@
                     <h3 class="text-xs font-bold text-slate-800 flex items-center gap-1.5 uppercase">
                         <i class="fa-solid fa-table-list text-cyan-600"></i> Detalhamento Analítico de Ordens de Serviço
                     </h3>
-                    <p class="text-[11px] text-slate-400">Listagem analítica leve com navegação por páginas</p>
+                    <p class="text-[11px] text-slate-400">Ordenado por SLA (Fora do Prazo no topo, do maior para o menor)</p>
                 </div>
                 <div class="flex items-center gap-2 no-print">
                     <span id="recordsCount" class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">Exibindo 0 registros</span>
@@ -983,6 +983,21 @@
                 }
 
                 return true;
+            });
+
+            // Ordenação pelo SLA: Fora do Prazo no topo, depois do maior % SLA para o menor
+            filteredDataset.sort((a, b) => {
+                if (a.isVencida !== b.isVencida) {
+                    return a.isVencida ? -1 : 1;
+                }
+                // Se ambas estiverem fora do prazo, ordena pelas mais atrasadas (menor dias restantes)
+                if (a.isVencida && b.isVencida) {
+                    const trA = a.tempoRestante !== null ? a.tempoRestante : 0;
+                    const trB = b.tempoRestante !== null ? b.tempoRestante : 0;
+                    if (trA !== trB) return trA - trB;
+                }
+                // Ordena do maior % SLA para o menor
+                return b.slaPctNum - a.slaPctNum;
             });
 
             currentPage = 1;
